@@ -46,6 +46,7 @@
   --fill:     #8c8c8c;
   --select:   #ebebeb;
   --media-bg: #f2f2f2;
+  --accent:   #2f5bff;
 
   --font: "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --size: 15px;
@@ -100,6 +101,7 @@ body.on-home main { display: grid; place-items: center; }
 .hero .ch { display: inline-block; white-space: pre; }
 
 .lede { font-size: var(--lede); line-height: 1.45; max-width: 36em; }
+.lede .hl { color: var(--accent); }
 .label { font-size: 1em; font-weight: 400; color: var(--muted); margin: 3.5rem 0 1rem; }
 .news {
   max-width: 44rem; max-height: 12rem; overflow-y: auto; padding-bottom: 3rem;
@@ -370,7 +372,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
 
   <section class="page" data-page="research" aria-labelledby="research-h">
     <h1 class="sr" id="research-h">research</h1>
-    <p class="lede">I’m a first-year PhD student in Computing and Information Sciences at RIT, working with Prof. Hwan Shim in the <a href="https://www.rit.edu/macl/">Music and Audio Cognition Lab (MACL)</a>. My work explores how people attend to and perceive sound, with a focus on decoding auditory attention from EEG and separating speech in real-world mixtures. Previously, at the <a href="https://hci.cs.tufts.edu/">Tufts HCI Lab</a> with Prof. Robert Jacob, I used fNIRS to study cognitive workload in AI-assisted decision-making.</p>
+    <p class="lede">I’m a first-year PhD student in Computing and Information Sciences at RIT, working with <span class="hl">Prof. Hwan Shim</span> in the <a class="hl" href="https://www.rit.edu/macl/">Music and Audio Cognition Lab (MACL)</a>. My work explores how people attend to and perceive sound, with a focus on decoding auditory attention from EEG and separating speech in real-world mixtures. Previously, at the <a class="hl" href="https://hci.cs.tufts.edu/">Tufts HCI Lab</a> with <span class="hl">Prof. Robert Jacob</span>, I used fNIRS to study cognitive workload in AI-assisted decision-making.</p>
 
     <h2 class="label">recently</h2>
     <div class="news" tabindex="0" role="region" aria-label="news, scrollable">
