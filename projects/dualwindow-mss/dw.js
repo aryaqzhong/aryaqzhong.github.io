@@ -121,7 +121,7 @@
       ctx.strokeStyle = cur.mark > .5 ? '#fff' : '#9a9a9a'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(bx0, by - 5); ctx.lineTo(bx0, by); ctx.lineTo(bx1, by); ctx.lineTo(bx1, by - 5); ctx.stroke();
       label(`wait ${M} samples = ${(M / FS * 1000).toFixed(1)} ms`, bx1, by + 16, 'right', cur.mark > .5 ? '#fff' : '#b3b3b3');
-      if (cur.mark > .01) { ctx.globalAlpha = cur.mark; label(narrow ? 'measured look-ahead 123 ≤ 127' : 'measured look-ahead: 123 samples (bound 127)', bx1, by + 32, 'right', '#fff'); ctx.globalAlpha = 1; }
+      if (cur.mark > .01) { ctx.globalAlpha = cur.mark; label(narrow ? 'framing bound: 127 samples' : 'framing bound: M − 1 = 127 samples; verify in Results', bx1, by + 32, 'right', '#fff'); ctx.globalAlpha = 1; }
       const lx = Math.max(x0 + 2, tx(-N) + 4);
       if (cur.ola < .5) label(N > M ? `analysis window · ${N} samples` : `window · ${N} samples`, Math.max(x0 + 2, Math.min(lx, W - 210)), top0 + 10, 'left', '#b3b3b3');
       if (N > M && cur.ola < .5) label(narrow ? 'synthesis window' : 'synthesis window · 128 samples', tx(-M) - 6, ty(.5), 'right', '#9a9a9a');

@@ -22,7 +22,7 @@
     if (btn && toc) {
       btn.addEventListener('click', () => { const open = toc.classList.toggle('open'); btn.setAttribute('aria-expanded', open); });
       toc.addEventListener('click', e => { if (e.target.closest('a')) { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') toc.classList.remove('open'); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') { toc.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); } });
     }
     const links = toc ? [...toc.querySelectorAll('a')] : [];
     let last = '';
@@ -37,7 +37,7 @@
       const text = cur ? cur.dataset.label : (where.dataset.start || '');
       if (text !== last) { where.textContent = text; last = text; }
       const chap = cur ? cur.closest('.chapter, .scrolly-wrap') : null;
-      const id = chap && (chap.id || (chap.previousElementSibling && chap.previousElementSibling.id));
+      const id = cur && cur.dataset.nav || chap && (chap.id || (chap.previousElementSibling && chap.previousElementSibling.id));
       links.forEach(a => a.classList.toggle('on', !!id && a.getAttribute('href') === '#' + id));
     };
   }
