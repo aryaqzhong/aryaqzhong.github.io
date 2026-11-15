@@ -105,53 +105,64 @@
       <p class="label">04 / Method</p>
       <h2>Analyze a long past, synthesize a short output</h2>
       <p>I separate the window’s two jobs. The analysis length <strong>N</strong> controls the spectral representation; the synthesis length <strong>M</strong> controls the output’s algorithmic wait. The analysis window uses samples that have already arrived, while the synthesis window keeps only the recent part of each reconstructed frame.</p>
-      <p>First, the animation builds up the conventional short-window trade-off. It then introduces the dual window and shows why the overlapping windows still reconstruct an unchanged signal.</p>
+      <p>First, the figure builds up the conventional short-window trade-off. It then introduces the dual window and shows why the overlapping windows still reconstruct an unchanged signal.</p>
     </div>
   </section>
 
-  <div class="scrolly wide has-legend" data-scene="window">
+  <div class="scrolly wide window-explainer" data-scene="window">
     <div class="stage">
       <span class="tick" aria-hidden="true"></span>
-      <div class="hud"><p class="fig">Fig. 2 · windows</p><div class="readout" aria-live="polite"></div></div>
-      <div class="plot"><canvas role="img" aria-label="Top: a slow-motion tape of a mixture arriving under the analysis and synthesis windows, which end at the present moment. Bottom: the spectrum of the mixture seen through the current analysis window."></canvas></div>
-      <div class="legend-strip" aria-hidden="true"><span><i class="dim"></i>samples arriving</span><span><i></i>what the model sees</span><span><i class="fill"></i>analysis window</span><span><i class="dash"></i>synthesis window</span><span><i class="tick"></i>sung note, harmonics of 220 Hz</span><span><i class="tick gray"></i>accompaniment</span><span><i class="dot"></i>STFT bins</span></div>
-      <p class="cap">The tape runs in slow motion. New samples arrive at the right edge (now); recorded history shifts left. The spectrum below is a synthetic illustration: one sung note and a few accompaniment partials, seen through the current analysis window. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/results/latency_check.md">Source ↗</a></p>
+      <div class="hud"><p class="fig">Fig. 2 · windows</p><div class="readout" aria-label="Figure step"></div></div>
+      <div class="window-panel">
+        <h3 class="window-title"></h3>
+        <div class="window-stats"></div>
+        <div class="plot"><svg role="img" aria-label="Step-by-step explanation of window length, frequency resolution and dual-window reconstruction."></svg></div>
+      </div>
+      <p class="window-note"></p>
+      <p class="cap">Synthetic two-tone illustration; spectra normalized to show their shape. Bars show sample ranges, not window weights. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/dwmss/stft.py">Window construction ↗</a></p>
     </div>
     <div class="steps">
       <div class="step" data-label="04 · method" data-nav="method"><div>
-        <p class="label">A window is a wait</p>
-        <h3>The model may only look through a window.</h3>
-        <p>Read the time axis from left to right: older samples on the left, the newest sample at <strong>now</strong> on the right. An STFT separator cuts the stream into windows and can process one only once all of its samples have arrived.</p>
-        <p>So the window length is a wait: with 1024 samples at 44.1 kHz, the worst-case algorithmic wait is about <strong>23.2 ms</strong>. This already exceeds the few-millisecond target studied here.</p>
+        <p class="label">1 / The wait</p>
+        <h3>A frame has to arrive before it can be processed.</h3>
+        <p>A conventional STFT uses equally long analysis and synthesis windows. At 44.1 kHz, 1024 samples correspond to about <strong>23.2 ms</strong> of algorithmic latency.</p>
+        <p>The strip represents one frame. Its right edge is the newest sample, <strong>now</strong>. A shorter frame would reduce the wait—but changes what the model can see.</p>
       </div></div>
       <div class="step" data-label="04 · method" data-nav="method"><div>
-        <p class="label">1024 samples · 43 Hz per bin</p>
-        <h3>What the model sees is a spectrum.</h3>
-        <p>Each window is turned into a spectrum, and the separator decides, bin by bin, how much of the energy is voice. A long window gives fine bins: 43 Hz apart, so every harmonic of the sung note (white ticks) stands apart from the accompaniment (gray ticks).</p>
+        <p class="label">2 / Frequency detail</p>
+        <h3>First, look at just two tones.</h3>
+        <p>This synthetic example contains a vocal tone at <strong>220 Hz</strong> and an accompaniment tone at <strong>330 Hz</strong>. The marks above the chart identify the tones; the curve below shows their combined windowed spectrum.</p>
+        <p>With 1024 samples, the STFT reads a frequency bin every <strong>43 Hz</strong>. Those bins are the dots on the curve. The two peaks are distinguishable.</p>
       </div></div>
       <div class="step" data-label="04 · method" data-nav="method"><div>
-        <p class="label">256 samples · 172 Hz per bin</p>
-        <h3>Cut the wait, lose the detail.</h3>
-        <p>A 256-sample window answers within <strong>5.8 ms</strong>, but its bins are 172 Hz apart. Neighboring partials of the voice and the accompaniment land in the same bin and start to merge.</p>
+        <p class="label">3 / A shorter window</p>
+        <h3>Less waiting, fewer frequency bins.</h3>
+        <p>The tones and the frequency axis stay fixed. Only the window shrinks to <strong>256 samples</strong>: about 5.8 ms of wait, with bins now <strong>172 Hz</strong> apart.</p>
+        <p>The two components blur together. A mask must now make its decision from fewer, less distinct measurements.</p>
       </div></div>
       <div class="step" data-label="04 · method" data-nav="method"><div>
-        <p class="label">128 samples · 345 Hz per bin</p>
-        <h3>At 2.9 ms, a blur.</h3>
-        <p>With 128 samples the bins are 345 Hz apart. Only five bin centers lie between 0 and 1.6 kHz. Voice and accompaniment are harder to distinguish, so the mask has less detail to work with.</p>
+        <p class="label">4 / Shorter still</p>
+        <h3>At 2.9 ms, still less detail.</h3>
+        <p>A <strong>128-sample</strong> window brings the wait down to about 2.9 ms. But bins are <strong>345 Hz</strong> apart: only two bin centers lie in the displayed 0–600 Hz range.</p>
+        <p>This is the trade-off the dual window addresses: keep the short output wait while giving analysis a longer view.</p>
       </div></div>
       <div class="step" id="idea" data-label="04 · method" data-nav="method"><div>
-        <p class="label">Dual-window construction</p>
-        <h3>Look back long, answer short.</h3>
-        <p>A dual window splits the two jobs (Mauler &amp; Martin, 2007). The <strong>analysis window</strong>, 2048 samples, reaches far into the past and gives the model a sharp spectrum again. The <strong>synthesis window</strong>, 128 samples, decides when the output may leave.</p>
-        <p>Only the synthesis window sets the wait: still 2.9 ms.</p>
+        <p class="label">5 / Separate the jobs</p>
+        <h3>Read more history; output a short tail.</h3>
+        <p>The upper bar is the <strong>2048-sample analysis range</strong>. The lower bar is the <strong>128-sample synthesis range</strong>. They share the same time axis and both end at now.</p>
+        <p>The extra analysis samples are already in the past. They give bins about <strong>22 Hz</strong> apart while the short synthesis window keeps the algorithmic wait near 2.9 ms.</p>
       </div></div>
       <div class="step" data-label="04 · method" data-nav="method"><div>
-        <h3>Nothing is lost on the way out.</h3>
-        <p>The synthesis window is shaped so that analysis × synthesis is a plain 128-sample Hann window. Overlapping those every 64 samples adds up to exactly one, so a signal that passes through untouched comes out exactly as it went in.</p>
+        <p class="label">6 / Reconstruct the signal</p>
+        <h3>The overlap fills in, rather than piling up.</h3>
+        <p>The two window weights multiply to a 128-sample Hann window. With a new frame every <strong>64 samples</strong>, one frame’s contribution fades out as the next fades in.</p>
+        <p>They are drawn separately here. The bottom row adds them: the weight stays at <strong>one</strong>. With the spectrum unchanged, the input is reconstructed exactly, apart from the streaming delay.</p>
       </div></div>
       <div class="step" data-label="04 · method" data-nav="method"><div>
-        <h3>A latency bound to verify.</h3>
-        <p>The long analysis window uses history already in the buffer. With a 128-sample synthesis window and 64-sample hops, the framing predicts a worst-case algorithmic latency of <strong>M − 1 = 127 samples</strong>. I test that bound on the implementation in the results section.</p>
+        <p class="label">7 / The comparison to test</p>
+        <h3>Same synthesis window. More spectral detail.</h3>
+        <p>Compare short-window E with dual-window D: the analysis length and frequency spacing change, but the synthesis length stays at <strong>128 samples</strong>.</p>
+        <p>Both have the same framing bound of <strong>M − 1 = 127 samples</strong>, about 2.88 ms. The later experiments test whether this design improves separation and whether the implementation respects that bound.</p>
       </div></div>
     </div>
   </div>
@@ -506,9 +517,7 @@
         <p class="credit" id="attribution"></p>
       </div>
     </div>
-    <div class="prose">
-      <div class="cta"><a class="btn" href="https://github.com/aryaqzhong/DualWindow-MSS">Code and results on GitHub ↗</a></div>
-    </div>
+    <div class="project-links"><a class="btn" href="https://github.com/aryaqzhong/DualWindow-MSS">Code and results on GitHub ↗</a></div>
   </section>
 </main>
 

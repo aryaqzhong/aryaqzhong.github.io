@@ -238,3 +238,24 @@
   .dataset-split small { font-size: 11px; }
   .research-table th, .research-table td { padding: .7rem .6rem; font-size: 11px; }
 }
+
+.dw .scrolly.window-explainer .stage { grid-template-rows: auto minmax(0, 1fr) auto auto; gap: 1rem; }
+.dw .window-explainer .hud { align-items: baseline; }
+.dw .window-explainer .readout { color: var(--muted); font-size: 11px; }
+.window-panel { min-height: 0; min-width: 0; display: grid; grid-template-rows: auto auto minmax(0, 1fr); gap: 1rem; padding-top: .6rem; }
+.window-title { margin: 0; color: var(--hi); font-size: clamp(20px, 1.2rem + .45vw, 26px); font-weight: 500; line-height: 1.25; }
+.window-stats { display: flex; flex-wrap: wrap; gap: .4rem 1.6rem; color: var(--soft); font: 12px/1.5 var(--mono); }
+.window-stats span { padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
+.window-note { margin: 0; padding-top: .8rem; border-top: 1px solid var(--line); color: var(--ink); font-size: 14px; line-height: 1.5; }
+.dw .window-explainer .plot { min-width: 0; }
+.project-links { display: flex; justify-content: center; max-width: 1180px; margin: 2.4rem auto 0; padding-top: 1.6rem; border-top: 1px solid var(--line); text-align: center; }
+@media (max-width: 860px) {
+  .dw .scrolly.window-explainer .stage { grid-template-rows: auto auto auto; gap: .55rem; }
+  .dw .window-explainer .hud { flex-direction: row; }
+  .window-panel { gap: .55rem; padding: 0; }
+  .window-title { font-size: 18px; }
+  .window-stats { gap: .2rem .9rem; font-size: 10.5px; }
+  .dw .window-explainer .plot { height: clamp(200px, 27svh, 270px); }
+  .window-note { padding-top: .5rem; font-size: 12px; }
+  .project-links { margin-top: 1.8rem; }
+}

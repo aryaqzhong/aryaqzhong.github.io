@@ -4,7 +4,6 @@
   const MONO = '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace';
   const fmt = (v, d = 2) => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(d);
   const hop = (i, p, f = .5) => ease(clamp(p / f));
-  const glerp = (a, b, t) => Math.exp(lerp(Math.log(a), Math.log(b), t));
   const observe = (node, fn) => { const ro = new ResizeObserver(() => fn(node.clientWidth, node.clientHeight)); ro.observe(node); return ro; };
   const clear = n => { while (n.firstChild) n.removeChild(n.firstChild); };
   const txt = (parent, x, y, s, attrs = {}) => { const t = el('text', Object.assign({ x, y }, attrs), parent); t.textContent = s; return t; };
@@ -20,177 +19,141 @@
     return { wa, ws, h };
   }
 
-  const VOICE = [220, 440, 660, 880, 1100, 1320, 1540].map((f, k) => ({ f, a: [1, .82, .62, .5, .4, .32, .26][k], ph: (k * 2.39) % 6.28 }));
-  const BAND = [330, 550, 770, 990, 1210, 1430].map((f, k) => ({ f, a: [.72, .6, .5, .42, .33, .26][k], ph: (k * 1.71 + 1) % 6.28 }));
-  const PARTIALS = VOICE.concat(BAND), FMAX = 1650, NF = 330, AMP = 7;
-  const sig = n => { let s = 0; for (const p of PARTIALS) s += p.a * Math.cos(2 * Math.PI * p.f * n / FS + p.ph); return Math.max(-1, Math.min(1, s / AMP)); };
-  const cache = new Map();
-  function spectrum(N, M) {
-    const key = N + ':' + M;
-    if (cache.has(key)) return cache.get(key);
-    const { wa } = windows(N, M), x = new Float64Array(N);
-    for (let n = 0; n < N; n++) { let s = 0; for (const p of PARTIALS) s += p.a * Math.cos(2 * Math.PI * p.f * n / FS + p.ph); x[n] = s * wa[n]; }
-    const mag = new Float64Array(NF);
-    for (let j = 0; j < NF; j++) {
-      const w = -2 * Math.PI * (j / (NF - 1) * FMAX) / FS, c = Math.cos(w), s = Math.sin(w);
-      let zr = 1, zi = 0, re = 0, im = 0;
-      for (let n = 0; n < N; n++) { re += x[n] * zr; im += x[n] * zi; const t = zr * c - zi * s; zi = zr * s + zi * c; zr = t; }
-      mag[j] = Math.hypot(re, im);
-    }
-    let mx = 0; for (const v of mag) mx = Math.max(mx, v);
-    const db = Array.from(mag, v => Math.max(-48, 20 * Math.log10(v / mx + 1e-12)));
-    if (cache.size > 400) cache.clear();
-    cache.set(key, db);
-    return db;
-  }
-
   X.scene('window', (() => {
-    const S = [
-      { N: 1024, M: 1024, span: 2304, ola: 0, mark: 0, spec: 0 },
-      { N: 1024, M: 1024, span: 2304, ola: 0, mark: 0, spec: 1 },
-      { N: 256, M: 256, span: 2304, ola: 0, mark: 0, spec: 1 },
-      { N: 128, M: 128, span: 2304, ola: 0, mark: 0, spec: 1 },
-      { N: 2048, M: 128, span: 2304, ola: 0, mark: 0, spec: 1 },
-      { N: 2048, M: 128, span: 420, ola: 1, mark: 0, spec: 1 },
-      { N: 2048, M: 128, span: 2304, ola: 0, mark: 1, spec: 1 },
+    const states = [
+      { title: 'First, collect a frame of audio.', stats: ['1024 samples', '≈ 23.2 ms wait'], note: 'A conventional window uses the same length for analysis and synthesis.', kind: 'time' },
+      { title: 'A long window resolves two nearby tones.', stats: ['1024 samples', '43 Hz between bins'], note: 'Line: normalized spectral magnitude. Dots: frequencies sampled by the STFT.', kind: 'spectrum', N: 1024 },
+      { title: 'A shorter window loses spectral detail.', stats: ['256 samples · ≈ 5.8 ms', '172 Hz between bins'], note: 'The signal and frequency axis stay the same; only the window changes.', kind: 'spectrum', N: 256 },
+      { title: 'At 128 samples, the view is coarser still.', stats: ['128 samples · ≈ 2.9 ms', '345 Hz between bins'], note: 'Fewer bins describe the same two tones. The mask has less detail to work with.', kind: 'spectrum', N: 128 },
+      { title: 'Give analysis and synthesis different jobs.', stats: ['2048 samples analyzed', '128 samples synthesized'], note: 'Both ranges end at now. The longer analysis reads history already in the buffer.', kind: 'dual' },
+      { title: 'Two frame contributions add up to one.', stats: ['128-sample Hann product', '64-sample hop'], note: 'With an unchanged spectrum, overlapping frames reconstruct the input without gaps.', kind: 'overlap' },
+      { title: 'More spectral detail at the same wait.', stats: ['Short E vs dual D', 'Same 128-sample synthesis'], note: 'The 127-sample framing bound is ≈ 2.88 ms. The implementation is tested in Results.', kind: 'summary' },
     ];
-    let canvas, ctx, readout, legendItems, W = 0, H = 0, dpr = 1, cur = S[0], raf = 0, visible = false, tape = 0, lastT = 0;
-    const even = v => Math.max(2, Math.round(v / 2) * 2);
-    const label = (text, x, y, align, color) => {
-      ctx.textAlign = align; const w = ctx.measureText(text).width, x0 = align === 'right' ? x - w : align === 'center' ? x - w / 2 : x;
-      ctx.fillStyle = '#0b0b0b'; ctx.fillRect(x0 - 3, y - 10, w + 6, 14);
-      ctx.fillStyle = color; ctx.fillText(text, x, y);
-    };
-    function draw() {
-      if (!W || !H) return;
-      const N = even(cur.N), M = even(Math.min(cur.M, N));
-      const { wa, ws } = windows(N, M);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-      ctx.font = `11px ${MONO}`;
-      const narrow = W < 520, pad = 2;
-      const top0 = 16, topH = H * (narrow ? .22 : .34), base = top0 + topH, amp = topH * .3;
-      const by = base + amp + 18, bot0 = by + 50, botH = Math.max(35, H - bot0 - 26);
-      const span = cur.span, x0 = pad, x1 = W - 14;
-      const tx = scale(-span, 0, x0, x1), ty = scale(0, 1.15, base, top0);
-      const pxs = (x1 - x0) / span;
-      ctx.strokeStyle = '#262626'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(x0, base + .5); ctx.lineTo(W - pad, base + .5); ctx.stroke();
-      const curve = (arr, start, close) => {
-        ctx.beginPath(); let first = true;
-        for (let n = start; n < arr.length; n++) {
-          const t = n - arr.length; if (t < -span) continue;
-          const px = tx(t), py = ty(arr[n]);
-          if (first) { ctx.moveTo(px, close ? ty(0) : py); if (close) ctx.lineTo(px, py); first = false; } else ctx.lineTo(px, py);
-        }
-        if (close) { ctx.lineTo(tx(0), ty(0)); ctx.closePath(); }
+    let svg, readout, heading, stats, note, panel, W = 0, H = 0, step = 0, renderedStep = -1;
+    const spectralCache = new Map();
+    function spectrum(N) {
+      if (spectralCache.has(N)) return spectralCache.get(N);
+      const { wa } = windows(N, N);
+      const samples = Array.from(wa, (v, n) => v * (Math.cos(2 * Math.PI * 220 * n / FS) + .85 * Math.cos(2 * Math.PI * 330 * n / FS + .7)));
+      const magnitude = f => {
+        const angle = -2 * Math.PI * f / FS, c = Math.cos(angle), s = Math.sin(angle);
+        let zr = 1, zi = 0, re = 0, im = 0;
+        for (const v of samples) { re += v * zr; im += v * zi; const next = zr * c - zi * s; zi = zr * s + zi * c; zr = next; }
+        return Math.hypot(re, im);
       };
-      curve(wa, 0, true); ctx.fillStyle = 'rgba(255,255,255,.08)'; ctx.fill();
-      ctx.beginPath();
-      for (let px = x0; px <= x1; px++) { const t = (px - x0) / pxs - span, y = base - sig(t + tape) * amp; px === x0 ? ctx.moveTo(px, y) : ctx.lineTo(px, y); }
-      ctx.strokeStyle = '#3a3a3a'; ctx.lineWidth = 1; ctx.stroke();
-      ctx.beginPath(); let first = true;
-      for (let px = Math.max(x0, Math.floor(tx(-N))); px <= x1; px++) {
-        const t = (px - x0) / pxs - span, idx = Math.round(N + t);
-        if (idx < 0 || idx >= N) continue;
-        const y = base - sig(t + tape) * wa[idx] * amp;
-        first ? ctx.moveTo(px, y) : ctx.lineTo(px, y); first = false;
+      const curve = Array.from({ length: 301 }, (_, j) => [j * 2, magnitude(j * 2)]);
+      const max = Math.max(...curve.map(p => p[1]));
+      const bins = Array.from({ length: Math.floor(600 * N / FS) + 1 }, (_, k) => { const f = k * FS / N; return [f, magnitude(f) / max]; });
+      const result = { curve: curve.map(([f, m]) => [f, m / max]), bins };
+      spectralCache.set(N, result); return result;
+    }
+    const line = (x1, y1, x2, y2, color = '#444', attrs = {}) => el('line', { x1, y1, x2, y2, stroke: color, ...attrs }, svg);
+    const label = (x, y, text, anchor = 'start', cls = 't-soft') => txt(svg, x, y, text, { class: cls, 'text-anchor': anchor });
+    const path = (points, color = '#fff', attrs = {}) => el('path', { d: points.map(([x, y], k) => `${k ? 'L' : 'M'}${x.toFixed(2)},${y.toFixed(2)}`).join(' '), fill: 'none', stroke: color, 'stroke-width': 2, ...attrs }, svg);
+    function timeFrame() {
+      const l = 16, r = W - 16, cy = H * .45, barH = Math.min(60, H * .24), unit = (r - l) / 32;
+      label(l, cy - barH / 2 - 28, 'oldest sample', 'start', 't-muted');
+      label(r, cy - barH / 2 - 28, 'newest · now', 'end', 't-hi');
+      for (let k = 0; k < 32; k++) el('rect', { x: l + k * unit, y: cy - barH / 2, width: Math.max(2, unit - 2), height: barH, fill: k === 31 ? '#fff' : '#888' }, svg);
+      const y = cy + barH / 2 + 16;
+      path([[l, y - 5], [l, y], [r, y], [r, y - 5]], '#aaa', { 'stroke-width': 1 });
+      label((l + r) / 2, y + 24, '1024 samples per frame', 'middle', 't-hi');
+      label((l + r) / 2, Math.min(H - 10, y + 55), 'collect → process → reconstruct', 'middle', 't-muted');
+    }
+    function frequency(N) {
+      const l = 28, r = W - 16, top = 48, bottom = H - 30;
+      const x = scale(0, 600, l, r), y = scale(0, 1, bottom, top);
+      label(x(220) - 6, 14, 'voice 220 Hz', 'end', 't-hi');
+      label(x(330) + 6, 14, 'band 330 Hz', 'start', 't-soft');
+      line(x(220), 20, x(220), 30, '#fff', { 'stroke-width': 2 });
+      line(x(330), 20, x(330), 30, '#999', { 'stroke-width': 2 });
+      for (const v of [0, .5, 1]) line(l, y(v), r, y(v), v ? '#222' : '#555');
+      label(l - 8, y(1) + 4, '1', 'end', 't-muted');
+      label(l - 8, y(0) + 4, '0', 'end', 't-muted');
+      for (const f of [0, 200, 400, 600]) {
+        line(x(f), bottom, x(f), bottom + 4);
+        label(x(f), bottom + 20, f === 600 ? '600 Hz' : String(f), f === 0 ? 'start' : f === 600 ? 'end' : 'middle', 't-muted');
       }
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.2; ctx.stroke();
-      curve(wa, 0, false); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
-      if (N > M) { curve(ws, N - M, false); ctx.setLineDash([4, 3]); ctx.strokeStyle = '#9a9a9a'; ctx.lineWidth = 1.3; ctx.stroke(); ctx.setLineDash([]); }
-      if (cur.ola > .01) {
-        ctx.globalAlpha = cur.ola;
-        const h = Array.from({ length: M }, (_, n) => .5 - .5 * Math.cos(2 * Math.PI * n / M));
-        for (let k = 0; k < 6; k++) {
-          const end = -k * M / 2; ctx.beginPath();
-          h.forEach((v, n) => { const t = end - M + n; const px = tx(t), py = ty(v * .98); n ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
-          ctx.strokeStyle = k === 0 ? '#fff' : '#5e5e5e'; ctx.lineWidth = k === 0 ? 1.8 : 1.2; ctx.stroke();
-        }
-        ctx.setLineDash([5, 4]); ctx.strokeStyle = '#d0d0d0'; ctx.lineWidth = 1.2;
-        ctx.beginPath(); ctx.moveTo(tx(-3 * M), ty(.98)); ctx.lineTo(tx(-M / 2), ty(.98)); ctx.stroke(); ctx.setLineDash([]);
-        label(narrow ? 'overlapped windows sum to 1' : 'analysis × synthesis = Hann(128); overlapped every 64 samples they sum to 1', tx(-3 * M) + 2, ty(.98) - 8, 'left', '#d0d0d0');
-        ctx.globalAlpha = 1;
-      }
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(tx(0) + .5, top0 - 8); ctx.lineTo(tx(0) + .5, base + amp + 6); ctx.stroke();
-      ctx.fillStyle = '#fff'; ctx.textAlign = 'right'; ctx.fillText('now', tx(0) - 6, top0 - 1);
-      const ticks = span > 1000 ? [[-2048, narrow ? '−2048' : '2048 samples ago · 46 ms'], [-1024, narrow ? '−1024' : '1024 · 23 ms']] : [[-384, '−384'], [-256, '−256'], [-128, '−128 samples']];
-      ctx.fillStyle = '#6a6a6a'; ctx.textAlign = 'center';
-      for (const [t, s] of ticks) { if (tx(t) < x0 + (narrow ? 24 : 130)) continue; ctx.fillRect(tx(t), base - 3, 1, 7); ctx.fillText(s, tx(t), base + amp + 12); }
-      label('time →', x0 + 2, top0 - 1, 'left', '#9a9a9a');
-      const bx0 = tx(-M), bx1 = tx(0);
-      ctx.strokeStyle = cur.mark > .5 ? '#fff' : '#9a9a9a'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(bx0, by - 5); ctx.lineTo(bx0, by); ctx.lineTo(bx1, by); ctx.lineTo(bx1, by - 5); ctx.stroke();
-      label(`wait ${M} samples = ${(M / FS * 1000).toFixed(1)} ms`, bx1, by + 16, 'right', cur.mark > .5 ? '#fff' : '#b3b3b3');
-      if (cur.mark > .01) { ctx.globalAlpha = cur.mark; label(narrow ? 'framing bound: 127 samples' : 'framing bound: M − 1 = 127 samples; verify in Results', bx1, by + 32, 'right', '#fff'); ctx.globalAlpha = 1; }
-      const lx = Math.max(x0 + 2, tx(-N) + 4);
-      if (cur.ola < .5) label(N > M ? `analysis window · ${N} samples` : `window · ${N} samples`, Math.max(x0 + 2, Math.min(lx, W - 210)), top0 + 10, 'left', '#b3b3b3');
-      if (N > M && cur.ola < .5) label(narrow ? 'synthesis window' : 'synthesis window · 128 samples', tx(-M) - 6, ty(.5), 'right', '#9a9a9a');
-
-      const sp = cur.spec;
-      if (sp < .99) {
-        ctx.globalAlpha = 1 - sp; ctx.fillStyle = '#b3b3b3'; ctx.textAlign = 'left';
-        ctx.font = `12px ${MONO}`;
-        const lines = narrow
-          ? ['1  audio arrives; the window fills', '2  process the window after it fills', '3  the synthesis window sets the wait']
-          : ['1  the window is the stretch of samples the model is allowed to look at', '2  it can only be processed once it is full: that wait is the latency', '3  the bright part of the tape is what the model sees right now'];
-        lines.forEach((s, k) => ctx.fillText(s, x0 + 2, bot0 + 8 + k * 20));
-        ctx.font = `11px ${MONO}`; ctx.globalAlpha = 1;
-      }
-      if (sp > .01) {
-        ctx.globalAlpha = sp;
-        const fx = scale(0, FMAX, x0, W - pad), fy = scale(-48, 0, bot0 + botH, bot0);
-        ctx.fillStyle = '#7b7b7b'; ctx.textAlign = 'left'; ctx.fillText(narrow ? 'spectrum · relative level (dB)' : 'windowed signal → spectrum · relative level (dB)', x0 + 2, bot0 - 12);
-        for (const f of [0, 400, 800, 1200, 1600]) {
-          ctx.strokeStyle = '#1d1d1d'; ctx.beginPath(); ctx.moveTo(fx(f) + .5, bot0 - 6); ctx.lineTo(fx(f) + .5, bot0 + botH); ctx.stroke();
-          ctx.fillStyle = '#6a6a6a'; ctx.textAlign = f === 0 ? 'left' : f === 1600 ? 'right' : 'center'; ctx.fillText(f === 1600 ? '1.6 kHz' : f ? String(f) : '0 Hz', fx(f) + (f === 1600 ? 4 : 0), bot0 + botH + 24);
-        }
-        ctx.fillStyle = '#6a6a6a'; ctx.textAlign = 'right'; ctx.fillText(narrow ? 'Hz →' : 'frequency →', W - pad, bot0 - 12);
-        const db = spectrum(N, M);
-        ctx.beginPath();
-        db.forEach((v, j) => { const px = fx(j / (NF - 1) * FMAX), py = fy(v); j ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
-        ctx.lineTo(fx(FMAX), fy(-48)); ctx.lineTo(fx(0), fy(-48)); ctx.closePath(); ctx.fillStyle = 'rgba(255,255,255,.07)'; ctx.fill();
-        ctx.beginPath();
-        db.forEach((v, j) => { const px = fx(j / (NF - 1) * FMAX), py = fy(v); j ? ctx.lineTo(px, py) : ctx.moveTo(px, py); });
-        ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
-        const bin = FS / N;
-        if (FMAX / bin < 90) {
-          ctx.fillStyle = '#fff';
-          for (let f = 0; f <= FMAX; f += bin) { const j = Math.round(f / FMAX * (NF - 1)); ctx.beginPath(); ctx.arc(fx(f), fy(db[j]), 2.2, 0, 6.283); ctx.fill(); }
-          const k = Math.max(1, Math.round(1250 / bin)), xa = fx(k * bin), xb = fx((k + 1) * bin), yb = bot0 + 8;
-          if (xb < W - 60) {
-            ctx.strokeStyle = '#9a9a9a'; ctx.beginPath(); ctx.moveTo(xa, yb + 5); ctx.lineTo(xa, yb); ctx.lineTo(xb, yb); ctx.lineTo(xb, yb + 5); ctx.stroke();
-            label(`${bin.toFixed(0)} Hz between bins`, Math.max(x0 + 2, W - 158), yb + 4, 'left', '#b3b3b3');
-          }
-        }
-        const tick = (list, color, y) => { ctx.fillStyle = color; for (const p of list) ctx.fillRect(fx(p.f) - 1, y, 2, 7); };
-        tick(VOICE, '#fff', bot0 + botH + 4); tick(BAND, '#6f6f6f', bot0 + botH + 4);
-        ctx.globalAlpha = 1;
+      const { curve, bins } = spectrum(N);
+      path(curve.map(([f, v]) => [x(f), y(v)]), '#b3b3b3', { 'stroke-width': 1.6 });
+      for (const [f, v] of bins) {
+        line(x(f), bottom, x(f), y(v), '#444');
+        el('circle', { cx: x(f), cy: y(v), r: 3.3, fill: '#fff', stroke: '#0b0b0b', 'stroke-width': 1 }, svg);
       }
     }
-    const loop = t => {
-      raf = 0; if (!visible) return;
-      const dt = lastT ? Math.min(.05, (t - lastT) / 1000) : 0; lastT = t;
-      tape += dt * FS / 36; draw();
-      if (!X.reduce) raf = requestAnimationFrame(loop);
-    };
-    function text() {
-      const N = even(cur.N), M = even(Math.min(cur.M, N));
-      legendItems.forEach(n => { n.hidden = cur.spec < .5; });
-      readout.innerHTML = `<span><b>${(M / FS * 1000).toFixed(1)} ms</b>wait</span><span><b>${N}</b>samples analyzed</span><span><b>${(FS / N).toFixed(0)} Hz</b>between bins</span>`;
+    function dual() {
+      const l = 12, r = W - 16, x = scale(-2048, 0, l, r), barH = Math.min(46, H * .17);
+      const rows = [{ y: H * .27, n: 2048, title: 'Analysis · read 2048 past samples', fill: '#b3b3b3' }, { y: H * .67, n: 128, title: 'Synthesis · keep the last 128', fill: '#fff' }];
+      for (const row of rows) {
+        label(l, row.y - 14, row.title, 'start', 't-hi');
+        el('rect', { x: l, y: row.y, width: r - l, height: barH, fill: '#151515', stroke: '#333' }, svg);
+        el('rect', { x: x(-row.n), y: row.y, width: r - x(-row.n), height: barH, fill: row.fill }, svg);
+      }
+      label(l, H - 8, '2048 samples ago', 'start', 't-muted');
+      label(r, H - 8, 'now', 'end', 't-hi');
+    }
+    function overlap() {
+      const l = 28, r = W - 16, rowH = (H - 26) / 3, n = 64;
+      const h = k => .5 - .5 * Math.cos(2 * Math.PI * k / 128);
+      const rows = [
+        ['Earlier frame · fading out', k => h(k + 64), '#999'],
+        ['Next frame · fading in', k => h(k), '#ccc'],
+        ['Sum · constant weight of 1', k => h(k + 64) + h(k), '#fff'],
+      ];
+      rows.forEach(([title, fn, color], j) => {
+        const row = j * rowH, top = row + 25, bottom = row + rowH - 9;
+        label(l, row + 12, title, 'start', j === 2 ? 't-hi' : 't-soft');
+        line(l, bottom, r, bottom, '#333');
+        label(l - 9, top + 4, '1', 'end', 't-muted');
+        label(l - 9, bottom + 4, '0', 'end', 't-muted');
+        path(Array.from({ length: n + 1 }, (_, k) => [l + (r - l) * k / n, bottom - fn(k) * (bottom - top)]), color);
+      });
+      label(l, H - 5, '0', 'start', 't-muted');
+      label(r, H - 5, '64 samples · one hop', 'end', 't-muted');
+    }
+    function summary() {
+      const l = 8, r = W - 8, c1 = W * .57, c2 = W * .85;
+      const top = 28, rowH = Math.min(68, (H - top - 5) / 4);
+      label(c1, 14, 'Short E', 'middle', 't-soft'); label(c2, 14, 'Dual D', 'middle', 't-hi');
+      const rows = [['Analysis (N)', '128', '2048'], ['Synthesis (M)', '128', '128'], ['Bin spacing', '345 Hz', '22 Hz'], ['Wait (samples)', '≤ 127', '≤ 127']];
+      rows.forEach(([name, a, b], j) => {
+        const y = top + j * rowH;
+        line(l, y, r, y, '#333');
+        label(l, y + rowH * .6, name, 'start', 't-muted');
+        label(c1, y + rowH * .6, a, 'middle', 't-soft'); label(c2, y + rowH * .6, b, 'middle', 't-hi');
+      });
+    }
+    function draw() {
+      if (!svg || !W || !H) return;
+      clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+      const state = states[step];
+      svg.setAttribute('aria-label', state.title + ' ' + state.stats.join('. ') + '. ' + state.note);
+      if (state.kind === 'time') timeFrame();
+      else if (state.kind === 'spectrum') frequency(state.N);
+      else if (state.kind === 'dual') dual();
+      else if (state.kind === 'overlap') overlap();
+      else summary();
+    }
+    function render() {
+      if (!heading || renderedStep === step) return;
+      renderedStep = step;
+      const state = states[step];
+      panel.dataset.phase = state.kind;
+      heading.textContent = state.title;
+      readout.textContent = `${String(step + 1).padStart(2, '0')} / 07`;
+      stats.replaceChildren(...state.stats.map(value => { const span = document.createElement('span'); span.textContent = value; return span; }));
+      note.textContent = state.note;
+      draw();
     }
     return {
       init(stage) {
-        canvas = stage.querySelector('canvas'); ctx = canvas.getContext('2d'); readout = stage.querySelector('.readout'); legendItems = [...stage.querySelectorAll('.legend-strip span')].slice(4);
-        observe(canvas.parentElement, (w, h) => { W = w; H = h; dpr = Math.min(2, devicePixelRatio || 1); canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); draw(); });
-        new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf) { lastT = 0; raf = requestAnimationFrame(loop); } }).observe(canvas);
+        svg = stage.querySelector('svg'); readout = stage.querySelector('.readout'); heading = stage.querySelector('.window-title');
+        stats = stage.querySelector('.window-stats'); note = stage.querySelector('.window-note'); panel = stage.querySelector('.window-panel');
+        render();
+        observe(svg.parentElement, (w, h) => { W = w; H = h; draw(); });
         if (document.fonts) document.fonts.ready.then(draw);
-        text();
       },
-      update(i, p) {
-        const a = S[Math.max(0, i - 1)], b = S[i], t = i === 0 ? 1 : hop(i, p, .55);
-        cur = { N: glerp(a.N, b.N, t), M: glerp(a.M, b.M, t), span: glerp(a.span, b.span, t), ola: lerp(a.ola, b.ola, t), mark: lerp(a.mark, b.mark, t), spec: lerp(a.spec, b.spec, t) };
-        text(); if (X.reduce || !raf) draw();
-      },
+      update(i) { step = i; render(); },
     };
   })());
 
