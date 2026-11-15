@@ -19,6 +19,8 @@
 .dw .hero::after { background: none; }
 .dw .hero h1 { font-size: clamp(2.8rem, 1rem + 6vw, 6rem); letter-spacing: -.03em; }
 .dw .hero .sub { font-size: 17px; }
+.dw .hero .hero-res { min-height: 1.6em; margin: 1.1rem 0 0; font: 12px/1.6 var(--mono); letter-spacing: .06em; color: var(--muted); }
+.dw .hero .hero-res + .sub { margin-top: .9rem; }
 .dw .hero .meta { font-family: var(--mono); font-size: 12.5px; }
 
 .dw .scrolly.wide { display: grid; grid-template-columns: var(--card) minmax(0, 1fr); gap: 0; max-width: none; margin: 0; padding: 0; }

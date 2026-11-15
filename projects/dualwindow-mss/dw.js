@@ -685,78 +685,117 @@
     new IntersectionObserver(es => { if (es[0].isIntersecting) { fig.classList.add('in'); const a = svg.querySelector('.axis'); if (a) a.setAttribute('stroke-dashoffset', 0); } }, { threshold: .35 }).observe(fig);
   }
 
-  async function scanHero(hero) {
-    const canvas = hero.querySelector('canvas'), title = hero.querySelector('h1');
+  async function lensHero(hero) {
+    const canvas = hero.querySelector('canvas'), title = hero.querySelector('h1'), res = hero.querySelector('.hero-res');
     if (!canvas || !title || !canvas.getContext) return;
     try { await Promise.all([document.fonts.load('500 80px "Instrument Sans"'), document.fonts.load('400 12px "JetBrains Mono"')]); } catch (e) {}
-    const ctx = canvas.getContext('2d');
-    let W = 0, H = 0, dpr = 1, cols = [], cy = 0, th = 0, raf = 0, visible = true, mx = -1e4, start = performance.now();
+    const ctx = canvas.getContext('2d'), text = title.textContent.trim();
+    const STAGES = [[24, 128], [16, 256], [10, 512], [6, 1024], [3, 2048]], STEP = .4;
+    let W = 0, H = 0, dpr = 1, font = '', spacing = '0px', cy = 0, th = 0, k = 1, box = null, I = null, iw = 0;
+    let raf = 0, visible = true, mx = -1e4, my = -1e4, start = 0, shown = '';
+    const say = s => { if (res && s !== shown) { res.textContent = s; shown = s; } };
     const layout = () => {
       dpr = Math.min(2, devicePixelRatio || 1);
       W = canvas.clientWidth; H = canvas.clientHeight;
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       const hb = hero.getBoundingClientRect(), tb = title.getBoundingClientRect(), cs = getComputedStyle(title);
-      const off = document.createElement('canvas'); off.width = Math.ceil(W); off.height = Math.ceil(H);
-      const o = off.getContext('2d');
-      o.fillStyle = '#fff'; o.textAlign = 'center'; o.textBaseline = 'middle';
-      o.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-      o.letterSpacing = cs.letterSpacing;
-      cy = tb.top - hb.top + tb.height / 2; th = tb.height;
-      o.fillText(title.innerText.trim(), W / 2, cy);
-      const img = o.getImageData(0, 0, off.width, off.height).data;
-      cols = [];
-      const y0 = Math.max(0, Math.floor(cy - th)), y1 = Math.min(off.height, Math.ceil(cy + th));
-      for (let x = 0; x < off.width; x += 2) {
-        const runs = []; let s = -1;
-        for (let y = y0; y <= y1; y++) {
-          const on = y < y1 && img[(y * off.width + x) * 4 + 3] > 110;
-          if (on && s < 0) s = y; else if (!on && s >= 0) { runs.push([s, y]); s = -1; }
-        }
-        if (runs.length) cols.push({ x, runs });
-      }
+      font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`; spacing = cs.letterSpacing;
+      cy = tb.top - hb.top + tb.height / 2; th = parseFloat(cs.fontSize); k = th / 96;
+      const m = document.createElement('canvas').getContext('2d'); m.font = font; m.letterSpacing = spacing;
+      const tw = m.measureText(text).width;
+      box = { x0: Math.max(0, Math.floor(W / 2 - tw / 2 - 10)), y0: Math.max(0, Math.floor(cy - th * .62)), x1: Math.min(Math.ceil(W), Math.ceil(W / 2 + tw / 2 + 10)), y1: Math.min(Math.ceil(H), Math.ceil(cy + th * .62)) };
+      const bw = box.x1 - box.x0, bh = box.y1 - box.y0, off = document.createElement('canvas'); off.width = bw; off.height = bh;
+      const o = off.getContext('2d'); o.font = font; o.letterSpacing = spacing; o.textAlign = 'center'; o.textBaseline = 'middle'; o.fillStyle = '#fff';
+      o.fillText(text, W / 2 - box.x0, cy - box.y0);
+      const a = o.getImageData(0, 0, bw, bh).data; iw = bw + 1; I = new Float32Array(iw * (bh + 1));
+      for (let y = 0; y < bh; y++) { let row = 0; for (let x = 0; x < bw; x++) { row += a[(y * bw + x) * 4 + 3]; I[(y + 1) * iw + x + 1] = I[y * iw + x + 1] + row; } }
       hero.classList.add('particles-on');
     };
-    const draw = t => {
-      raf = 0; if (!visible) return;
-      const time = (t - start) / 1000, hp = clamp(scrollY / (hero.offsetHeight * .8));
-      const rv = X.reduce ? 1 : ease(clamp(time / 1.9));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-      const tl = cols.length ? cols[0].x - 28 : W / 2, tr = cols.length ? cols[cols.length - 1].x + 30 : W / 2;
-      ctx.strokeStyle = '#222'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(0, cy + .5); ctx.lineTo(tl, cy + .5); ctx.moveTo(tr, cy + .5); ctx.lineTo(W, cy + .5); ctx.stroke();
-      ctx.beginPath();
-      for (let x = (W / 2) % 48; x < W; x += 48) { if (x > tl && x < tr) continue; ctx.moveTo(x + .5, cy - 4); ctx.lineTo(x + .5, cy + 4); }
+    const cover = (x0, y0, x1, y1) => {
+      x0 = Math.max(0, Math.round(x0 - box.x0)); y0 = Math.max(0, Math.round(y0 - box.y0));
+      x1 = Math.min(iw - 1, Math.round(x1 - box.x0)); y1 = Math.min(box.y1 - box.y0, Math.round(y1 - box.y0));
+      const n = (x1 - x0) * (y1 - y0); if (n <= 0) return 0;
+      return (I[y1 * iw + x1] - I[y0 * iw + x1] - I[y1 * iw + x0] + I[y0 * iw + x0]) / (n * 255);
+    };
+    const cells = (c, alpha, t, lim) => {
+      c = Math.max(2, Math.round(c)); const gap = c >= 5 ? 1 : 0;
+      const L = lim || box, ox = box.x0 + (((W / 2 - box.x0) % c) + c) % c - c;
+      ctx.fillStyle = '#e8e8e8';
+      for (let y = box.y0; y < box.y1; y += c) {
+        if (y + c < L.y0 || y > L.y1) continue;
+        for (let x = ox; x < box.x1; x += c) {
+          if (x + c < L.x0 || x > L.x1) continue;
+          const v = cover(x, y, x + c, y + c); if (v < .05) continue;
+          ctx.globalAlpha = clamp(Math.pow(v, .8) * alpha * (.8 + .2 * Math.sin(x * .045 - t * 3.1 + y * .02)));
+          ctx.fillRect(x + gap / 2, y + gap / 2, c - gap, c - gap);
+        }
+      }
+      ctx.globalAlpha = 1;
+    };
+    const crisp = t => {
+      ctx.font = font; ctx.letterSpacing = spacing; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#d2d2d2'; ctx.fillText(text, W / 2, cy);
+      const period = 6.5, u = ((t - 2.4) % period) / period, sx = lerp(box.x0 - 160, box.x1 + 160, u);
+      if (t > 2.4 && !X.reduce) {
+        ctx.save(); ctx.globalCompositeOperation = 'source-atop';
+        const g = ctx.createLinearGradient(sx - 120, 0, sx + 120, 0);
+        g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(.5, 'rgba(255,255,255,.95)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g; ctx.fillRect(box.x0, box.y0, box.x1 - box.x0, box.y1 - box.y0); ctx.restore();
+      }
+    };
+    const axis = () => {
+      ctx.strokeStyle = '#222'; ctx.lineWidth = 1; ctx.beginPath();
+      ctx.moveTo(0, cy + .5); ctx.lineTo(box.x0 - 18, cy + .5); ctx.moveTo(box.x1 + 18, cy + .5); ctx.lineTo(W, cy + .5);
+      for (let x = (W / 2) % 48; x < W; x += 48) { if (x > box.x0 - 18 && x < box.x1 + 18) continue; ctx.moveTo(x + .5, cy - 4); ctx.lineTo(x + .5, cy + 4); }
       ctx.stroke();
-      const beam = rv * (W + 80) - 40;
-      const sweep = rv >= 1 && !X.reduce ? ((time - 1.9) % 7 / 7) * (W + 120) - 60 : -1e4;
-      const stretch = 1 + hp * 1.8;
-      for (const c of cols) {
-        if (c.x > beam) break;
-        const trail = clamp((beam - c.x) / 90), near = Math.max(0, 1 - Math.abs(c.x - mx) / 70);
-        const re = Math.max(0, 1 - Math.abs(c.x - sweep) / 60);
-        const x = W / 2 + (c.x - W / 2) * stretch;
-        const jit = X.reduce ? 0 : Math.sin(time * 3 + c.x * .05) * .35;
-        const a = clamp((.9 + .1 * (1 - trail) + near * .1 + re * .1) * (1 - hp * .92));
-        ctx.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`;
-        const grow = 1 + near * .1 + re * .04;
-        for (const r of c.runs) { const m = (r[0] + r[1]) / 2, h = (r[1] - r[0]) * grow; ctx.fillRect(x - .9, m - h / 2 + jit, 1.8, h); }
+    };
+    const final = 'analysis window 2048 samples · synthesis window 128 · 2.9 ms wait', finalShort = 'analysis 2048 · synthesis 128 · 2.9 ms wait';
+    const stageText = n => W < 560 ? `analysis window ${n} · bins ${Math.round(FS / n)} Hz` : `analysis window ${n} samples · bins ${Math.round(FS / n)} Hz apart`;
+    const draw = now => {
+      raf = 0; if (!visible || !box) return;
+      if (!start) start = now;
+      const t = Math.max(0, (now - start) / 1000), hp = clamp(scrollY / (hero.offsetHeight * .8));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      axis();
+      const stage = Math.floor(t / STEP);
+      if (X.reduce) { crisp(99); say(W < 560 ? finalShort : final); return; }
+      if (stage < STAGES.length) {
+        const f = ease(clamp((t - stage * STEP) / (STEP * .8))), sx = lerp(box.x0 - 4, box.x1 + 4, f);
+        const cNew = STAGES[stage][0] * k, cOld = stage ? STAGES[stage - 1][0] * k : 36 * k;
+        ctx.save(); ctx.beginPath(); ctx.rect(0, 0, sx, H); ctx.clip(); cells(cNew, 1, t); ctx.restore();
+        ctx.save(); ctx.beginPath(); ctx.rect(sx, 0, W - sx, H); ctx.clip(); cells(cOld, stage ? 1 : f * .9 + .1, t); ctx.restore();
+        if (f < 1) {
+          const g = ctx.createLinearGradient(sx - 50, 0, sx, 0); g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(255,255,255,.22)');
+          ctx.fillStyle = g; ctx.fillRect(sx - 50, box.y0 - 8, 50, box.y1 - box.y0 + 16);
+          ctx.fillStyle = '#fff'; ctx.fillRect(sx, box.y0 - 8, 1, box.y1 - box.y0 + 16);
+        }
+        say(stageText(STAGES[stage][1]));
+      } else if (hp > .015) {
+        cells(lerp(3, 34, ease(hp)) * k, 1 - hp * .95, t);
+        const n = Math.max(128, Math.round(2048 / Math.pow(2, Math.round(hp * 4))));
+        say(stageText(n));
+      } else {
+        crisp(t); say(W < 560 ? finalShort : final);
+        const r = clamp(th * .64, 38, 76);
+        if (mx > -1e3 && mx > box.x0 - r && mx < box.x1 + r && my > box.y0 - r && my < box.y1 + r) {
+          const lim = { x0: mx - r, y0: my - r, x1: mx + r, y1: my + r };
+          ctx.save(); ctx.beginPath(); ctx.arc(mx, my, r, 0, 6.283); ctx.clip();
+          ctx.fillStyle = '#0b0b0b'; ctx.fillRect(lim.x0, lim.y0, 2 * r, 2 * r);
+          cells(14 * k, 1, t, lim); ctx.restore();
+          ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(mx, my, r, 0, 6.283); ctx.stroke();
+          say(W < 560 ? 'lens: a 256-sample window · 172 Hz bins' : 'inside the lens: what a 256-sample window sees · bins 172 Hz apart');
+        }
       }
-      if (rv < 1) {
-        const g = ctx.createLinearGradient(beam - 70, 0, beam, 0);
-        g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(255,255,255,.32)');
-        ctx.fillStyle = g; ctx.fillRect(beam - 70, cy - th * .7, 70, th * 1.4);
-        ctx.fillStyle = '#fff'; ctx.fillRect(beam, cy - th * .7, 1, th * 1.4);
-      }
-      if (!X.reduce) raf = requestAnimationFrame(draw);
+      raf = requestAnimationFrame(draw);
     };
     const go = () => { if (!raf) raf = requestAnimationFrame(draw); };
     layout(); go();
     let rt = 0;
     addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); go(); }, 150); });
-    hero.addEventListener('pointermove', e => { const b = canvas.getBoundingClientRect(); mx = e.clientX - b.left; go(); });
-    hero.addEventListener('pointerleave', () => { mx = -1e4; });
+    hero.addEventListener('pointermove', e => { const b = canvas.getBoundingClientRect(); mx = e.clientX - b.left; my = e.clientY - b.top; go(); });
+    hero.addEventListener('pointerleave', () => { mx = my = -1e4; });
     new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) go(); }).observe(hero);
-    addEventListener('scroll', () => { if (X.reduce && visible) go(); }, { passive: true });
+    addEventListener('scroll', () => { if (visible) go(); }, { passive: true });
   }
 
   fetch('data.json').then(r => r.json()).then(data => {
@@ -766,5 +805,5 @@
     X.scene('prefix', prefix(data));
     X.scene('deadline', deadline(data));
     X.scene('bleed', bleed(data));
-  }).catch(e => console.error(e)).then(() => { budget(); X.boot({ hero: scanHero }); });
+  }).catch(e => console.error(e)).then(() => { budget(); X.boot({ hero: lensHero }); });
 })();
