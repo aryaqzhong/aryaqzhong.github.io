@@ -46,7 +46,7 @@ a { color: inherit; }
 .cue { position: absolute; left: 50%; bottom: 26px; z-index: 1; width: 1px; height: 44px; background: linear-gradient(var(--soft), transparent); animation: cue 2.4s ease-in-out infinite; }
 @keyframes cue { 0%, 100% { opacity: .25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(8px); } }
 
-.chapter { padding: 20vh clamp(1.25rem, 5vw, 3rem) 4vh; }
+.chapter { padding: 20vh clamp(1.25rem, 5vw, 3rem) 4vh; scroll-margin-top: calc(var(--bar) + 10px); }
 .chapter.tight { padding-top: 8vh; }
 .prose { max-width: var(--measure); margin: 0 auto; }
 .label { margin: 0 0 .9rem; color: var(--muted); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; }
@@ -62,7 +62,7 @@ a { color: inherit; }
 
 .scrolly { position: relative; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.38fr); gap: clamp(2rem, 4vw, 4.5rem); max-width: 1280px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
 .steps { padding: 26vh 0 46vh; }
-.step { display: flex; align-items: center; min-height: 78vh; opacity: .22; transition: opacity .45s; }
+.step { display: flex; align-items: center; min-height: 78vh; opacity: .22; transition: opacity .45s; scroll-margin-top: calc(var(--bar) + 10px); }
 .step.on { opacity: 1; }
 .step > div { max-width: 25em; }
 .step .label { margin-bottom: .6rem; }

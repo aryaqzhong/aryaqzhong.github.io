@@ -156,8 +156,8 @@
     tick();
     counters();
     const hero = document.querySelector('.hero');
-    if (hero) particles(hero, opts.mode || 'dots');
+    if (hero) { if (opts.hero) opts.hero(hero); else particles(hero, opts.mode || 'dots'); }
   }
 
-  window.Explainer = { scene: (name, s) => { scenes[name] = s; }, boot, el, scale, clamp, lerp, ease, reduce };
+  window.Explainer = { scene: (name, s) => { scenes[name] = s; }, boot, el, scale, clamp, lerp, ease, reduce, particles };
 })();
