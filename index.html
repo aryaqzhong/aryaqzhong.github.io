@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
 
-<title>Arya Q. Zhong</title>
-<meta name="description" content="Arya Q. Zhong's personal site: research, publications, cv, and a gallery of work.">
-<link rel="canonical" href="https://example.com/">
+<title>Qing (Arya) Zhong</title>
+<meta name="description" content="Qing (Arya) Zhong's personal site: research, publications, cv, and a gallery of work.">
+<link rel="canonical" href="https://aryaqzhong.github.io/">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Arya Q. Zhong">
-<meta property="og:title" content="Arya Q. Zhong">
-<meta property="og:description" content="Arya Q. Zhong's personal site: research, publications, cv, and a gallery of work.">
-<meta property="og:url" content="https://example.com/">
+<meta property="og:site_name" content="Qing (Arya) Zhong">
+<meta property="og:title" content="Qing (Arya) Zhong">
+<meta property="og:description" content="Qing (Arya) Zhong's personal site: research, publications, cv, and a gallery of work.">
+<meta property="og:url" content="https://aryaqzhong.github.io/">
 <meta name="twitter:card" content="summary">
 
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='84' text-anchor='middle'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
@@ -24,13 +24,12 @@
 {
   "@context": "https://schema.org",
   "@type": "Person",
-  "name": "Arya Q. Zhong",
-  "alternateName": ["Arya Zhong"],
-  "url": "https://example.com/",
+  "name": "Qing Zhong",
+  "alternateName": ["Qing (Arya) Zhong", "Arya Zhong"],
+  "url": "https://aryaqzhong.github.io/",
   "sameAs": [
-    "https://github.com/your-username",
-    "https://www.linkedin.com/in/your-username",
-    "https://scholar.google.com/citations?user=your-id"
+    "https://github.com/aryaqzhong",
+    "https://www.linkedin.com/in/qingzhong/"
   ]
 }
 </script>
@@ -123,8 +122,16 @@ body.on-home main { display: grid; place-items: center; }
 .cv-head, .cv-sec h2 { margin-left: calc(var(--cv-date) + var(--cv-gap)); }
 .cv-name { font-size: clamp(2.5rem, 2rem + 1.5vw, 3.25rem); font-weight: 400; line-height: 1; letter-spacing: -.03em; }
 .cv-role { margin-top: .55rem; color: var(--muted); }
-.cv-contacts { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1.4rem; margin-top: 1.1rem; font-size: .875rem; color: var(--muted); }
+.cv-kw { white-space: nowrap; }
+.cv-dot { margin: 0 .2em; }
+.cv-contacts { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.15rem; margin-top: 1.1rem; font-size: .875rem; color: var(--muted); }
 .cv-contacts a { color: var(--ink); }
+.cv-loc { display: inline-flex; align-items: center; gap: .35rem; margin-right: .3rem; }
+.cv-loc svg { width: .95rem; height: .95rem; fill: currentColor; }
+.cv-ico { display: inline-flex; color: var(--ink); }
+.cv-ico svg { width: 1rem; height: 1rem; fill: currentColor; }
+.cv-contacts a.cv-ico::after { inset: -9px; }
+.cv-contacts a.cv-ico:hover::after { inset: -6px; }
 .cv-sec { margin-top: 3.25rem; }
 .cv-sec h2 { font-size: 1.625rem; font-weight: 500; line-height: 1.2; letter-spacing: -.01em; margin-bottom: .35rem; }
 .cv-entry { display: grid; grid-template-columns: var(--cv-date) minmax(0, 1fr); gap: var(--cv-gap); align-items: baseline; padding: 1rem 0 .25rem; }
@@ -316,7 +323,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
     font-size: 1.6rem;
   }
   .news li { grid-template-columns: 5.5rem minmax(0, 1fr); }
-  .year, .block { grid-template-columns: 1fr; gap: .6rem; }
+  .year, .block { grid-template-columns: minmax(0, 1fr); gap: .6rem; }
   .cv-head, .cv-sec h2 { margin-left: 0; }
   .cv-entry { grid-template-columns: 1fr; gap: .15rem; }
   .cv-when { text-align: left; }
@@ -444,119 +451,62 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
     <h2 class="label">publications</h2>
 
     <section class="year">
-      <h2 class="yr">2026</h2>
-      <div>
-        <article class="pub">
-          <h3><a href="#projects/your-newest-project">Your Newest Project: A Subtitle That Says What It Does</a></h3>
-          <p class="authors"><span class="me">Arya Q. Zhong</span>, <span class="fill">[Coauthor]</span>, <span class="fill">[Advisor]</span></p>
-          <p class="venue"><span>Venue 2026</span></p>
-          <p class="tags"><a href="#todo">pdf</a><a href="#todo">arxiv</a><a href="#todo">code</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
-          <div class="bib" hidden><pre>@inproceedings{zhong2026newest,
-  title     = {Your Newest Project: A Subtitle That Says What It Does},
-  author    = {Zhong, Arya Q. and Coauthor, A. and Advisor, B.},
-  booktitle = {Proceedings of Venue},
-  year      = {2026}
-}</pre><button type="button" class="copy">copy</button></div>
-        </article>
-        <article class="pub">
-          <h3><a href="#todo">An Interactive Explainer of an Idea</a></h3>
-          <p class="authors"><span class="me">Arya Q. Zhong</span>*, <span class="fill">[Coauthor]</span>*, <span class="fill">[Advisor]</span></p>
-          <p class="venue"><span>Workshop at Venue 2026</span></p>
-          <p class="tags"><a href="#todo">demo</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
-          <div class="bib" hidden><pre>@inproceedings{zhong2026explainer,
-  title     = {An Interactive Explainer of an Idea},
-  author    = {Zhong, Arya Q. and Coauthor, A. and Advisor, B.},
-  booktitle = {Workshop at Venue},
-  year      = {2026}
-}</pre><button type="button" class="copy">copy</button></div>
-        </article>
-      </div>
-    </section>
-
-    <section class="year">
       <h2 class="yr">2025</h2>
       <div>
         <article class="pub">
-          <h3><a href="#todo">A Tool You Built with Others</a></h3>
-          <p class="authors"><span class="fill">[Coauthor]</span>, <span class="me">Arya Q. Zhong</span>, <span class="fill">[Advisor]</span></p>
-          <p class="venue"><span>arXiv preprint 2025</span></p>
-          <p class="tags"><a href="#todo">arxiv</a><a href="#todo">code</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
-          <div class="bib" hidden><pre>@article{coauthor2025tool,
-  title   = {A Tool You Built with Others},
-  author  = {Coauthor, A. and Zhong, Arya Q. and Advisor, B.},
-  journal = {arXiv preprint},
-  year    = {2025}
+          <h3><a href="https://www.cs.tufts.edu/~jacob/papers/llm.russell.nat25.pdf">LLM-Tools’ Effects on Users During Complex Decision-Making with fNIRS</a></h3>
+          <p class="authors">M. Russell, <span class="me">Q. Zhong</span>, K. Zheng, K. Hu, J. Santaniello, and R. J. K. Jacob</p>
+          <p class="venue"><span>Neuroadaptive Technology Conference (NAT’25)</span></p>
+          <p class="tags"><a href="https://www.cs.tufts.edu/~jacob/papers/llm.russell.nat25.pdf">pdf</a><a href="https://neuroadaptive.org/wp-content/uploads/2025/04/NAT25_Conference_Programme.pdf">conference</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
+          <div class="bib" hidden><pre>@inproceedings{russell2025llmtools,
+  title     = {LLM-Tools' Effects on Users During Complex
+               Decision-Making with fNIRS},
+  author    = {Russell, M. and Zhong, Q. and Zheng, K. and Hu, K. and
+               Santaniello, J. and Jacob, R. J. K.},
+  booktitle = {Neuroadaptive Technology Conference (NAT'25)},
+  year      = {2025}
 }</pre><button type="button" class="copy">copy</button></div>
         </article>
       </div>
     </section>
-
-    <section class="year">
-      <h2 class="yr">2024</h2>
-      <div>
-        <article class="pub">
-          <h3><a href="#todo">A Collaboration Across Fields</a></h3>
-          <p class="authors"><span class="fill">[Coauthor]</span>, <span class="me">Arya Q. Zhong</span>, <span class="fill">[Coauthor]</span>, <span class="fill">[Advisor]</span></p>
-          <p class="venue"><span>Venue 2024</span><span class="award"><span aria-hidden="true">✦</span> Honorable Mention</span></p>
-          <p class="tags"><a href="#todo">pdf</a><a href="#todo">demo</a><a href="#todo">code</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
-          <div class="bib" hidden><pre>@inproceedings{coauthor2024collab,
-  title     = {A Collaboration Across Fields},
-  author    = {Coauthor, A. and Zhong, Arya Q. and Coauthor, C. and Advisor, B.},
-  booktitle = {Proceedings of Venue},
-  year      = {2024}
-}</pre><button type="button" class="copy">copy</button></div>
-        </article>
-        <article class="pub">
-          <h3><a href="#todo">A Poster or Extended Abstract</a></h3>
-          <p class="authors"><span class="me">Arya Q. Zhong</span>, <span class="fill">[Advisor]</span></p>
-          <p class="venue"><span>Poster, Venue 2024</span></p>
-          <p class="tags"><a href="#todo">pdf</a></p>
-        </article>
-      </div>
-    </section>
-
-    <p class="note">* equal contribution. the full list is also on <a href="#todo">google scholar</a>.</p>
   </section>
 
   <section class="page" data-page="cv" data-title="cv" aria-labelledby="cv-h">
     <div class="cv">
       <header class="cv-head">
-        <h1 class="cv-name" id="cv-h">Arya Q. Zhong</h1>
-        <p class="cv-role"><span class="fill">[your fields, e.g. visualization, interaction, design]</span></p>
+        <h1 class="cv-name" id="cv-h">Qing (Arya) Zhong</h1>
+        <p class="cv-role"><span class="cv-kw">Auditory Attention</span>&nbsp;<span class="cv-dot" aria-hidden="true">·</span> <span class="cv-kw">Music Perception</span>&nbsp;<span class="cv-dot" aria-hidden="true">·</span> <span class="cv-kw">EEG &amp; fNIRS</span>&nbsp;<span class="cv-dot" aria-hidden="true">·</span> <span class="cv-kw">Audio Signal Processing</span>&nbsp;<span class="cv-dot" aria-hidden="true">·</span> <span class="cv-kw">HCI</span></p>
         <p class="cv-contacts">
-          <span class="fill">[City, ST]</span>
-          <a href="mailto:hello@example.com">hello@example.com</a>
-          <a href="#todo">github</a>
-          <a href="#todo">google scholar</a>
-          <a href="#todo">linkedin</a>
-          <a class="cv-print" href="#print">pdf</a>
+          <span class="cv-loc"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M12 2.25a7 7 0 0 0-7 7c0 4.9 5.6 11.4 6.4 12.3a.8.8 0 0 0 1.2 0c.8-.9 6.4-7.4 6.4-12.3a7 7 0 0 0-7-7zm0 9.75a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5z"/></svg>Rochester, NY, USA</span>
+          <a class="cv-ico" href="mailto:qz8592@rit.edu" aria-label="Email" title="qz8592@rit.edu"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3.6 6.9 12 12.6l8.4-5.7.8 1.3L12 14.4 2.8 8.2z"/></svg></a>
+          <a class="cv-ico" href="https://www.linkedin.com/in/qingzhong/" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a>
+          <a class="cv-ico" href="https://github.com/aryaqzhong" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+          <span class="cv-ico" role="img" aria-label="Google Scholar" title="Google Scholar"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5.242 13.769L0 9.5 12 0l12 9.5-5.242 4.269C17.548 11.249 14.978 9.5 12 9.5c-2.977 0-5.548 1.748-6.758 4.269zM12 10a7 7 0 1 0 0 14 7 7 0 0 0 0-14z"/></svg></span>
+          <span class="cv-ico" role="img" aria-label="CV (PDF)" title="CV (PDF)"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill-rule="evenodd" d="M6 2h8.5L20 7.5V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm8.5 1.6v3.9h3.9zM7.5 11.5h9V13h-9zm0 3.5h9v1.5h-9zm0 3.5h6V20h-6z"/></svg></span>
         </p>
       </header>
 
       <section class="cv-sec">
         <h2>Education</h2>
         <div class="cv-entry">
-          <p class="cv-when">Aug. 2025 – Present</p>
+          <p class="cv-when">Aug. 2026 – Present</p>
           <div class="cv-what">
-            <p class="cv-title"><span class="fill">[University]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
-            <p class="cv-sub">PhD, <span class="fill">[Field]</span></p>
-            <p class="cv-note">Advisor: <span class="fill">[name]</span></p>
+            <p class="cv-title">Rochester Institute of Technology<span class="cv-where">, Rochester, NY, USA</span></p>
+            <p class="cv-sub">PhD, Computing and Information Sciences</p>
           </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-when">May 2025</p>
+          <p class="cv-when">Jan. 2023 – May 2025</p>
           <div class="cv-what">
-            <p class="cv-title"><span class="fill">[University]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
-            <p class="cv-sub">BS, <span class="fill">[Field]</span></p>
+            <p class="cv-title">Tufts University<span class="cv-where">, Boston, MA, USA</span></p>
+            <p class="cv-sub">MS, Computer Science</p>
           </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-when">2024</p>
+          <p class="cv-when">Sep. 2020 – Aug. 2022</p>
           <div class="cv-what">
-            <p class="cv-title"><span class="fill">[School]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
-            <p class="cv-sub"><span class="fill">[Summer program or studio]</span></p>
-            <p class="cv-title"><span class="fill">[School]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
-            <p class="cv-sub"><span class="fill">[Exchange or cross-registration]</span></p>
+            <p class="cv-title">Northeastern University<span class="cv-where">, Boston, MA, USA</span></p>
+            <p class="cv-sub">BS, Information Technology, Cum Laude</p>
           </div>
         </div>
       </section>
@@ -564,19 +514,19 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
       <section class="cv-sec">
         <h2>Research Experience</h2>
         <div class="cv-entry">
-          <p class="cv-when">Jun. 2026 –</p>
+          <p class="cv-when">Aug. 2026 – Present</p>
           <div class="cv-what">
-            <p class="cv-title"><span class="fill">[Lab or company]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
-            <p class="cv-sub"><span class="fill">[Research Intern, team or group]</span></p>
-            <p class="cv-note">Mentors: <span class="fill">[names]</span></p>
+            <p class="cv-title">Rochester Institute of Technology<span class="cv-where">, Rochester, NY, USA</span></p>
+            <p class="cv-sub">PhD Researcher, <a href="https://www.rit.edu/macl/">Music and Audio Cognition Lab (MACL)</a>, Advisor: Prof. Hwan Shim</p>
+            <p class="cv-note">Projects: EEG-based auditory attention decoding&nbsp;<span class="cv-dot" aria-hidden="true">·</span> Neural Orchestra, an EEG-driven virtual instrument</p>
           </div>
         </div>
         <div class="cv-entry">
-          <p class="cv-when">2024 – 2025</p>
+          <p class="cv-when">May 2024 – Apr. 2026</p>
           <div class="cv-what">
-            <p class="cv-title"><span class="fill">[Lab]</span><span class="cv-where">, <span class="fill">[University]</span></span></p>
-            <p class="cv-sub">Research Assistant</p>
-            <p class="cv-note">Advisor: <span class="fill">[name]</span></p>
+            <p class="cv-title">Tufts University<span class="cv-where">, Boston, MA, USA</span></p>
+            <p class="cv-sub">Graduate Research Assistant, <a href="https://hci.cs.tufts.edu/">HCI Lab</a>, Advisor: Prof. Robert Jacob</p>
+            <p class="cv-note">Project: Cognitive workload and affect in LLM-assisted decision-making (fNIRS)</p>
           </div>
         </div>
       </section>
@@ -584,99 +534,6 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
       <section class="cv-sec">
         <h2>Publications</h2>
         <div data-cv-pubs></div>
-      </section>
-
-      <section class="cv-sec">
-        <h2>Awards</h2>
-        <div class="cv-entry">
-          <p class="cv-when">Nov. 2025</p>
-          <div class="cv-what">
-            <p class="cv-title"><span class="fill">[Award or contest]</span><span class="cv-where">, <span class="fill">[City, Country]</span></span></p>
-            <p class="cv-sub"><span class="fill">[Honorable Mention, project name]</span></p>
-            <p class="tags"><a href="#todo">paper</a><a href="#todo">demo</a><a href="#todo">award</a></p>
-          </div>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-when">2021 – 2025</p>
-          <div class="cv-what">
-            <p class="cv-title"><span class="fill">[Dean’s List]</span></p>
-            <p class="cv-sub"><span class="fill">[University]</span></p>
-          </div>
-        </div>
-      </section>
-
-      <section class="cv-sec">
-        <h2>Teaching</h2>
-        <div class="cv-entry">
-          <p class="cv-when">Fall 2026</p>
-          <div class="cv-what">
-            <p class="cv-title">Teaching Assistant</p>
-            <p class="cv-sub"><span class="fill">[Course number: Course name]</span>, Instructor: <span class="fill">[name]</span></p>
-          </div>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-when">Spring 2026</p>
-          <div class="cv-what">
-            <p class="cv-title">Guest Lecturer</p>
-            <p class="cv-sub"><span class="fill">[Course number: Course name]</span></p>
-            <p class="tags"><a href="#todo">slides</a></p>
-          </div>
-        </div>
-      </section>
-
-      <section class="cv-sec">
-        <h2>Talks</h2>
-        <div class="cv-entry">
-          <p class="cv-when">Apr. 2026</p>
-          <div class="cv-what">
-            <p class="cv-title"><span class="fill">[Talk title]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
-            <p class="cv-sub"><span class="fill">[Event, course, or lab]</span></p>
-            <p class="tags"><a href="#todo">slides</a><a href="#todo">video</a></p>
-          </div>
-        </div>
-      </section>
-
-      <section class="cv-sec">
-        <h2>Service</h2>
-        <div class="cv-entry">
-          <p class="cv-when">2026 – Present</p>
-          <div class="cv-what">
-            <p class="cv-title">Reviewer</p>
-            <p class="cv-sub"><span class="fill">[Conference or journal]</span></p>
-          </div>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-when">2025</p>
-          <div class="cv-what">
-            <p class="cv-title">Student Volunteer</p>
-            <p class="cv-sub"><span class="fill">[Conference]</span></p>
-          </div>
-        </div>
-      </section>
-
-      <section class="cv-sec">
-        <h2>Skills</h2>
-        <div class="cv-entry">
-          <p class="cv-when"></p>
-          <div class="cv-what">
-            <p class="cv-title">Programming</p>
-            <p class="cv-sub"><span class="fill">[Python, JavaScript, …]</span></p>
-          </div>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-when"></p>
-          <div class="cv-what">
-            <p class="cv-title">Design tools</p>
-            <p class="cv-sub"><span class="fill">[Figma, Illustrator, …]</span></p>
-          </div>
-        </div>
-        <div class="cv-entry">
-          <p class="cv-when"></p>
-          <div class="cv-what">
-            <p class="cv-title">Languages</p>
-            <p class="cv-sub"><span class="fill">[English, Mandarin Chinese, …]</span></p>
-          </div>
-        </div>
       </section>
     </div>
   </section>
@@ -751,7 +608,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
     <h1 class="title" id="project-h">your newest project</h1>
     <p class="subtitle">a subtitle that says what it does, in plain words</p>
     <div class="byline">
-      <p class="authors"><span class="me">Arya Q. Zhong</span>, <span class="fill">[Coauthor]</span>, <span class="fill">[Advisor]</span></p>
+      <p class="authors"><span class="me">Qing Zhong</span>, <span class="fill">[Coauthor]</span>, <span class="fill">[Advisor]</span></p>
       <p class="badge"><span aria-hidden="true">✦</span>venue 2026</p>
     </div>
     <p class="tags"><a href="#todo">paper</a><a href="#todo">demo</a><a href="#todo">code</a><a href="#todo">video</a></p>
@@ -796,7 +653,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
       <h2 class="label">cite</h2>
       <div class="bib"><pre>@inproceedings{zhong2026newest,
   title     = {Your Newest Project: A Subtitle That Says What It Does},
-  author    = {Zhong, Arya Q. and Coauthor, A. and Advisor, B.},
+  author    = {Zhong, Qing and Coauthor, A. and Advisor, B.},
   booktitle = {Proceedings of Venue},
   year      = {2026}
 }</pre><button type="button" class="copy">copy</button></div>
@@ -815,10 +672,10 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
 </main>
 
 <footer class="foot">
-  <a href="#todo">github</a>
-  <a href="#todo">linkedin</a>
-  <a href="#todo">google scholar</a>
-  <a href="mailto:hello@example.com">email</a>
+  <a href="https://github.com/aryaqzhong">github</a>
+  <a href="https://www.linkedin.com/in/qingzhong/">linkedin</a>
+  <span>google scholar</span>
+  <a href="mailto:qz8592@rit.edu">email</a>
 </footer>
 
 <div class="cursor" aria-hidden="true"></div>
@@ -1497,7 +1354,7 @@ const gallery = (() => {
 const pages = [...document.querySelectorAll('.page')];
 const navLinks = [...document.querySelectorAll('.top a[href^="#"]')];
 const menu = document.querySelector('.menu');
-const SITE = 'Arya Q. Zhong';
+const SITE = 'Qing (Arya) Zhong';
 let current = null;
 
 function route(initial) {
