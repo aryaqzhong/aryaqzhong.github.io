@@ -95,7 +95,7 @@
     <div class="prose">
       <p class="label">1 · Background and motivation</p>
       <h2>Separating a voice while the music is still arriving</h2>
-      <p>Music source separation estimates individual sources from a mixture: for example, a singer’s voice from vocals, drums, bass and other instruments. For a finished recording, a model can inspect audio on both sides of the moment it is reconstructing; offline separators such as HTDemucs <a class="ref" href="#ref-4">[4]</a> read seconds of context. A live system has a different constraint: waiting for future audio delays what the performer hears.</p>
+      <p>Music source separation estimates individual sources from a mixture: for example, a singer’s voice from vocals, drums, bass and other instruments. For a finished recording, a model can inspect audio on both sides of the moment it is reconstructing; offline separators such as HTDemucs <a class="cref" href="#ref-4">[4]</a> read seconds of context. A live system has a different constraint: waiting for future audio delays what the performer hears.</p>
       <aside class="side"><span class="k">Algorithmic latency</span>The delay the algorithm itself imposes: how long it must wait for input before it can produce the matching output. Computation time and audio-interface buffers come on top (section 6.4).</aside>
       <p>In-ear monitoring and vocal-microphone processing motivate a budget of only a few milliseconds. A useful separator must preserve the voice, suppress accompaniment and finish its computation in time. Good separation quality by itself does not establish that the system can work within that budget.</p>
     </div>
@@ -117,10 +117,10 @@
       <p>Long-analysis, short-synthesis windows come from earlier signal-processing research and have been used in neural speech enhancement. Those findings motivate the design here; their outcomes need to be tested in the music-vocal setting.</p>
     </div>
     <div class="literature">
-      <article><p class="cite">2007 · Mauler &amp; Martin <a class="ref" href="#ref-1">[1]</a></p><div><h3>Separate spectral resolution from synthesis delay</h3><p>A longer analysis window and a shorter synthesis window can preserve perfect reconstruction while reducing delay. I use this analysis–synthesis construction as the foundation of the separator.</p><a href="https://www.eurasip.org/Proceedings/Eusipco/Eusipco2007/Papers/A2L-D02.pdf">Read the EUSIPCO paper ↗</a></div></article>
-      <article><p class="cite">2023 · Wang et al. <a class="ref" href="#ref-2">[2]</a></p><div><h3>Use dual windows in neural speech enhancement</h3><p>Their frame-online enhancement system combines dual-window STFT processing with complex spectral mapping and other techniques, reporting algorithmic latency as low as 2 ms. It demonstrates the approach in speech enhancement and motivates testing a compact causal model for music vocals.</p><a href="https://arxiv.org/abs/2204.09911">Read the TASLP paper ↗</a></div></article>
-      <article><p class="cite">2025 · Wu &amp; Braun <a class="ref" href="#ref-3">[3]</a></p><div><h3>Check whether the model changes the window’s benefit</h3><p>In their controlled speech-enhancement study, asymmetric windows clearly helped a weaker U-Net, while gains for the stronger CRUSE model were inconclusive. This motivates my model-size controls. The architectures, tasks and feature construction differ, so the studies’ numbers are not directly comparable.</p><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2025/03/Microsoft___LowLatencySE___ICASSP_2025.pdf">Read the ICASSP paper ↗</a></div></article>
-      <article><p class="cite">2023 · Rouard et al. <a class="ref" href="#ref-4">[4]</a></p><div><h3>Keep an offline music-separation reference</h3><p>HTDemucs combines waveform and spectrogram processing with a cross-domain Transformer and seconds-long context. I include it as an offline quality reference, with access to future audio and a different training setup; it is not a latency-matched control.</p><a href="https://arxiv.org/abs/2211.08553">Read the HTDemucs paper ↗</a></div></article>
+      <article><p class="cite">2007 · Mauler &amp; Martin <a class="cref" href="#ref-1">[1]</a></p><div><h3>Separate spectral resolution from synthesis delay</h3><p>A longer analysis window and a shorter synthesis window can preserve perfect reconstruction while reducing delay. I use this analysis–synthesis construction as the foundation of the separator.</p><a href="https://www.eurasip.org/Proceedings/Eusipco/Eusipco2007/Papers/A2L-D02.pdf">Read the EUSIPCO paper ↗</a></div></article>
+      <article><p class="cite">2023 · Wang et al. <a class="cref" href="#ref-2">[2]</a></p><div><h3>Use dual windows in neural speech enhancement</h3><p>Their frame-online enhancement system combines dual-window STFT processing with complex spectral mapping and other techniques, reporting algorithmic latency as low as 2 ms. It demonstrates the approach in speech enhancement and motivates testing a compact causal model for music vocals.</p><a href="https://arxiv.org/abs/2204.09911">Read the TASLP paper ↗</a></div></article>
+      <article><p class="cite">2025 · Wu &amp; Braun <a class="cref" href="#ref-3">[3]</a></p><div><h3>Check whether the model changes the window’s benefit</h3><p>In their controlled speech-enhancement study, asymmetric windows clearly helped a weaker U-Net, while gains for the stronger CRUSE model were inconclusive. This motivates my model-size controls. The architectures, tasks and feature construction differ, so the studies’ numbers are not directly comparable.</p><a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2025/03/Microsoft___LowLatencySE___ICASSP_2025.pdf">Read the ICASSP paper ↗</a></div></article>
+      <article><p class="cite">2023 · Rouard et al. <a class="cref" href="#ref-4">[4]</a></p><div><h3>Keep an offline music-separation reference</h3><p>HTDemucs combines waveform and spectrogram processing with a cross-domain Transformer and seconds-long context. I include it as an offline quality reference, with access to future audio and a different training setup; it is not a latency-matched control.</p><a href="https://arxiv.org/abs/2211.08553">Read the HTDemucs paper ↗</a></div></article>
     </div>
   </section>
 
@@ -145,7 +145,7 @@
     <div class="prose">
       <p class="label">4.1 · Method · the dual window</p>
       <h2>Analyze a long past, synthesize a short output</h2>
-      <p>Following Mauler and Martin <a class="ref" href="#ref-1">[1]</a>, I separate the window’s two jobs. The analysis length <strong>N</strong> controls the spectral representation; the synthesis length <strong>M</strong> controls the output’s algorithmic wait. The analysis window uses samples that have already arrived, while the synthesis window keeps only the recent part of each reconstructed frame.</p>
+      <p>Following Mauler and Martin <a class="cref" href="#ref-1">[1]</a>, I separate the window’s two jobs. The analysis length <strong>N</strong> controls the spectral representation; the synthesis length <strong>M</strong> controls the output’s algorithmic wait. The analysis window uses samples that have already arrived, while the synthesis window keeps only the recent part of each reconstructed frame.</p>
       <p>First, the figure builds up the conventional short-window trade-off. It then introduces the dual window and shows why the overlapping windows still reconstruct an unchanged signal.</p>
     </div>
   </section>
@@ -279,7 +279,7 @@
       <h2>Change the window; control the comparison</h2>
       <p>Having defined the separator, I need to distinguish a window benefit from a training, model-size or compute advantage. The primary comparison holds the architecture, synthesis window and hop fixed within each latency pair. Each configuration is trained separately using the same recipe.</p>
       <h3>The data and prediction target</h3>
-      <p>I use <a href="https://doi.org/10.5281/zenodo.3338373">MUSDB18-HQ</a> <a class="ref" href="#ref-5">[5]</a>, whose 150 songs include separate vocals, drums, bass and other-instrument stems. The target is the vocal stem; the other three stems form the accompaniment. I convert the signals to mono at 44.1 kHz.</p>
+      <p>I use <a href="https://doi.org/10.5281/zenodo.3338373">MUSDB18-HQ</a> <a class="cref" href="#ref-5">[5]</a>, whose 150 songs include separate vocals, drums, bass and other-instrument stems. The target is the vocal stem; the other three stems form the accompaniment. I convert the signals to mono at 44.1 kHz.</p>
       <p>The official 100-song training set is split into 86 training and 14 validation songs. The official 50-song test set supplies the reported full-song separation results. Validation chooses checkpoints and the analysis-window length; the later learning-rate follow-ups reuse the test set and are identified as exploratory.</p>
     </div>
     <div class="dataset-split" aria-label="Dataset split: 86 training, 14 validation and 50 test songs">
@@ -364,7 +364,7 @@
       <div class="step" data-label="6.1 · results · quality" data-nav="results"><div>
         <p class="label">Model size</p>
         <h3>Small models benefit too.</h3>
-        <p>Shrinking the GRU to 0.38 M and 0.17 M parameters keeps the gain at <strong>+0.59 and +0.54 dB</strong>. The 0.17 M dual-window model even beats the 0.94 M short-window model by 0.31 dB per song, though it still costs 3.3× as many multiply-adds per frame. In speech enhancement, asymmetric windows helped a weaker model more <a class="ref" href="#ref-3">[3]</a>; here the gain is slightly smaller for the smallest model, not larger.</p>
+        <p>Shrinking the GRU to 0.38 M and 0.17 M parameters keeps the gain at <strong>+0.59 and +0.54 dB</strong>. The 0.17 M dual-window model even beats the 0.94 M short-window model by 0.31 dB per song, though it still costs 3.3× as many multiply-adds per frame. In speech enhancement, asymmetric windows helped a weaker model more <a class="cref" href="#ref-3">[3]</a>; here the gain is slightly smaller for the smallest model, not larger.</p>
       </div></div>
     </div>
   </div>
@@ -497,7 +497,7 @@
     <div class="prose">
       <p class="label">6.5 · Results · vocal preservation</p>
       <h2>The vocal microphone</h2>
-      <p>The quality and timing results address full music mixtures. To move closer to the motivating use case, I also ask whether the dual window preserves more voice in a simulated vocal microphone, where the band leaks into a vocal-dominant signal. In a simulated version, studio stems are mixed with the accompaniment <strong>5 dB below the voice</strong>, and the mixture determines a mask. Holding that mask fixed and applying it separately to voice and accompaniment splits the output exactly into the voice kept and the bleed remaining, in the spirit of Hagerman and Olofsson’s measurement method <a class="ref" href="#ref-6">[6]</a>.</p>
+      <p>The quality and timing results address full music mixtures. To move closer to the motivating use case, I also ask whether the dual window preserves more voice in a simulated vocal microphone, where the band leaks into a vocal-dominant signal. In a simulated version, studio stems are mixed with the accompaniment <strong>5 dB below the voice</strong>, and the mixture determines a mask. Holding that mask fixed and applying it separately to voice and accompaniment splits the output exactly into the voice kept and the bleed remaining, in the spirit of Hagerman and Olofsson’s measurement method <a class="cref" href="#ref-6">[6]</a>.</p>
     </div>
   </section>
 

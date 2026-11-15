@@ -293,11 +293,11 @@
 @media (min-width: 1200px) {
   .dw .prose .side { float: right; clear: right; width: clamp(200px, 17vw, 250px); margin: .35rem calc(-1 * clamp(230px, 19.5vw, 290px)) 1rem 0; padding: 0 0 0 .9rem; }
 }
-.ref { position: relative; color: var(--soft); font: 12px var(--mono); text-decoration: none; vertical-align: .08em; padding: 0 .1rem; border-bottom: 1px dotted var(--faint); cursor: help; }
-.ref:hover, .ref:focus { color: var(--hi); border-color: var(--hi); outline: none; }
-.ref-pop { position: absolute; z-index: 60; width: min(340px, calc(100vw - 2rem)); padding: .75rem .9rem; background: #161616; border: 1px solid var(--faint); color: var(--soft); font: 13px/1.5 var(--font); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); pointer-events: none; opacity: 0; transform: translateY(4px); transition: opacity .15s, transform .15s; }
-.ref-pop.on { opacity: 1; transform: none; }
-.ref-pop b { display: block; margin-bottom: .2rem; font: 500 11px var(--mono); letter-spacing: .1em; color: var(--muted); }
+.cref { position: relative; color: var(--soft); font: 12px var(--mono); text-decoration: none; vertical-align: .08em; padding: 0 .1rem; border-bottom: 1px dotted var(--faint); cursor: help; }
+.cref:hover, .cref:focus { color: var(--hi); border-color: var(--hi); outline: none; }
+.cref-pop { position: absolute; z-index: 60; width: min(340px, calc(100vw - 2rem)); padding: .75rem .9rem; background: #161616; border: 1px solid var(--faint); color: var(--soft); font: 13px/1.5 var(--font); box-shadow: 0 10px 30px rgba(0, 0, 0, .5); pointer-events: none; opacity: 0; transform: translateY(4px); transition: opacity .15s, transform .15s; }
+.cref-pop.on { opacity: 1; transform: none; }
+.cref-pop b { display: block; margin-bottom: .2rem; font: 500 11px var(--mono); letter-spacing: .1em; color: var(--muted); }
 
 
 

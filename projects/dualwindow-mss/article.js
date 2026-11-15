@@ -18,7 +18,7 @@
   };
 
   function citations() {
-    const pop = document.createElement('div'); pop.className = 'ref-pop'; pop.setAttribute('role', 'tooltip'); document.body.appendChild(pop);
+    const pop = document.createElement('div'); pop.className = 'cref-pop'; pop.setAttribute('role', 'tooltip'); document.body.appendChild(pop);
     const show = a => {
       const li = document.querySelector(a.getAttribute('href')); if (!li) return;
       pop.innerHTML = ''; const b = document.createElement('b'); b.textContent = `Reference ${a.getAttribute('href').replace('#ref-', '')}`;
@@ -30,7 +30,7 @@
       pop.classList.add('on');
     };
     const hide = () => pop.classList.remove('on');
-    document.querySelectorAll('a.ref').forEach(a => {
+    document.querySelectorAll('a.cref').forEach(a => {
       a.addEventListener('mouseenter', () => show(a)); a.addEventListener('mouseleave', hide);
       a.addEventListener('focus', () => show(a)); a.addEventListener('blur', hide);
     });
