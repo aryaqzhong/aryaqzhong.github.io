@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>DualWindow-MSS · Qing (Arya) Zhong</title>
-<meta name="description" content="A causal vocal separator that answers within 5.8 or 2.9 milliseconds, a dual-window STFT that wins back much of the quality short windows lose, and a listening desk to hear it.">
+<meta name="description" content="A causal vocal separator that answers within 5.8 or 2.9 milliseconds: how a dual-window STFT works, why it helps, what it costs, how the latency was verified, and a listening desk to hear it.">
 <link rel="canonical" href="https://aryaqzhong.github.io/projects/dualwindow-mss/">
 <meta property="og:type" content="article">
 <meta property="og:title" content="DualWindow-MSS: latency–quality trade-offs in streaming vocal separation">
@@ -31,9 +31,13 @@
 <nav class="toc" id="toc" aria-label="Contents">
   <a href="#problem"><span>01</span>The latency budget</a>
   <a href="#idea"><span>02</span>Two windows</a>
-  <a href="#results"><span>03</span>Fifty songs</a>
-  <a href="#realtime"><span>04</span>Before the next hop</a>
-  <a href="#listen"><span>05</span>The listening desk</a>
+  <a href="#how"><span>03</span>How it works</a>
+  <a href="#why"><span>04</span>Why it works</a>
+  <a href="#results"><span>05</span>Fifty songs</a>
+  <a href="#verify"><span>06</span>Latency, measured</a>
+  <a href="#realtime"><span>07</span>Before the next hop</a>
+  <a href="#mic"><span>08</span>The vocal microphone</a>
+  <a href="#listen"><span>09</span>The listening desk</a>
 </nav>
 
 <main>
@@ -52,134 +56,324 @@
     <div class="prose">
       <p class="label">01 / Problem</p>
       <h2>The latency budget</h2>
-      <p>Live sound, in-ear monitoring and hearing devices need the voice separated from the band within a few milliseconds. Offline separators such as HTDemucs read seconds of future audio. A causal separator cannot, and in a short-time Fourier transform the window decides how long it has to wait.</p>
+      <p>Live sound, in-ear monitoring and hearing devices need the voice separated from the band within a few milliseconds. Offline separators such as HTDemucs read seconds of future audio. A causal separator cannot, and in a short-time Fourier transform (STFT), the synthesis window determines the algorithmic wait.</p>
     </div>
     <figure class="budget">
       <svg role="img" aria-label="Latencies on a logarithmic time axis, from one sample to seconds: 2.9 and 5.8 milliseconds for this work, 23.2 milliseconds for a conventional window, seconds for offline separators."></svg>
       <figcaption><b>Fig. 1</b>Where the budget sits. 2.9 ms is about the time sound needs to cross one meter of stage (343 m/s).</figcaption>
     </figure>
     <div class="prose">
-      <p>How much quality does a causal separator lose at 5.8 or 2.9 ms, and can the window design win part of it back without adding latency?</p>
+      <p>How much quality does a causal separator lose at 5.8 or 2.9 ms, and can the window design win part of it back without adding latency? Three hypotheses were written down before the experiments:</p>
+    </div>
+    <div class="ledger" aria-label="Hypotheses and results">
+      <div><b>H1</b><p>A long analysis window with a short synthesis window recovers quality at the short window’s latency.</p><p class="r">+0.76 dB per song at 5.8 ms and +0.73 dB at 2.9 ms; 45 of 50 songs improve at each latency.</p></div>
+      <div><b>H2</b><p>Extending the analysis window costs compute, not latency.</p><p class="r">Measured look-ahead 247 ≤ 255 and 123 ≤ 127 samples, unchanged by the long window; about 2× the CPU time of the short-window baseline.</p></div>
+      <div><b>H3</b><p>The gain does not depend on a large model.</p><p class="r">+0.54 to +0.76 dB from 0.17 M to 0.94 M parameters.</p></div>
     </div>
   </section>
 
-  <div class="scrolly wide" data-scene="window">
+  <div class="scrolly wide has-legend" data-scene="window">
     <div class="stage">
       <span class="tick" aria-hidden="true"></span>
       <div class="hud"><p class="fig">Fig. 2 · windows</p><div class="readout" aria-live="polite"></div></div>
       <div class="plot"><canvas role="img" aria-label="Top: a slow-motion tape of a mixture arriving under the analysis and synthesis windows, which end at the present moment. Bottom: the spectrum of the mixture seen through the current analysis window."></canvas></div>
-      <p class="cap">Top: the signal arriving in slow motion; the windows end at the present moment and the bright part of the tape is what the model sees. Bottom: a synthetic sung note (white ticks) and accompaniment partials (gray ticks) seen through the current analysis window; dots mark STFT bins.</p>
+      <div class="legend-strip" aria-hidden="true"><span><i class="dim"></i>samples arriving</span><span><i></i>what the model sees</span><span><i class="fill"></i>analysis window</span><span><i class="dash"></i>synthesis window</span><span><i class="tick"></i>sung note, harmonics of 220 Hz</span><span><i class="tick gray"></i>accompaniment</span><span><i class="dot"></i>STFT bins</span></div>
+      <p class="cap">The tape runs in slow motion. New samples arrive at the right edge (now); recorded history shifts left. The spectrum below is a synthetic illustration: one sung note and a few accompaniment partials, seen through the current analysis window. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/results/latency_check.md">Source ↗</a></p>
     </div>
     <div class="steps">
       <div class="step" data-label="01 · the latency budget"><div>
-        <p class="label">1024 samples</p>
-        <h3>A window is a wait.</h3>
-        <p>An STFT separator can process a frame only once all of its samples have arrived. At 44.1 kHz, a 1024-sample window means waiting <strong>23.2 ms</strong>: too long for a singer’s in-ear monitor.</p>
-        <p>In return its frequency bins are 43 Hz apart, and every harmonic of the sung note stands on its own.</p>
+        <p class="label">A window is a wait</p>
+        <h3>The model may only look through a window.</h3>
+        <p>Read the time axis from left to right: older samples on the left, the newest sample at <strong>now</strong> on the right. An STFT separator cuts the stream into windows and can process one only once all of its samples have arrived.</p>
+        <p>So the window length is a wait: with 1024 samples at 44.1 kHz, the worst-case algorithmic wait is about <strong>23.2 ms</strong>. Too long for a singer’s in-ear monitor.</p>
       </div></div>
       <div class="step" data-label="01 · the latency budget"><div>
-        <p class="label">256 samples</p>
+        <p class="label">1024 samples · 43 Hz per bin</p>
+        <h3>What the model sees is a spectrum.</h3>
+        <p>Each window is turned into a spectrum, and the separator decides, bin by bin, how much of the energy is voice. A long window gives fine bins: 43 Hz apart, so every harmonic of the sung note (white ticks) stands apart from the accompaniment (gray ticks).</p>
+      </div></div>
+      <div class="step" data-label="01 · the latency budget"><div>
+        <p class="label">256 samples · 172 Hz per bin</p>
         <h3>Cut the wait, lose the detail.</h3>
-        <p>A 256-sample window answers within <strong>5.8 ms</strong>. Its bins are 172 Hz apart, and neighboring partials of the voice and the accompaniment start to merge.</p>
+        <p>A 256-sample window answers within <strong>5.8 ms</strong>, but its bins are 172 Hz apart. Neighboring partials of the voice and the accompaniment land in the same bin and start to merge.</p>
       </div></div>
       <div class="step" data-label="01 · the latency budget"><div>
-        <p class="label">128 samples</p>
+        <p class="label">128 samples · 345 Hz per bin</p>
         <h3>At 2.9 ms, a blur.</h3>
-        <p>With 128 samples the bins are 345 Hz apart. Below 1.6 kHz, four bins have to describe the whole mixture, and a mask can no longer tell the voice from the band.</p>
+        <p>With 128 samples the bins are 345 Hz apart. Only five bin centers lie between 0 and 1.6 kHz. Voice and accompaniment are harder to distinguish, so the mask has less detail to work with.</p>
       </div></div>
       <div class="step" id="idea" data-label="02 · two windows"><div>
         <p class="label">02 / Idea</p>
         <h3>Look back long, answer short.</h3>
-        <p>A dual window splits the two jobs (Mauler &amp; Martin, 2007). A <strong>2048-sample analysis window</strong> gives the model a sharp view of the recent past; a <strong>128-sample synthesis window</strong> decides when the output can leave.</p>
-        <p>The spectrum sharpens again, and the wait stays at 2.9 ms.</p>
+        <p>A dual window splits the two jobs (Mauler &amp; Martin, 2007). The <strong>analysis window</strong>, 2048 samples, reaches far into the past and gives the model a sharp spectrum again. The <strong>synthesis window</strong>, 128 samples, decides when the output may leave.</p>
+        <p>Only the synthesis window sets the wait: still 2.9 ms.</p>
       </div></div>
       <div class="step" data-label="02 · two windows"><div>
         <h3>Nothing is lost on the way out.</h3>
-        <p>The synthesis window is chosen so that analysis × synthesis is a short Hann window. Overlapping those every 64 samples adds up to exactly one, so the signal is reconstructed perfectly.</p>
+        <p>The synthesis window is shaped so that analysis × synthesis is a plain 128-sample Hann window. Overlapping those every 64 samples adds up to exactly one, so a signal that passes through untouched comes out exactly as it went in.</p>
       </div></div>
       <div class="step" data-label="02 · two windows"><div>
-        <h3>The latency is measured, not assumed.</h3>
-        <p>Feeding the trained models inputs that differ only after a given sample shows how far each output looks ahead: at most <strong>123 samples at 2.9 ms</strong> (bound 127) and 247 at 5.8 ms (bound 255). The long window adds no latency.</p>
+        <h3>The analysis window adds no delay.</h3>
+        <p>Looking further into the past costs nothing in time, because the past has already arrived. The trained models confirm it: the output reacts to an input change after at most <strong>123 samples</strong> (bound 127), the same as the short window. How this was measured: chapter 06.</p>
       </div></div>
     </div>
   </div>
 
-  <section class="chapter" id="results" data-label="03 · fifty songs">
+  <section class="chapter" id="how" data-label="03 · how it works">
     <div class="prose">
-      <p class="label">03 / Results</p>
+      <p class="label">03 / How it works</p>
+      <h2>One small network, five windows</h2>
+      <p>Every configuration A–E uses the same pipeline and network architecture, trained separately for its window pair; only the windows and the hop change. The network is deliberately small, <strong>0.94 M parameters</strong>, because it has to finish every block before the next one arrives.</p>
+    </div>
+    <div class="config-list" aria-label="The five window configurations">
+      <p class="config-key">A–E are model names. Windows are analysis / synthesis samples; hop = synthesis / 2.</p>
+      <div><b>A · long</b><span>1024 / 1024</span><strong>23.2 ms</strong></div>
+      <div><b>B · short</b><span>256 / 256</span><strong>5.8 ms</strong></div>
+      <div><b>C · dual</b><span>2048 / 256</span><strong>5.8 ms</strong></div>
+      <div><b>E · short</b><span>128 / 128</span><strong>2.9 ms</strong></div>
+      <div><b>D · dual</b><span>2048 / 128</span><strong>2.9 ms</strong></div>
+    </div>
+  </section>
+
+  <div class="scrolly wide" data-scene="pipeline">
+    <div class="stage">
+      <span class="tick" aria-hidden="true"></span>
+      <div class="hud"><p class="fig">Fig. 3 · the pipeline</p><div class="big" aria-live="polite"></div></div>
+      <div class="plot"><svg role="img" aria-label="The streaming pipeline as a chain of stages: input blocks, dual-window STFT, encoder along frequency, pooling and causal GRU, mask head, masking and inverse STFT with overlap-add."></svg></div>
+      <p class="cap">Shown: D at 2.9 ms, with one 64-sample block per hop. Stages light up as the text describes them. The final compute comparison uses C and B, both at 5.8 ms. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/README.md#3-method">Source ↗</a></p>
+    </div>
+    <div class="steps">
+      <div class="step" data-label="03 · how it works"><div>
+        <h3>Blocks in, blocks out.</h3>
+        <p>Audio arrives in blocks of 64 samples (one hop, 1.45 ms at 2.9 ms latency). Each new block is appended to a buffer of the recent past, and the chain runs once.</p>
+      </div></div>
+      <div class="step" data-label="03 · how it works"><div>
+        <h3>The transform decides the latency.</h3>
+        <p>The analysis window reads the last 2048 samples of the buffer and produces 1025 frequency bins. The synthesis window, used at the far end, covers only the last 128 samples: that is the only part of the output that has to wait.</p>
+      </div></div>
+      <div class="step" data-label="03 · how it works"><div>
+        <h3>A small, causal network.</h3>
+        <p>A convolutional encoder runs along frequency with weights shared across bins, pools to 64 bands, and one <strong>causal GRU</strong> layer carries context forward in time, never backward. Weights are shared across frequency bins within each model; each window configuration is trained separately.</p>
+      </div></div>
+      <div class="step" data-label="03 · how it works"><div>
+        <h3>A mask, not a new signal.</h3>
+        <p>The head outputs one gain between 0 and 1 per bin. The vocal estimate is the mixture spectrum multiplied by this mask, so the system attenuates mixture bins rather than generating a new spectrum; it keeps the mixture phase.</p>
+      </div></div>
+      <div class="step" data-label="03 · how it works"><div>
+        <h3>Back to audio, one hop later.</h3>
+        <p>The masked spectrum goes through the inverse transform with the short synthesis window, overlap-added with the previous block. The streaming implementation shifts the reconstructed signal by one hop. Waiting for an input block to fill adds up to one more hop minus one sample: 127 samples in the worst case.</p>
+      </div></div>
+      <div class="step" data-label="03 · how it works"><div>
+        <h3>Where the compute goes.</h3>
+        <p>The encoder and the mask head run on every bin, so the dual window pays for its 1025 bins where the short window has 129: <strong>5.84 against 1.55 million multiply-adds per frame</strong>. These per-bin layers dominate the dual-window cost. Widening the GRU also adds compute, which is tested separately below.</p>
+      </div></div>
+    </div>
+  </div>
+
+  <section class="chapter tight" id="training" data-label="03 · how it works">
+    <div class="prose">
+      <p class="label">Training and evaluation</p>
+      <h2>The same recipe for every window</h2>
+      <p>Using the same data, objective and training recipe makes the window comparison controlled. Model size, compute and learning-rate checks below probe other explanations.</p>
+    </div>
+    <div class="recipe">
+      <div><h4>Data</h4><p><b>MUSDB18-HQ</b>, mono at 44.1 kHz: 86 songs for training, 14 for validation and model selection, the 50 test songs only for the numbers reported here.</p></div>
+      <div><h4>Loss</h4><p>Computed on the <b>synthesized waveform</b> (L1 plus a multi-resolution STFT term), so every window pair is judged on the audio it outputs, not on its own spectrum.</p></div>
+      <div><h4>Training</h4><p><b>200 k updates</b> with random stem gains, cross-song remixing and 20% vocal-dominant mixtures; the checkpoint with the best validation SI-SDR is kept; <b>two seeds</b> per configuration.</p></div>
+      <div><h4>Metric</h4><p>Vocal <b>SI-SDR</b> measures how closely the separated vocal matches the clean vocal after allowing an overall gain change; higher is better. It is scored on each full test song, with seeds averaged. HTDemucs, an offline reference that sees seconds ahead, reaches 8.49 dB on the same mono input.</p></div>
+      <div><h4>Comparisons</h4><p>Always <b>paired per song</b>: the median of the 50 per-song differences, with a bootstrap 95% confidence interval over songs (10,000 resamples), and the count of songs that improve.</p></div>
+      <div><h4>Why medians</h4><p>A few songs have almost no vocal. On one of them single runs score −13 to −50 dB, which would dominate any mean; medians report what happens on most songs. Means are given alongside.</p></div>
+    </div>
+  </section>
+
+  <section class="chapter" id="why" data-label="04 · why it works">
+    <div class="prose">
+      <p class="label">04 / Why it works</p>
+      <h2>What the window lets a mask recover</h2>
+      <p>Before any training, an <strong>oracle experiment</strong> asks what each window pair can recover with an ideal ratio mask computed from the true stems. This is a diagnostic reference, not a proven upper bound for every possible separator. That separates what the window allows from what the network manages to learn.</p>
+    </div>
+  </section>
+
+  <div class="scrolly wide" data-scene="oracle">
+    <div class="stage">
+      <span class="tick" aria-hidden="true"></span>
+      <div class="hud"><p class="fig">Fig. 4 · ideal masks</p><div class="big" aria-live="polite"></div></div>
+      <div class="plot"><svg role="img" aria-label="Separation quality with ideal masks against latency for symmetric and dual windows; then the vocal energy lost in the lowest octaves per configuration."></svg></div>
+      <p class="cap">Ideal ratio masks: uSDR on 30-second excerpts of the 14 validation songs. The gain comparison uses full-test-song SI-SDR. These are different evaluation settings. Octave losses: output vocal energy relative to the clean vocal with simulated bleed, 50 test songs. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/results/oracle_validation.md">Source ↗</a></p>
+    </div>
+    <div class="steps">
+      <div class="step" data-label="04 · why it works"><div>
+        <h3>Short windows lose detail even with ideal masks.</h3>
+        <p>With ideal masks, symmetric windows lose about <strong>3 dB</strong> between 23.2 and 2.9 ms. This loss appears before a network is trained: the window representation itself matters.</p>
+      </div></div>
+      <div class="step" data-label="04 · why it works"><div>
+        <h3>A long analysis window recovers detail.</h3>
+        <p>At 5.8 ms, a 2048-sample analysis window (<strong>10.06 dB</strong>) beats a symmetric window at twice the latency (9.52 dB at 11.6 ms). Going to 4096 adds nothing, which is why 2048 was chosen, on validation songs only.</p>
+      </div></div>
+      <div class="step" data-label="04 · why it works"><div>
+        <h3>The trained models realize about 40% of it.</h3>
+        <p>On the test songs the oracle gain of the dual window over the short window is <strong>+1.87 dB</strong>, positive on every song. The trained 0.94 M models turn it into +0.76 dB. The remaining gap leaves room to improve the estimator and its training; this experiment does not identify a single cause.</p>
+      </div></div>
+      <div class="step" data-label="04 · why it works"><div>
+        <h3>The loss sits in the low voice.</h3>
+        <p>Where does the short window lose? Mostly in the lowest octave of the voice. With simulated bleed, the 256-sample window loses <strong>3.6 dB</strong> of vocal energy between 125 and 250 Hz, the dual window 2.6 dB, the long window 2.4 dB.</p>
+        <p>Resolution is not the whole story: the 128-sample window loses 2.9 dB there, less than 256 samples, and its dual partner 2.2 dB.</p>
+      </div></div>
+    </div>
+  </div>
+
+  <section class="chapter" id="results" data-label="05 · fifty songs">
+    <div class="prose">
+      <p class="label">05 / Results</p>
       <h2>Fifty songs, one network</h2>
-      <p>The same small network handles every window: a frequency encoder, one causal GRU layer and a mask head, <strong>0.94 M parameters</strong>. Within each latency the hop and the synthesis window are identical; only the analysis window differs. Every model was trained twice on MUSDB18-HQ and scored on all 50 test songs.</p>
+      <p>Within each latency the hop and the synthesis window are identical; only the analysis window differs. The main comparison is therefore C against B at 5.8 ms and D against E at 2.9 ms, song by song.</p>
     </div>
   </section>
 
   <div class="scrolly wide" data-scene="gains">
     <div class="stage">
       <span class="tick" aria-hidden="true"></span>
-      <div class="hud"><p class="fig">Fig. 3 · per-song gain</p><div class="big" aria-live="polite"></div></div>
-      <div class="plot"><svg role="img" aria-label="Fifty vertical bars, one per test song, showing the gain in vocal SI-SDR of the dual window over the comparison model."></svg></div>
-      <p class="cap">One bar per MUSDB18-HQ test song, two training seeds averaged, sorted by gain. Bars above the line are songs the dual window improves. Gains below −3 dB are clipped and marked.</p>
+      <div class="hud"><p class="fig">Fig. 5 · per-song gain</p><div class="big" aria-live="polite"></div></div>
+      <div class="plot"><svg role="img" aria-label="Fifty vertical bars, one per test song, showing the gain in vocal SI-SDR of the dual window over the comparison model; then the gain against model size."></svg></div>
+      <p class="cap">One bar per MUSDB18-HQ test song, two training seeds averaged, sorted by gain. Bars above the line are songs the dual window improves; gains below −3 dB are clipped and marked. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/results/summary_test.md">Source ↗</a></p>
     </div>
     <div class="steps">
-      <div class="step" data-label="03 · fifty songs"><div>
+      <div class="step" data-label="05 · fifty songs"><div>
         <p class="label">5.8 ms</p>
         <h3>45 of 50 songs improve.</h3>
         <p>Each bar is a test song, raised by how much vocal SI-SDR the dual window gains over the 256-sample window at the same latency. Median gain per song: <strong>+0.76 dB</strong> (95% CI 0.57 to 0.90).</p>
       </div></div>
-      <div class="step" data-label="03 · fifty songs"><div>
+      <div class="step" data-label="05 · fifty songs"><div>
         <p class="label">2.9 ms</p>
         <h3>The same at half the latency.</h3>
-        <p>Against the 128-sample window: <strong>+0.73 dB</strong> (0.59 to 0.88), again on 45 of 50 songs. Halving the latency costs the dual window only 0.16 dB.</p>
+        <p>Against the 128-sample window: <strong>+0.73 dB</strong> (0.59 to 0.88), again on 45 of 50 songs. Halving the dual window’s latency from 5.8 to 2.9 ms costs only 0.16 dB per song.</p>
       </div></div>
-      <div class="step" data-label="03 · fifty songs"><div>
+      <div class="step" data-label="05 · fifty songs"><div>
         <p class="label">Matched compute</p>
         <h3>Not just a bigger model.</h3>
-        <p>Widen the short-window network until it costs as many operations per frame, and give it a learning rate chosen on validation data: it closes about a third of the gap. The dual window still leads by a median <strong>0.50 dB</strong>, on 41 of 50 songs.</p>
+        <p>Widen the short-window network until it costs as many operations per frame, and give it a learning rate chosen on validation data: it closes about a third of the gap. These learning-rate checks were prompted by test results and are exploratory. The dual window still leads by a median <strong>0.50 dB</strong>, on 41 of 50 songs.</p>
       </div></div>
-      <div class="step" data-label="03 · fifty songs"><div>
+      <div class="step" data-label="05 · fifty songs"><div>
         <p class="label">Failure case</p>
         <h3>One song goes the other way.</h3>
         <p>On PR – Happy Daze the voice sits 26 dB below the band. The dual window removes more accompaniment but also more voice, and the song loses 19 dB.</p>
-        <p>That single song is why the mean gain (+0.06 dB) is far below the median: the result holds for most songs, not on average.</p>
+        <p>That single song is why the matched-compute mean gain (+0.06 dB, 95% CI −0.82 to +0.59) is far below its median (+0.50 dB). For the original D–E pair the mean is +0.35 dB (−0.57 to +0.91), also inconclusive; most songs improve, but the average gain is uncertain.</p>
+      </div></div>
+      <div class="step" data-label="05 · fifty songs"><div>
+        <p class="label">Model size</p>
+        <h3>Small models benefit too.</h3>
+        <p>Shrinking the GRU to 0.38 M and 0.17 M parameters keeps the gain at <strong>+0.59 and +0.54 dB</strong>. The 0.17 M dual-window model even beats the 0.94 M short-window model, by 0.31 dB per song.</p>
       </div></div>
     </div>
   </div>
 
-  <section class="chapter" id="realtime" data-label="04 · before the next hop">
+  <section class="chapter" id="verify" data-label="06 · latency, measured">
     <div class="prose">
-      <p class="label">04 / Cost</p>
+      <p class="label">06 / Verification</p>
+      <h2>Latency, measured rather than assumed</h2>
+      <p>A claim of 2.9 ms is only as good as the implementation. Two tests check that no code path quietly looks further ahead than the synthesis window allows.</p>
+    </div>
+  </section>
+
+  <div class="scrolly wide" data-scene="prefix">
+    <div class="stage">
+      <span class="tick" aria-hidden="true"></span>
+      <div class="hud"><p class="fig">Fig. 6 · the prefix test</p><div class="big" aria-live="polite"></div></div>
+      <div class="plot"><svg role="img" aria-label="Two inputs that agree up to a sample and differ afterwards, and the two outputs, which start to differ a bounded number of samples earlier than the change."></svg></div>
+      <p class="cap">Schematic. The measured look-ahead is the largest over 16 positions of the change within a hop, with the trained weights; the bound is the synthesis window minus one. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/results/latency_check.md">Source ↗</a></p>
+    </div>
+    <div class="steps">
+      <div class="step" data-label="06 · latency, measured"><div>
+        <h3>Two inputs that agree, then differ.</h3>
+        <p>Feed the trained model two signals that are identical up to sample <em>n</em> and different afterwards. Compare the outputs aligned to the original signal, before adding the streaming delay. If their first difference is at <em>n − L</em>, output at that position depends on input <em>L</em> samples later.</p>
+      </div></div>
+      <div class="step" data-label="06 · latency, measured"><div>
+        <h3>Where the outputs part is the look-ahead.</h3>
+        <p>The distance from the first changed output to sample <em>n</em> measures look-ahead in the aligned output. Repeat at 16 change positions within a hop and take the largest distance. For the 2.9 ms models it is <strong>123 samples</strong>, under the bound of 127; for 5.8 ms, 247 under 255. The 2048-sample analysis window did not add a single sample.</p>
+      </div></div>
+      <div class="step" data-label="06 · latency, measured"><div>
+        <h3>And the frame-by-frame code agrees.</h3>
+        <p>An impulse fed through the streaming code with an identity mask comes out exactly one hop later; with the wait for an input block to fill, the worst case is the synthesis window minus one sample: 127 samples, 2.88 ms. What is not measured: the audio interface’s own buffers.</p>
+      </div></div>
+    </div>
+  </div>
+
+  <section class="chapter" id="realtime" data-label="07 · before the next hop">
+    <div class="prose">
+      <p class="label">07 / Cost</p>
       <h2>Before the next hop arrives</h2>
       <p>Algorithmic latency is only half of the story: every hop must also be computed before the next one arrives. The full pipeline (STFT, network, inverse STFT) was exported to ONNX Runtime and timed on a single CPU thread.</p>
     </div>
   </section>
 
-  <div class="scrolly wide" data-scene="deadline">
+  <div class="scrolly wide has-legend" data-scene="deadline">
     <div class="stage">
       <span class="tick" aria-hidden="true"></span>
-      <div class="hud"><p class="fig">Fig. 4 · the deadline</p><div class="big" aria-live="polite"></div></div>
-      <div class="plot"><svg role="img" aria-label="Processing time per hop compared with the 1.45 ms hop budget, for three runtimes."></svg></div>
-      <p class="cap">Mean time per hop from the benchmark (one Xeon Gold 6150 thread, all models in one job), shown in slow motion.</p>
+      <div class="hud"><p class="fig">Fig. 7 · the deadline</p><div class="big" aria-live="polite"></div></div>
+      <div class="plot"><svg role="img" aria-label="Processing time per hop compared with the 1.45 ms hop budget, for three runtimes; then quality against compute for all configurations."></svg></div>
+      <div class="legend-strip" aria-hidden="true"><span><i class="fill"></i>one hop = one slot of 1.45 ms</span><span><i></i>time spent computing it</span><span><i class="hatch"></i>finished after the deadline</span></div>
+      <p class="cap">Mean time per hop from the benchmark (one Xeon Gold 6150 thread, all models in one job), shown in slow motion. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/results/latency_benchmark.md">Source ↗</a></p>
     </div>
     <div class="steps">
-      <div class="step" data-label="04 · before the next hop"><div>
-        <h3>Half the budget.</h3>
-        <p>The 2.9 ms dual-window model has 1.45 ms per hop and needs <strong>0.75 ms</strong> on average, 0.76 ms at the 99th percentile. 0.01% of hops were late.</p>
+      <div class="step" data-label="07 · before the next hop"><div>
+        <h3>What a hop is.</h3>
+        <p>At 2.9 ms latency a new block of 64 samples arrives every <strong>1.45 ms</strong>. Each slot on the track is one such hop. Whatever the model computes for a block has to be finished before the slot ends, or the audio glitches.</p>
       </div></div>
-      <div class="step" data-label="04 · before the next hop"><div>
+      <div class="step" data-label="07 · before the next hop"><div>
+        <h3>Half the budget.</h3>
+        <p>The 2.9 ms dual-window model needs <strong>0.75 ms</strong> of its 1.45 ms on average and 0.76 ms at the 99th percentile. 0.01% of hops were late.</p>
+      </div></div>
+      <div class="step" data-label="07 · before the next hop"><div>
         <h3>The price is compute, not latency.</h3>
         <p>The 128-sample window alone needs half that time. At the same latency the dual window roughly doubles CPU time: real-time factor <strong>0.515</strong> against 0.262.</p>
       </div></div>
-      <div class="step" data-label="04 · before the next hop"><div>
+      <div class="step" data-label="07 · before the next hop"><div>
         <h3>Implementation matters.</h3>
-        <p>The same model run in eager PyTorch takes 1.7 ms per hop (real-time factor 1.18) and misses every deadline.</p>
+        <p>The same model run in eager PyTorch takes 1.7 ms per hop (real-time factor 1.18) and misses every deadline. A deployed system would run in a dedicated real-time audio thread.</p>
+      </div></div>
+      <div class="step" data-label="07 · before the next hop"><div>
+        <h3>The whole trade-off on one chart.</h3>
+        <p>Lowering latency from 23.2 to 5.8 ms costs 1.05 dB with a short window but only 0.31 dB with the dual window, and 2.9 ms costs another 0.16 dB. What the dual window buys with quality it pays in multiply-adds per frame, about 3.8× to 4.7× its short-window baseline.</p>
       </div></div>
     </div>
   </div>
 
-  <section class="chapter desk-wrap" id="listen" data-label="05 · the listening desk">
+  <section class="chapter" id="mic" data-label="08 · the vocal microphone">
     <div class="prose">
-      <p class="label">05 / Listen</p>
+      <p class="label">08 / A stage situation</p>
+      <h2>The vocal microphone</h2>
+      <p>On stage the vocal microphone does not pick up a clean mix: the band leaks in. In a simulated version, studio stems are mixed with the accompaniment <strong>5 dB below the voice</strong>, and the mixture determines a mask. Holding that mask fixed and applying it separately to voice and accompaniment splits the output exactly into the voice kept and the bleed remaining.</p>
+    </div>
+  </section>
+
+  <div class="scrolly wide" data-scene="bleed">
+    <div class="stage">
+      <span class="tick" aria-hidden="true"></span>
+      <div class="hud"><p class="fig">Fig. 8 · bleed</p><div class="big" aria-live="polite"></div></div>
+      <div class="plot"><svg role="img" aria-label="Vocal energy lost against accompaniment removed, for each configuration as the mask strength is swept; then the paired gain of the dual window under three accompaniment paths."></svg></div>
+      <p class="cap">Simulated bleed from digitally mixed stems, 30-second excerpts of the 50 test songs; sweeping the mask strength traces each curve. The three paths are fixed synthetic transformations, not real rooms or microphones. <a href="https://github.com/aryaqzhong/DualWindow-MSS/blob/main/results/bleed/summary.md">Source ↗</a></p>
+    </div>
+    <div class="steps">
+      <div class="step" data-label="08 · the vocal microphone"><div>
+        <h3>Two things to trade.</h3>
+        <p>A separator can always remove more of the band by removing more of everything. The fair comparison is at equal bleed attenuation: how much voice does each model lose while removing the same amount of band?</p>
+      </div></div>
+      <div class="step" data-label="08 · the vocal microphone"><div>
+        <h3>At 2.9 ms, the dual window keeps more voice.</h3>
+        <p>Sweeping the mask strength traces each model’s curve. At a common 8.9 dB of bleed attenuation the dual window loses <strong>0.67 dB</strong> of vocal energy, the short window 0.97 dB; at 5.8 ms, 0.68 against 0.94 dB at a common 9.7 dB attenuation. Each pair uses its own operating point.</p>
+      </div></div>
+      <div class="step" data-label="08 · the vocal microphone"><div>
+        <h3>And it survives a change of path.</h3>
+        <p>With frozen models, the accompaniment was sent through three fixed paths before mixing: dry, mild filtering plus delay, and a synthetic room. The paired gain of the dual window stays between <strong>+0.59 and +0.91 dB</strong> on every path, and at equal attenuation it keeps 0.32–0.35 dB more voice.</p>
+      </div></div>
+    </div>
+  </div>
+
+  <section class="chapter desk-wrap" id="listen" data-label="09 · the listening desk">
+    <div class="prose">
+      <p class="label">09 / Listen</p>
       <h2>The listening desk</h2>
-      <p>Everything above is numbers. The desk below plays the same 24-second excerpt through every model and switches between them without losing your place, next to each version’s spectrogram. Four Creative Commons songs from ccMixter, each in two scenes: the full mix, and a simulated vocal microphone with the band leaking in.</p>
+      <p>Everything above is numbers. The desk below plays the same 24-second excerpt through every model and switches between them without losing your place, next to each version’s spectrogram. Four Creative Commons songs from ccMixter, each in two scenes: the full mix, and the simulated vocal microphone with the band leaking in.</p>
     </div>
     <div class="desk" id="desk">
       <aside class="panel">
@@ -201,7 +395,7 @@
         </div>
         <h3><b>e</b>The same models on the test set</h3>
         <div class="models" id="models"></div>
-        <p class="figcap"><span class="fig">Fig. 5</span> <b>The listening desk.</b> <i>a</i>, choose a song. <i>b</i>, choose a scene: the full mix, or the vocal microphone with the band leaking in 5 dB below the voice. <i>c</i>, choose what you hear: the input, the five causal models, the offline HTDemucs reference or the original vocal stem. Playback keeps its position, so switch while the music plays. <i>d</i>, the spectrogram of the selected version; click it to jump. <i>e</i>, test-set results for the same models: median SI-SDR over the 50 MUSDB18-HQ test songs, 99th-percentile compute per hop against the hop length, share of late hops and real-time factor on one CPU thread with ONNX Runtime. All clips are loudness-matched (RMS −20 dBFS), so differences are in quality, not volume.</p>
+        <p class="figcap"><span class="fig">Fig. 9</span> <b>The listening desk.</b> <i>a</i>, choose a song. <i>b</i>, choose a scene: the full mix, or the vocal microphone with the band leaking in 5 dB below the voice. <i>c</i>, choose what you hear: the input, the five causal models, the offline HTDemucs reference or the original vocal stem. Playback keeps its position, so switch while the music plays. <i>d</i>, the spectrogram of the selected version; click it to jump. <i>e</i>, test-set results for the same models: median SI-SDR over the 50 MUSDB18-HQ test songs, 99th-percentile compute per hop against the hop length, share of late hops and real-time factor on one CPU thread with ONNX Runtime. All clips are loudness-matched (RMS −20 dBFS), so differences are in quality, not volume.</p>
         <p class="credit" id="attribution"></p>
       </div>
     </div>
@@ -210,10 +404,10 @@
         <h3>Limitations</h3>
         <ul>
           <li>Mono vocals on one dataset (MUSDB18-HQ), scored with SI-SDR; no listening test.</li>
-          <li>Small models trained with one recipe, two seeds per configuration.</li>
-          <li>Gains are medians over songs; at 2.9 ms the mean gain is not significant.</li>
+          <li>Small models trained with one recipe, two seeds per configuration; only the GRU width was varied.</li>
+          <li>Gains are medians over songs; at 2.9 ms the mean gain is not significant because of one song with almost no vocal.</li>
           <li>Timing on one CPU type; end-to-end latency through an audio interface was not measured.</li>
-          <li>The desk uses excerpts of ccMixter songs, not MUSDB18 audio; the bleed scene is simulated.</li>
+          <li>Bleed and acoustic paths are simulated; the desk uses ccMixter excerpts, not MUSDB18 audio.</li>
         </ul>
       </div>
       <div class="cta"><a class="btn" href="https://github.com/aryaqzhong/DualWindow-MSS">Code and results on GitHub ↗</a></div>
@@ -229,6 +423,7 @@
         <li>Mauler &amp; Martin. A low delay, variable resolution, perfect reconstruction spectral analysis-synthesis system for speech enhancement. EUSIPCO 2007.</li>
         <li>Wang, Wichern, Watanabe &amp; Le Roux. STFT-domain neural speech enhancement with very low algorithmic latency. IEEE/ACM TASLP 2023.</li>
         <li>Rafii et al. MUSDB18-HQ, an uncompressed version of MUSDB18. Zenodo 2019.</li>
+        <li>Hagerman &amp; Olofsson. A method to measure the effect of noise reduction algorithms using simultaneous speech and noise. Acta Acustica 2004.</li>
       </ol>
     </div>
     <p class="back"><a href="/#research">← research</a><a href="/projects/beyond-words/">beyond words →</a><a href="/">home</a></p>
