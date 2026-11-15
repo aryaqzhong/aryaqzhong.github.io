@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DualWindow-MSS Demo</title>
+<meta name="description" content="Listening demo: causal vocal separation at 23.2, 5.8 and 2.9 ms algorithmic latency, with symmetric and dual STFT windows.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <div class="wrap">
+    <h1>DualWindow-MSS · listening demo</h1>
+    <p class="lede">Causal vocal separation with one small network (0.94 M parameters) under different STFT windows.
+      <b>B</b> and <b>C</b> have the same 5.8 ms algorithmic latency; <b>E</b> and <b>D</b> repeat the comparison at
+      2.9 ms. Within each pair, only the analysis window differs (256 vs. 2048 samples at 5.8 ms, 128 vs. 2048 at
+      2.9 ms). Switch between versions while the music plays to compare them.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <p id="loading" class="note">Loading…</p>
+
+  <section class="panel" id="player" hidden>
+    <div class="songs" id="songs" role="tablist" aria-label="Songs"></div>
+    <div class="scenarios" id="scenarios" role="tablist" aria-label="Scenario"></div>
+    <div class="versions" id="versions" role="radiogroup" aria-label="Version"></div>
+    <div class="transport">
+      <button id="play" class="primary" aria-label="Play">▶ Play</button>
+      <label class="loop"><input type="checkbox" id="loop" checked> Loop</label>
+      <span id="time" class="note">0:00 / 0:00</span>
+      <span id="status" class="note"></span>
+    </div>
+    <div class="spec" id="spec" title="Click to jump to a position">
+      <img id="spec-img" alt="Spectrogram of the selected version">
+      <div class="playhead" id="playhead"></div>
+      <div class="axis-note">spectrogram, 50 Hz – 12 kHz (log frequency)</div>
+    </div>
+    <p class="note small" id="attribution"></p>
+    <p class="note small">Keys: space = play / pause, 1–9 = switch version. All clips are loudness-matched, so
+      differences are in quality, not volume.</p>
+  </section>
+
+  <section class="panel">
+    <h2>What to listen for</h2>
+    <ul class="bullets">
+      <li><b>B vs. C</b> (same 5.8 ms latency): the low-frequency body of the voice and how much accompaniment leaks
+        through. On the 50 MUSDB18-HQ test songs, C's median SI-SDR is 1.03 dB higher than B's (4.20 vs. 3.17 dB);
+        compared song by song, the median improvement is 0.76 dB (95% CI 0.57 to 0.90), and C is better on 45 of
+        the 50 songs (figure below).</li>
+      <li><b>E vs. D</b> (same 2.9 ms latency): D reaches 4.02 dB median SI-SDR vs. E's 3.17 dB. Compared song by
+        song, the median gain is 0.73 dB (95% CI 0.59 to 0.88), with D better on 45 of 50 songs. Halving the
+        dual window's latency from C to D costs a median 0.16 dB per song (95% CI 0.11 to 0.24); C is better on
+        39 of 50 songs.</li>
+      <li>The low end of the voice: with simulated bleed, B loses the most vocal energy in the 125–250 Hz octave
+        (3.6 dB, vs. 2.6 dB for C and 2.4 dB for A). B's 256-sample window puts its frequency bins 172 Hz apart
+        (C's analysis window: 21.5 Hz), but resolution alone does not explain the ordering: E's even shorter
+        window loses 2.9 dB there, and D 2.2 dB.</li>
+      <li><b>A</b> (23.2 ms) is the long-window reference; C recovers most of the gap between B and A.</li>
+      <li><b>HTDemucs</b> is a large offline model that sees seconds of future audio (8.49 dB SI-SDR on the same test
+        songs with the same mono input). It shows what is possible without a latency constraint, not a competitor at
+        these latencies.</li>
+      <li><b>Vocal mic with bleed</b>: a simulated stage situation, the accompaniment leaking into the vocal microphone
+        5 dB below the voice. All four songs have supplied vocal and accompaniment stems; this scenario compares A through E.
+        At 2.9 ms and equal 8.9 dB bleed attenuation, D loses 0.67 dB of vocal energy vs. E's 0.97 dB in the
+        50-song benchmark.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <h2>Is the improvement consistent across songs?</h2>
+    <p class="sub">Per-song difference between the dual and the short window on the 50 test songs: C − B at
+      5.8 ms and D − E at 2.9 ms. The dual window improves 45 of 50 songs at each latency.</p>
+    <img class="figure" src="img/fig_paired_gain.png?v=stacked" alt="Two vertically stacked bar charts of per-song SI-SDR gains: C over B at 5.8 ms on top, median 0.76 dB; D over E at 2.9 ms below, median 0.73 dB. Each improves 45 of 50 songs." loading="lazy">
+    <p class="sub">The gain is not universal. In a post-hoc analysis of the worst 2.9 ms case, a song with very
+      quiet vocals, D suppresses more accompaniment but also removes more target vocal energy than E.
+      The failure persists when scoring vocal-active intervals. The full 50-song results above remain the
+      primary comparison.</p>
+  </section>
+
+  <section class="panel">
+    <h2>The models</h2>
+    <p class="sub">Test-set SI-SDR: median over the 50 MUSDB18-HQ test songs (mono, full length), two training seeds
+      averaged. Compute: full streaming pipeline (STFT, network, iSTFT) on one CPU thread with ONNX Runtime; the
+      99th-percentile time per hop and the share of hops that took longer than the hop show whether every audio
+      callback meets its deadline, which the mean real-time factor alone does not. At 2.9 ms algorithmic latency,
+      D takes 0.76 ms at the 99th percentile per 1.45 ms hop (real-time factor 0.515) with ONNX Runtime.</p>
+    <div id="models" class="table-wrap"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Beyond direct mixing</h2>
+    <p class="sub">With frozen models and accompaniment re-normalized to 5 dB below the clean vocal, the paired
+      D-over-E SI-SDR gain is 0.78 dB under fixed filtering and delay, and 0.91 dB under a synthetic-room path
+      (50 songs, two seeds). These mild synthetic paths preserve the gain; they are not real-microphone or
+      acoustic-feedback tests.</p>
+    <p class="sub">A separate experiment widened the short-window GRU until its model MACs matched the dual-window
+      models. With a learning rate chosen on validation scores, the wider short-window models reach 3.63 dB at 5.8 ms
+      and 3.41 dB at 2.9 ms; the dual window still leads by a median 0.51 dB per song (95% CI 0.40 to 0.65; better on
+      42 of 50 songs) and 0.50 dB (95% CI 0.28 to 0.63; 41 of 50). Matched MACs are not matched runtime: the wider
+      2.9 ms model misses 52.7% of its deadlines. The listening buttons above use the original A–E models; the wider
+      controls are reported in the project results.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Notes</h2>
+    <ul class="bullets small">
+      <li>Algorithmic latency is set by the synthesis window (M samples, worst case M − 1). It was checked on the
+        implementation: a prefix test with the trained models (largest measured look-ahead 247 samples for B and C,
+        bound 255; 123 samples for D and E, bound 127) and an impulse test of the frame-by-frame code.
+        End-to-end latency through an audio interface adds
+        driver buffering and was not measured. Timings come from Python on a shared server; a deployed system would
+        run in a dedicated real-time audio thread.</li>
+      <li>The demo audio uses excerpts of songs from <a href="https://ccmixter.org" rel="noopener">ccMixter</a> under
+        Creative Commons Attribution licenses (credits above the player). Changes: the mixes were converted to mono,
+        excerpted, separated by the models listed here and loudness-matched. No MUSDB18 audio is used on this page.</li>
+      <li>Code and results: the project README.</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="site"><div class="wrap"><p><a href="/projects/dualwindow-mss/">DualWindow-MSS</a> · Qing (Arya) Zhong · 2026</p></div></footer>
+<script src="demo.js"></script>
+</body>
+</html>

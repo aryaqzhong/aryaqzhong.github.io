@@ -1,0 +1,477 @@
+{
+  "sample_rate": 44100,
+  "loudness": "RMS -20 dBFS, peaks limited to -1 dBFS",
+  "models": [
+    {
+      "id": "A_sym1024",
+      "label": "A · long window",
+      "latency_ms": 23.2,
+      "si_sdr": 4.65,
+      "rtf": 0.048,
+      "p99_ms": 0.61,
+      "hop_ms": 11.61,
+      "deadline_miss": 0.0
+    },
+    {
+      "id": "B_sym256",
+      "label": "B · short window",
+      "latency_ms": 5.8,
+      "si_sdr": 3.17,
+      "rtf": 0.138,
+      "p99_ms": 0.42,
+      "hop_ms": 2.9,
+      "deadline_miss": 9.675858732462506e-05
+    },
+    {
+      "id": "C_dual",
+      "label": "C · dual window",
+      "latency_ms": 5.8,
+      "si_sdr": 4.2,
+      "rtf": 0.257,
+      "p99_ms": 0.76,
+      "hop_ms": 2.9,
+      "deadline_miss": 9.675858732462506e-05
+    },
+    {
+      "id": "E_sym128",
+      "label": "E · short window",
+      "latency_ms": 2.9,
+      "si_sdr": 3.17,
+      "rtf": 0.262,
+      "p99_ms": 0.41,
+      "hop_ms": 1.45,
+      "deadline_miss": 0.0
+    },
+    {
+      "id": "D_dual_2p9ms",
+      "label": "D · dual window",
+      "latency_ms": 2.9,
+      "si_sdr": 4.02,
+      "rtf": 0.515,
+      "p99_ms": 0.76,
+      "hop_ms": 1.45,
+      "deadline_miss": 9.675390643897248e-05
+    },
+    {
+      "id": "htdemucs",
+      "label": "HTDemucs · offline reference",
+      "latency_ms": null,
+      "si_sdr": 8.49,
+      "rtf": null,
+      "p99_ms": null,
+      "hop_ms": null,
+      "deadline_miss": null
+    }
+  ],
+  "songs": [
+    {
+      "slug": "chill_relax",
+      "title": "Chill, Relax",
+      "artist": "Coruscate",
+      "artist_real_name": "coruscate",
+      "license": "Attribution (3.0)",
+      "license_url": "http://creativecommons.org/licenses/by/3.0/",
+      "page": "https://ccmixter.org/files/Coruscate/68969",
+      "excerpt_start_s": 120.0,
+      "excerpt_s": 24.0,
+      "vocal_lag_ms": 0.0,
+      "versions": [
+        {
+          "id": "mix",
+          "label": "Mixture (input)",
+          "kind": "input"
+        },
+        {
+          "id": "A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "htdemucs",
+          "label": "HTDemucs · offline reference",
+          "kind": "offline"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ],
+      "bleed": [
+        {
+          "id": "bleed_input",
+          "label": "Vocal mic with bleed (−5 dB)",
+          "kind": "input"
+        },
+        {
+          "id": "bleed_A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ]
+    },
+    {
+      "slug": "that_is_that",
+      "title": "That is That",
+      "artist": "Kara Square",
+      "license": "Attribution (3.0)",
+      "license_url": "http://creativecommons.org/licenses/by/3.0/",
+      "page": "https://ccmixter.org/files/mindmapthat/60536",
+      "artist_real_name": "Kara Square",
+      "excerpt_start_s": 39.0,
+      "excerpt_s": 24.0,
+      "vocal_lag_ms": 0.0,
+      "source_provenance_sha256": "17f41caef5e24b58c653d9253ff454107b6925060bf91fd784c0d67a0d7b8213",
+      "versions": [
+        {
+          "id": "mix",
+          "label": "Mixture (input)",
+          "kind": "input"
+        },
+        {
+          "id": "A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "htdemucs",
+          "label": "HTDemucs · offline reference",
+          "kind": "offline"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ],
+      "bleed": [
+        {
+          "id": "bleed_input",
+          "label": "Vocal mic with bleed (−5 dB)",
+          "kind": "input"
+        },
+        {
+          "id": "bleed_A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ],
+      "accompaniment_lag_ms": 0.0
+    },
+    {
+      "slug": "falling",
+      "title": "Falling",
+      "artist": "Zutsuri",
+      "license": "Attribution (3.0)",
+      "license_url": "http://creativecommons.org/licenses/by/3.0/",
+      "page": "https://ccmixter.org/files/Zutsuri/55541",
+      "artist_real_name": "Zutsuri",
+      "excerpt_start_s": 75.0,
+      "excerpt_s": 24.0,
+      "vocal_lag_ms": 237.1,
+      "source_provenance_sha256": "5d6fc2f1cdd94256ad42b686403662b46e0498f5d1d9488af71be706a292eb0c",
+      "versions": [
+        {
+          "id": "mix",
+          "label": "Mixture (input)",
+          "kind": "input"
+        },
+        {
+          "id": "A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "htdemucs",
+          "label": "HTDemucs · offline reference",
+          "kind": "offline"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ],
+      "bleed": [
+        {
+          "id": "bleed_input",
+          "label": "Vocal mic with bleed (−5 dB)",
+          "kind": "input"
+        },
+        {
+          "id": "bleed_A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ],
+      "accompaniment_lag_ms": 237.1
+    },
+    {
+      "slug": "persephone",
+      "title": "Persephone",
+      "artist": "snowflake",
+      "artist_real_name": "Madam Snowflake",
+      "featuring": "Vidian, Dimitri Artemenko",
+      "license": "Attribution",
+      "license_url": "http://creativecommons.org/licenses/by/2.5/",
+      "page": "https://ccmixter.org/files/snowflake/22364",
+      "excerpt_start_s": 182.0,
+      "excerpt_s": 24.0,
+      "vocal_lag_ms": 0.0,
+      "versions": [
+        {
+          "id": "mix",
+          "label": "Mixture (input)",
+          "kind": "input"
+        },
+        {
+          "id": "A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "htdemucs",
+          "label": "HTDemucs · offline reference",
+          "kind": "offline"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ],
+      "bleed": [
+        {
+          "id": "bleed_input",
+          "label": "Vocal mic with bleed (−5 dB)",
+          "kind": "input"
+        },
+        {
+          "id": "bleed_A_sym1024",
+          "label": "A · long window",
+          "latency_ms": 23.2,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_B_sym256",
+          "label": "B · short window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_C_dual",
+          "label": "C · dual window",
+          "latency_ms": 5.8,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_E_sym128",
+          "label": "E · short window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "bleed_D_dual_2p9ms",
+          "label": "D · dual window",
+          "latency_ms": 2.9,
+          "kind": "causal"
+        },
+        {
+          "id": "vocal_stem",
+          "label": "Original vocal stem",
+          "kind": "reference"
+        }
+      ]
+    }
+  ]
+}

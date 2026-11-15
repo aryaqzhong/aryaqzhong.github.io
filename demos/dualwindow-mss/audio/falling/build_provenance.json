@@ -1,0 +1,244 @@
+{
+  "source_inspection": {
+    "schema_version": 1,
+    "slug": "falling",
+    "sample_rate": 44100,
+    "builder_sha256": "85dbf0642e1f7e3451ed0aabb16099ae761136c9d269580cc000910ae86b3479",
+    "source_provenance_sha256": "5d6fc2f1cdd94256ad42b686403662b46e0498f5d1d9488af71be706a292eb0c",
+    "sources": {
+      "mix_0.flac": {
+        "role": "mix",
+        "sha256": "9e00b2d6467ee0df27b4fd836d362283c42bdfd55a0f7408d937e183ef438f1f",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling.flac",
+        "nickname": "\"Falling\" Full Song",
+        "decoded_samples": 7910247,
+        "decoded_duration_s": 179.37068027210884,
+        "original_sample_rate": 44100,
+        "original_channels": 2,
+        "original_frames": 7910247
+      },
+      "vocals_0.flac": {
+        "role": "vocals",
+        "sha256": "8c02dce6ad3feb0dd212b52bd7c1b595acf18f8efd5fe08d7d22c411c24e507f",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling_8.flac",
+        "nickname": "\"Falling\" Lead Vox",
+        "decoded_samples": 7315661,
+        "decoded_duration_s": 165.8880045351474,
+        "original_sample_rate": 48000,
+        "original_channels": 1,
+        "original_frames": 7962624
+      },
+      "vocals_1.flac": {
+        "role": "vocals",
+        "sha256": "edd5a5366206f2ac103f026da78cef286422ca55a2014ea443bee2448d9c27a3",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling_1.flac",
+        "nickname": "\"Falling\" Harmony Vox",
+        "decoded_samples": 7163252,
+        "decoded_duration_s": 162.43201814058958,
+        "original_sample_rate": 48000,
+        "original_channels": 1,
+        "original_frames": 7796736
+      },
+      "accompaniment_0.flac": {
+        "role": "accompaniment",
+        "sha256": "1cdfd9139af31d49cb78263466c5b3984a0f2dcde8af8f781c776f1651ccb7e0",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling_2.flac",
+        "nickname": "\"Falling\" Dreamy Synth Pa",
+        "decoded_samples": 8385785,
+        "decoded_duration_s": 190.15385487528346,
+        "original_sample_rate": 48000,
+        "original_channels": 2,
+        "original_frames": 9127385
+      },
+      "accompaniment_1.flac": {
+        "role": "accompaniment",
+        "sha256": "b91b30dad8a3e17074327217f6aba6def19f3a68e607fc06631803026e3a7ea2",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling_5.flac",
+        "nickname": "\"Falling\" Synth Bass",
+        "decoded_samples": 7208655,
+        "decoded_duration_s": 163.46156462585034,
+        "original_sample_rate": 48000,
+        "original_channels": 2,
+        "original_frames": 7846155
+      },
+      "accompaniment_2.flac": {
+        "role": "accompaniment",
+        "sha256": "2a02b4b38c120f25369a9fec873c1331015f542ceff155491633884c216121ff",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling_4.flac",
+        "nickname": "\"Falling\" Mellotron Flute",
+        "decoded_samples": 7255450,
+        "decoded_duration_s": 164.52267573696145,
+        "original_sample_rate": 48000,
+        "original_channels": 2,
+        "original_frames": 7897088
+      },
+      "accompaniment_3.flac": {
+        "role": "accompaniment",
+        "sha256": "e67d6a51dc054838888a74fa305296809ffa8d40a13d1b239656e25aef26aa51",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling_3.flac",
+        "nickname": "\"Falling\" Delayed Chime S",
+        "decoded_samples": 7208655,
+        "decoded_duration_s": 163.46156462585034,
+        "original_sample_rate": 48000,
+        "original_channels": 2,
+        "original_frames": 7846155
+      },
+      "accompaniment_4.flac": {
+        "role": "accompaniment",
+        "sha256": "d4f99a00563018ca02d6e72506dfc45e5e3237ad827df24a8cd0eea247374a68",
+        "source": "https://ccmixter.org/content/Zutsuri/Zutsuri_-_Falling_6.flac",
+        "nickname": "\"Falling\" Gritty Synth Lo",
+        "decoded_samples": 7503821,
+        "decoded_duration_s": 170.15467120181407,
+        "original_sample_rate": 48000,
+        "original_channels": 2,
+        "original_frames": 8167424
+      }
+    },
+    "attribution": {
+      "title": "Falling",
+      "artist": "Zutsuri",
+      "artist_real_name": "Zutsuri",
+      "license": "Attribution (3.0)",
+      "license_url": "http://creativecommons.org/licenses/by/3.0/",
+      "page": "https://ccmixter.org/files/Zutsuri/55541"
+    },
+    "mix_duration_s": 179.37068027210884,
+    "alignment": {
+      "vocals": {
+        "lag_samples": 10456,
+        "lag_ms": 237.09750566893422,
+        "correlation": 0.24535856830087227,
+        "source_duration_s": [
+          165.8880045351474,
+          162.43201814058958
+        ],
+        "coverage_start_s": 0.23709750566893423,
+        "coverage_end_s": 166.12510204081633,
+        "local_probes": [
+          {
+            "start_s": 5.0,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -31.55880123994756,
+            "residual_lag_samples": 12,
+            "correlation": 0.3433898183937491
+          },
+          {
+            "start_s": 74.68532879818594,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -27.916718825743075,
+            "residual_lag_samples": -16,
+            "correlation": 0.2760518673188192
+          },
+          {
+            "start_s": 149.37068027210884,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -30.41081541615356,
+            "residual_lag_samples": -48,
+            "correlation": 0.2220193775891894
+          }
+        ]
+      },
+      "accompaniment": {
+        "lag_samples": 10456,
+        "lag_ms": 237.09750566893422,
+        "correlation": 0.2542224550699054,
+        "source_duration_s": [
+          190.15385487528346,
+          163.46156462585034,
+          164.52267573696145,
+          163.46156462585034,
+          170.15467120181407
+        ],
+        "coverage_start_s": 0.23709750566893423,
+        "coverage_end_s": 179.37068027210884,
+        "local_probes": [
+          {
+            "start_s": 5.0,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -16.3155735174689,
+            "residual_lag_samples": 12,
+            "correlation": 0.3685576064242954
+          },
+          {
+            "start_s": 74.68532879818594,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -13.08823601979743,
+            "residual_lag_samples": -8,
+            "correlation": 0.2399207691830278
+          },
+          {
+            "start_s": 149.37068027210884,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -14.476915361386617,
+            "residual_lag_samples": -32,
+            "correlation": 0.3210283284258753
+          }
+        ]
+      }
+    },
+    "lag_protocol": "independent component-to-mix cross-correlation; first 90 s; decimation 4; search +/-5 s",
+    "probe_protocol": "30 s early/middle/late aligned windows; residual search +/-0.1 s; skip below -60 dBFS",
+    "excerpt_start_s": 75.0,
+    "excerpt_s": 24.0,
+    "excerpt_selection": {
+      "mode": "audited_explicit",
+      "requested_start_s": 75.0
+    },
+    "excerpt_protocol": "explicit audited reference-vocal interval, rounded to nearest sample; at least 5 s preceding context"
+  },
+  "replaced_slug": "king_richards_blues",
+  "previous_manifest_sha256": "bd31ea82cd622445511f781bd6d52fac45ce3fcda96e9df53789d0c12bf32307",
+  "model_checkpoints": {
+    "A_sym1024": "c91dc2425e8d44c41c9ddb3e559b90716078f33c1ce036dc4e59e53cb89b7593",
+    "B_sym256": "dcf43834ed9603eb3dabd73baf915f72a3859654acf3b7e06796ae05c2e6d68c",
+    "C_dual": "3cf556a74f50d53055648d8f3a91fcb23dd30408baefe27edaae3bd6fe66a851",
+    "E_sym128": "6824af72b4c9ab4a7e5154180e914fc71f86b171c36cd7e67094e643aa6dd6c4",
+    "D_dual_2p9ms": "6befd477627ff0acbd2cd19f2675395dff7668c8c5a0233874ed4c9e6a241912"
+  },
+  "offline_reference": {
+    "name": "htdemucs",
+    "shifts": 1,
+    "split": true,
+    "overlap": 0.25,
+    "seed": 0
+  },
+  "numerics": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "dtype": "float32",
+    "device": "cpu",
+    "torch_version": "2.15.0+cu132"
+  },
+  "render_protocol": "full continuous mono44.1k inference; common24s excerpt; RMS-20dBFS/peak-1dBFS clips",
+  "asset_sha256": {
+    "A_sym1024.mp3": "b13b832a656e2769a6befa2ce0c2f35c6b3bf7be48579ec36e6194efbbe78ec7",
+    "A_sym1024.png": "656ce218b8b31c00f5c3f8b841fc771502e67007a479c0d0893d45f131792772",
+    "B_sym256.mp3": "4597b40a991f43c110c8a9cf2ec0b4bbcf26cbbe28e53f0426c76a66b9347024",
+    "B_sym256.png": "bf89dfef6e8719df8db72016966fbe46230c8c040d7a714dad9347daa51a6685",
+    "C_dual.mp3": "aad0a607c43482ec08b2a4d1720135bc021a68c1123177d05fbf5cc695ac54cb",
+    "C_dual.png": "9423054f1019a7ec86430d2b33190539644113e3877742f9ef5d225f4b15f6b8",
+    "D_dual_2p9ms.mp3": "db1df03c123812c396f7927978bd330e26b0322b054035b53977f70ef8597e7d",
+    "D_dual_2p9ms.png": "7fe9e27db8c00e9e78cfc4145bdccce3c65bec1b5bb3a0e553f2b4c02393e2a2",
+    "E_sym128.mp3": "f8cf5526581bb09a5ff846f7af12034c0e6570940dfae9fd0f5aaad40c457fe7",
+    "E_sym128.png": "8cd0c2c7a896db898f01b8887b5a00af3337892fa132cd4dc96b98e9d671ccff",
+    "bleed_A_sym1024.mp3": "6ed7b4fdcf63920f6b857a9a4e1650b2fb427ce65962e71f581b1f02f604ed0f",
+    "bleed_A_sym1024.png": "d98c53e95435c6efa4cf16a721dfdfcc8412998c18be6ba66ec4258d407fec96",
+    "bleed_B_sym256.mp3": "4f4764a6e87f514f0fbe84f3be6fdd3757109bbe2dde1c5304649f66fb89248a",
+    "bleed_B_sym256.png": "ccc8cf6966f067f66d27a9fa20786df859a6016a4a3b841c318a9a983b4ee35b",
+    "bleed_C_dual.mp3": "f8e792e2fad26135d0c174710ec9988d82ae57b054b5e87cfae3016d8f07a74b",
+    "bleed_C_dual.png": "136eba688ab1f0c849151d013f866eec97065144e6634cc3f16b2e42751f507d",
+    "bleed_D_dual_2p9ms.mp3": "b6bd82284a35dcd907f0194da5d0ed8e47a11f22ae3088a67043613df48fd76f",
+    "bleed_D_dual_2p9ms.png": "81519e774ad403b79f2f77e7f03a0ef326cb14cbf0a6eda809ea88ae9f2f50b9",
+    "bleed_E_sym128.mp3": "271c84d127ff7d8a0c4761cab2f5daa44be89c9ea050473bee569652533ede07",
+    "bleed_E_sym128.png": "f6fe1cd84f490566744d42432121c692c24f7a428aa131e8207c83b09fa7d494",
+    "bleed_input.mp3": "ab7151f7a89380132f2a86b5d0ee068da67d8bcf8e5656ac1732cdb26bc4e8a9",
+    "bleed_input.png": "bcb1ced32180a0099caf5ac54b0db511d078f69e85a769ed40d28c0f7fbe40a2",
+    "htdemucs.mp3": "6ef7189478298ca2eb65d7e6785d6457fd91948579289481dd151547b6e2ed1d",
+    "htdemucs.png": "dd8dae8a836a3201874706666c02376fc7a618b046115a9d23a7daebceda1c56",
+    "mix.mp3": "5adbcd374bae88457b4535503fded2888a99c89a88169b13c448928da110e00b",
+    "mix.png": "c5280df3c4593037b501fec8d97b8474fa10f99e3cfe840ffacdc5005c51aaa1",
+    "vocal_stem.mp3": "ad63956290e6e79c1e8bd21892460f18890a724d9c4403551676965bdaf6bb0f",
+    "vocal_stem.png": "b54913fcd48dfa1d3f4253ec09bc12742f0d8fb22ff9aa2a03803af166f0e8d7"
+  }
+}

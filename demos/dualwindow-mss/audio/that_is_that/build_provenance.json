@@ -1,0 +1,204 @@
+{
+  "source_inspection": {
+    "schema_version": 1,
+    "slug": "that_is_that",
+    "sample_rate": 44100,
+    "builder_sha256": "500fd675da4c7df8b66ca5302ea7ef34492e52df1bc477d49248c9cba5adb136",
+    "source_provenance_sha256": "17f41caef5e24b58c653d9253ff454107b6925060bf91fd784c0d67a0d7b8213",
+    "sources": {
+      "mix_0.flac": {
+        "role": "mix",
+        "sha256": "84d64ad4a83c8826e00bcd28d0eb4c949e553b81400518760f214e08c48e9066",
+        "source": "https://ccmixter.org/content/mindmapthat/mindmapthat_-_That_is_That.flac",
+        "nickname": "FLAC",
+        "decoded_samples": 3612808,
+        "decoded_duration_s": 81.92308390022676,
+        "original_sample_rate": 44100,
+        "original_channels": 2,
+        "original_frames": 3612808
+      },
+      "vocals_0.flac": {
+        "role": "vocals",
+        "sha256": "98760474ec39ae3455f92332ca6cec250c93cf8b1137724777de4632111946e6",
+        "source": "https://ccmixter.org/content/mindmapthat/mindmapthat_-_That_is_That.zip",
+        "nickname": "Vox & Uke",
+        "decoded_samples": 3612808,
+        "decoded_duration_s": 81.92308390022676,
+        "original_sample_rate": 44100,
+        "original_channels": 1,
+        "original_frames": 3612808
+      },
+      "vocals_1.flac": {
+        "role": "vocals",
+        "sha256": "1412cc1546a95751683af56824fd9262649d7bcbac99404cdc40b0e0d5a8522e",
+        "source": "https://ccmixter.org/content/mindmapthat/mindmapthat_-_That_is_That.zip",
+        "nickname": "Vox & Uke",
+        "decoded_samples": 3612808,
+        "decoded_duration_s": 81.92308390022676,
+        "original_sample_rate": 44100,
+        "original_channels": 1,
+        "original_frames": 3612808
+      },
+      "accompaniment_0.flac": {
+        "role": "accompaniment",
+        "sha256": "a3a93c602651ed90fd8e29caee0772d756773411eaa79809bc0d9752a68a90b8",
+        "source": "https://ccmixter.org/content/mindmapthat/mindmapthat_-_That_is_That.zip",
+        "nickname": "Vox & Uke",
+        "decoded_samples": 3612808,
+        "decoded_duration_s": 81.92308390022676,
+        "original_sample_rate": 44100,
+        "original_channels": 1,
+        "original_frames": 3612808
+      },
+      "accompaniment_1.flac": {
+        "role": "accompaniment",
+        "sha256": "e5a6615313ac48a10f94d6c41f6ff329e1120ee151804143c7855820aaf8cb0d",
+        "source": "https://ccmixter.org/content/mindmapthat/mindmapthat_-_That_is_That.zip",
+        "nickname": "Vox & Uke",
+        "decoded_samples": 3612808,
+        "decoded_duration_s": 81.92308390022676,
+        "original_sample_rate": 44100,
+        "original_channels": 2,
+        "original_frames": 3612808
+      }
+    },
+    "attribution": {
+      "title": "That is That",
+      "artist": "Kara Square",
+      "artist_real_name": "Kara Square",
+      "license": "Attribution (3.0)",
+      "license_url": "http://creativecommons.org/licenses/by/3.0/",
+      "page": "https://ccmixter.org/files/mindmapthat/60536"
+    },
+    "mix_duration_s": 81.92308390022676,
+    "alignment": {
+      "vocals": {
+        "lag_samples": 0,
+        "lag_ms": 0.0,
+        "correlation": 0.609873369472708,
+        "source_duration_s": [
+          81.92308390022676,
+          81.92308390022676
+        ],
+        "coverage_start_s": 0.0,
+        "coverage_end_s": 81.92308390022676,
+        "local_probes": [
+          {
+            "start_s": 5.0,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -27.084281698783215,
+            "residual_lag_samples": 0,
+            "correlation": 0.5422411663721937
+          },
+          {
+            "start_s": 25.96154195011338,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -25.219706641296163,
+            "residual_lag_samples": 0,
+            "correlation": 0.700195647736528
+          },
+          {
+            "start_s": 51.92308390022676,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -25.52856027963361,
+            "residual_lag_samples": 0,
+            "correlation": 0.5704050862445836
+          }
+        ]
+      },
+      "accompaniment": {
+        "lag_samples": 0,
+        "lag_ms": 0.0,
+        "correlation": 0.7599039781548633,
+        "source_duration_s": [
+          81.92308390022676,
+          81.92308390022676
+        ],
+        "coverage_start_s": 0.0,
+        "coverage_end_s": 81.92308390022676,
+        "local_probes": [
+          {
+            "start_s": 5.0,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -23.65902220243509,
+            "residual_lag_samples": 0,
+            "correlation": 0.8209078625313493
+          },
+          {
+            "start_s": 25.96154195011338,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -26.295786270614272,
+            "residual_lag_samples": 0,
+            "correlation": 0.6672980860029074
+          },
+          {
+            "start_s": 51.92308390022676,
+            "duration_s": 30.0,
+            "component_rms_dbfs": -24.089045703767876,
+            "residual_lag_samples": 0,
+            "correlation": 0.782927897605174
+          }
+        ]
+      }
+    },
+    "lag_protocol": "independent component-to-mix cross-correlation; first 90 s; decimation 4; search +/-5 s",
+    "probe_protocol": "30 s early/middle/late aligned windows; residual search +/-0.1 s; skip below -60 dBFS",
+    "excerpt_start_s": 39.0,
+    "excerpt_s": 24.0,
+    "excerpt_protocol": "maximum reference-vocal energy in a 24 s interval at integer-second starts, after 5 s"
+  },
+  "replaced_slug": "falling",
+  "previous_manifest_sha256": "79eb32fc73edb51e30b9d875b4cf0b323e79a9298e4ea70e7c3a75c4d8d2668f",
+  "model_checkpoints": {
+    "A_sym1024": "c91dc2425e8d44c41c9ddb3e559b90716078f33c1ce036dc4e59e53cb89b7593",
+    "B_sym256": "dcf43834ed9603eb3dabd73baf915f72a3859654acf3b7e06796ae05c2e6d68c",
+    "C_dual": "3cf556a74f50d53055648d8f3a91fcb23dd30408baefe27edaae3bd6fe66a851",
+    "E_sym128": "6824af72b4c9ab4a7e5154180e914fc71f86b171c36cd7e67094e643aa6dd6c4",
+    "D_dual_2p9ms": "6befd477627ff0acbd2cd19f2675395dff7668c8c5a0233874ed4c9e6a241912"
+  },
+  "offline_reference": {
+    "name": "htdemucs",
+    "shifts": 1,
+    "split": true,
+    "overlap": 0.25,
+    "seed": 0
+  },
+  "numerics": {
+    "cuda_matmul_allow_tf32": false,
+    "cudnn_allow_tf32": false,
+    "dtype": "float32",
+    "device": "cpu",
+    "torch_version": "2.15.0+cu132"
+  },
+  "render_protocol": "full continuous mono44.1k inference; common24s excerpt; RMS-20dBFS/peak-1dBFS clips",
+  "asset_sha256": {
+    "A_sym1024.mp3": "33b135eca3ce1e047622ea95a2cbb29f452635fcbab874ba86e58d2644461fec",
+    "A_sym1024.png": "cec07d6fc2bfbca837a35c22544ad0283f96f7557aa5d9219bbab9799eabf29d",
+    "B_sym256.mp3": "65724f15a161d1d6913191f1e3e29902fe424bbbd9174f0e708c3da4cce409b4",
+    "B_sym256.png": "9445bc8e68f50d0530eb5a661b215d910c7dd480d94751549ec201a0574e4d3e",
+    "C_dual.mp3": "f7860732f343d09eb457088a429164570d7c1d263c89c61df897a28a8aa3fe5f",
+    "C_dual.png": "83a42083de6a2b1b504484b4f7a8320560abf9f59c0a451e210436e2b1d2ca18",
+    "D_dual_2p9ms.mp3": "e361d3609320616a20c11372a8659bbd12cf2326731c14181807b9c8f93bcc55",
+    "D_dual_2p9ms.png": "5a4064d2dbb6d83debd181c3068d0d86cbfe41c77cee6296a409f53d4d70b3fc",
+    "E_sym128.mp3": "41fbfe1345113b97ea522cf3471291158c0e27fc47f27b03f1c42b227dbdd7a7",
+    "E_sym128.png": "d5b1829d881ef7c0ff8805e256b16c391fa67e9ff9ae7301c3099e0f60a8766c",
+    "bleed_A_sym1024.mp3": "9d232db9fe72c46c2a0e6da3dee81c75e0d5ea2d79aa4ded253279c7c8d6f327",
+    "bleed_A_sym1024.png": "cff590d883829a5ffcfa77e32a61bbbd857e7e7704337b44440c3028022bf2ce",
+    "bleed_B_sym256.mp3": "dcb5883ada9c5dd94b932b48e5ab12a3160c3e3d680554062fa449b982fb1b69",
+    "bleed_B_sym256.png": "1b0b2e828b8d13b392ca7847b77dc57b469f84bd3b243fd786b577b9d04f1947",
+    "bleed_C_dual.mp3": "a2ce08dc61f1823b0f9063ab8371150e89a6df6b670de0ef5ff423506bec60ee",
+    "bleed_C_dual.png": "46d8d27a30df177ca1e085b014aa2676e8e53131b2453e819e5c10dc1ca29e3b",
+    "bleed_D_dual_2p9ms.mp3": "734c7b953faaa6d6dc1297f1d241227a2792db18e5515e03284fec5f68edb413",
+    "bleed_D_dual_2p9ms.png": "448a5f0b17bb8648eaae89dce4b0fa1e0eb4baa30dc70d95f70fe3d918219cbd",
+    "bleed_E_sym128.mp3": "634d3b0efc69fa82293e6395412a010dc696035e78a13532bbb91778acd9ecdc",
+    "bleed_E_sym128.png": "60b242e1fb877aeffc2c45089caaece54c856b76031499590562b0701bbfdf5e",
+    "bleed_input.mp3": "c8b9762a3038c402101728e1e6b343df34fd6fe9e4ad61a9a423b80474d2c1bb",
+    "bleed_input.png": "1997ad29b336355457477eaf226e2b5b0dabbc58f93ade131b79dbbfe2dae9af",
+    "htdemucs.mp3": "946d4b4b648d3ba2ad908e2aa1c889816d472c9af32ec3d11ec8b8aebeaaf855",
+    "htdemucs.png": "435c9b396e415baf42997f9bcb2b1aa3cd2f3fd7e7d725f86f1231244acce162",
+    "mix.mp3": "65a789d86dec746a6f4568597eb7f85ca8928da731482bf3849351a3a65e8388",
+    "mix.png": "f58817a1b301dae2a0a9a09dc76a528951cba3bc1961d0a6263fdb835314e669",
+    "vocal_stem.mp3": "ad4daded70d0f6166d6488e6f613c7f0beb8706550b0fe5f6c0b6d0df84b5677",
+    "vocal_stem.png": "5b1b86ec0c2425daf924b360c8720cbb878937b2cc030e737b5de31757ad9818"
+  }
+}
