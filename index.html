@@ -1,0 +1,1532 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+
+<title>Arya Q. Zhong</title>
+<meta name="description" content="Arya Q. Zhong's personal site: research, publications, cv, and a gallery of work.">
+<link rel="canonical" href="https://example.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Arya Q. Zhong">
+<meta property="og:title" content="Arya Q. Zhong">
+<meta property="og:description" content="Arya Q. Zhong's personal site: research, publications, cv, and a gallery of work.">
+<meta property="og:url" content="https://example.com/">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='84' text-anchor='middle'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wdth,wght@0,75..100,400..700;1,75..100,400..700&display=swap">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Arya Q. Zhong",
+  "alternateName": ["Arya Zhong"],
+  "url": "https://example.com/",
+  "sameAs": [
+    "https://github.com/your-username",
+    "https://www.linkedin.com/in/your-username",
+    "https://scholar.google.com/citations?user=your-id"
+  ]
+}
+</script>
+<script>document.documentElement.classList.add('js');</script>
+
+<style>
+:root {
+  --paper:    #ffffff;
+  --ink:      #000000;
+  --soft:     #4d4d4d;
+  --muted:    #737373;
+  --line:     #e4e4e4;
+  --fill:     #8c8c8c;
+  --select:   #ebebeb;
+  --media-bg: #f2f2f2;
+
+  --font: "Instrument Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --size: 15px;
+  --lede: 1.375rem;
+  --hero: clamp(3rem, 1rem + 8vw, 8.5rem);
+  --pad:  clamp(1.1rem, 2.4vw, 1.75rem);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 var(--size) / 1.55 var(--font);
+}
+h1, h2, h3, p, ul, dl, dd, figure { margin: 0; }
+ul { padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+::selection { background: var(--select); }
+:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; }
+h1[tabindex="-1"]:focus { outline: none; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.fill {
+  color: var(--fill);
+  text-decoration-line: underline; text-decoration-style: dotted;
+  text-decoration-thickness: 1px; text-underline-offset: .2em;
+}
+.prose a, .note a, .cv-title a, .cv-sub a, .cv-note a {
+  text-decoration-line: underline; text-decoration-color: var(--line);
+  text-decoration-thickness: 1px; text-underline-offset: .22em;
+}
+.prose a:hover, .note a:hover, .cv-title a:hover, .cv-sub a:hover, .cv-note a:hover { text-decoration-color: currentColor; }
+.card h3 a:hover, .pub h3 a:hover { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+
+.top { position: relative; z-index: 20; padding: var(--pad); }
+.top .tag { color: var(--muted); white-space: nowrap; }
+.menu { display: none; }
+
+main { flex: 1; width: 100%; padding: 0 var(--pad); }
+.js .page { display: none; }
+.js .page.is-current { display: block; }
+body.on-home main { display: grid; place-items: center; }
+[data-page="home"] { text-align: center; padding: 2rem 0 4rem; }
+.page:not([data-page="home"]) { max-width: 62rem; margin: 0 auto; padding: clamp(1.5rem, 5vh, 3.5rem) 0 5rem; }
+.hero { display: inline-block; font-size: var(--hero); font-weight: 400; line-height: 1; user-select: none; }
+.hero .ch { display: inline-block; white-space: pre; }
+
+.lede { font-size: var(--lede); line-height: 1.45; max-width: 36em; }
+.label { font-size: 1em; font-weight: 400; color: var(--muted); margin: 3.5rem 0 1rem; }
+.news {
+  max-width: 44rem; max-height: 12rem; overflow-y: auto; padding-bottom: 3rem;
+  -webkit-mask-image: linear-gradient(#000 62%, transparent);
+          mask-image: linear-gradient(#000 62%, transparent);
+}
+.news li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: .3rem 0; }
+.news time { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 3rem 1.75rem; }
+.media { position: relative; display: block; aspect-ratio: var(--ratio, 4 / 3); overflow: hidden; background: var(--media-bg); }
+.media svg, .media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.card h3 { font-size: 1em; font-weight: var(--title-weight, 500); line-height: 1.35; margin-top: .9rem; }
+.card-body > * + * { margin-top: .35rem; }
+.badge { font-size: .85em; }
+.badge span { margin-right: .4em; }
+.desc { color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: .3rem 1.2rem; font-size: .85em; padding-top: .15rem; }
+
+.cv { --cv-date: 10.5rem; --cv-gap: 2rem; font-size: 1rem; line-height: 1.45; }
+.cv-head, .cv-sec h2 { margin-left: calc(var(--cv-date) + var(--cv-gap)); }
+.cv-name { font-size: clamp(2.5rem, 2rem + 1.5vw, 3.25rem); font-weight: 400; line-height: 1; letter-spacing: -.03em; }
+.cv-role { margin-top: .55rem; color: var(--muted); }
+.cv-contacts { display: flex; flex-wrap: wrap; align-items: baseline; gap: .35rem 1.4rem; margin-top: 1.1rem; font-size: .875rem; color: var(--muted); }
+.cv-contacts a { color: var(--ink); }
+.cv-sec { margin-top: 3.25rem; }
+.cv-sec h2 { font-size: 1.625rem; font-weight: 500; line-height: 1.2; letter-spacing: -.01em; margin-bottom: .35rem; }
+.cv-entry { display: grid; grid-template-columns: var(--cv-date) minmax(0, 1fr); gap: var(--cv-gap); align-items: baseline; padding: 1rem 0 .25rem; }
+.cv-when { text-align: right; font-size: .875rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cv-what > * + * { margin-top: .15rem; }
+.cv-what > .cv-title:not(:first-child) { margin-top: .8rem; }
+.cv-title { font-weight: 500; }
+.cv-where { font-weight: 400; color: var(--muted); }
+.cv-sub { color: var(--soft); }
+.cv-note { font-size: .875rem; color: var(--muted); }
+.cv-note .me { color: var(--soft); }
+.cv .tags { padding-top: .3rem; }
+
+body.on-gallery {
+  --paper:    #0d0d0d;
+  --ink:      #f2f2ee;
+  --soft:     rgba(242, 242, 238, .72);
+  --muted:    rgba(242, 242, 238, .52);
+  --line:     rgba(255, 255, 255, .1);
+  --fill:     rgba(242, 242, 238, .4);
+  --select:   rgba(255, 255, 255, .16);
+  --media-bg: #201f1e;
+  color-scheme: dark;
+}
+body.on-gallery .top { background: rgba(13, 13, 13, .72); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255, 255, 255, .07); }
+
+.gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 2.75rem 2rem; }
+.gallery-intro { grid-column: 1 / -1; }
+.gallery-intro h1 { font-size: clamp(2.5rem, 2rem + 2vw, 3.5rem); font-weight: 400; line-height: 1; letter-spacing: -.03em; }
+.gallery-intro p { margin-top: .7rem; max-width: 30em; color: var(--muted); }
+.gallery-hint { display: none; }
+.print { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 1rem; align-items: baseline; align-content: start; }
+.print .media { grid-column: 1 / -1; aspect-ratio: 4 / 3; border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, .45); transition: transform .3s cubic-bezier(.22, 1, .36, 1), box-shadow .3s; }
+.print .media::after { content: ""; position: absolute; inset: 0; border: 1px solid var(--line); border-radius: inherit; pointer-events: none; transition: border-color .16s; }
+.print:hover .media::after { border-color: rgba(255, 255, 255, .2); }
+.print-title { margin-top: .85rem; }
+.print-meta { margin-top: .85rem; color: var(--muted); font-size: .85em; font-variant-numeric: tabular-nums; }
+.print-desc { grid-column: 1 / -1; margin-top: .1rem; color: var(--muted); font-size: .85em; }
+.gc:not(.is-canvas) .print:hover .media { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(0, 0, 0, .55); }
+.gallery-intro, .print-title, .print-meta { transition: opacity .3s ease-out; }
+
+html.gallery-lock, html.gallery-lock body { overflow: hidden; }
+body.gallery-canvas .top { position: fixed; top: 0; left: 0; right: 0; }
+body.gallery-canvas .foot { display: none; }
+.gc.is-canvas {
+  position: fixed; inset: 0; z-index: 1; overflow: hidden;
+  touch-action: none; overscroll-behavior: none;
+  user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
+}
+.gc.is-canvas .gallery { display: block; position: absolute; left: 0; top: 0; transform-origin: 0 0; will-change: transform; }
+.gc.is-canvas .gallery > * {
+  position: absolute; left: 0; top: 0; width: var(--w); z-index: var(--z, 1);
+  transform: translate3d(var(--x, 0), var(--y, 0), 0) rotate(var(--r, 0deg)) scale(var(--k, 1));
+}
+.gc.is-canvas .gallery-intro h1 { font-size: 4.25rem; }
+.gc.is-canvas .gallery-intro p { max-width: none; font-size: 1.5rem; line-height: 1.55; }
+.gc.is-canvas .gallery-hint { display: block; color: rgba(242, 242, 238, .35); }
+.gc.is-canvas .print { display: block; -webkit-user-drag: none; -webkit-touch-callout: none; transition: transform .14s cubic-bezier(.33, 1, .68, 1); }
+.gc.is-canvas .print img { pointer-events: none; -webkit-user-drag: none; }
+.gc.is-canvas .print .media { aspect-ratio: var(--ratio, 4 / 3); border-radius: 12px; }
+.gc.is-canvas .print-title { margin-top: .6rem; font-size: 1.5rem; color: var(--muted); }
+.gc.is-canvas .print-meta { display: none; }
+.gc.is-canvas .print-desc { position: absolute; top: 100%; left: 0; right: 0; margin-top: .35rem; font-size: 1rem; color: rgba(242, 242, 238, .35); opacity: 0; pointer-events: none; transition: opacity .14s; }
+@media (hover: hover) {
+  .gc.is-canvas .print:hover { --k: 1.015; z-index: calc(var(--z, 1) + 10); }
+  .gc.is-canvas .print:hover .media { box-shadow: 0 14px 34px rgba(0, 0, 0, .55); }
+  .gc.is-canvas .print:hover .print-desc { opacity: 1; }
+}
+.gc.is-canvas .print.is-dragging { --k: 1.02; z-index: 9000; transition: none; }
+.gc.is-canvas .print.is-dragging .media { box-shadow: 0 24px 56px rgba(0, 0, 0, .62); }
+.gc.is-canvas .print.is-moving { transition: none; }
+html.is-panning .cursor { width: 8px; height: 8px; margin: -4px 0 0 -4px; }
+
+[data-page="gallery"] { position: relative; }
+.gc-toggle, .gc-fit { font-size: .85em; color: var(--muted); transition: color .16s, opacity .16s; }
+.gc-toggle:hover, .gc-fit:hover { color: var(--ink); }
+.gc-toggle { position: absolute; top: clamp(1.5rem, 5vh, 3.5rem); right: 0; z-index: 30; }
+.gc-fit { display: none; }
+body.gallery-canvas .gc-toggle { position: fixed; top: calc(var(--top-h, 4.5rem) + 1rem); right: var(--pad); text-shadow: 0 0 8px #0d0d0d; }
+body.gallery-canvas .gc-fit { display: block; position: fixed; right: var(--pad); bottom: 1.25rem; z-index: 30; opacity: 0; visibility: hidden; text-shadow: 0 0 8px #0d0d0d; }
+body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
+
+.gc.is-flying .print .media { visibility: hidden; }
+.gc.is-flying .gallery-intro, .gc.is-flying .print-title, .gc.is-flying .print-meta, .gc.is-flying .print-desc { opacity: 0; }
+.gv-layer { position: fixed; inset: 0; z-index: 200; pointer-events: none; }
+.gv-layer .gv-fly { position: absolute; margin: 0; aspect-ratio: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, .5); }
+
+.year { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: 1.4rem 0; border-top: 1px solid var(--line); }
+.year:last-of-type { border-bottom: 1px solid var(--line); }
+.yr { font-size: 1em; font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pub { max-width: 46rem; }
+.pub + .pub { margin-top: 1.6rem; }
+.pub > * + * { margin-top: .15rem; }
+.pub h3 { font-size: 1em; font-weight: 500; line-height: 1.4; }
+.authors { color: var(--muted); }
+.authors .me { color: var(--ink); }
+.venue { display: flex; flex-wrap: wrap; gap: 0 1rem; font-style: italic; }
+.award { font-style: normal; }
+.pub .tags { padding-top: .4rem; }
+.note { margin-top: 2rem; color: var(--muted); font-size: .85em; }
+
+.bib { position: relative; max-width: 44rem; margin-top: .8rem; background: var(--media-bg); }
+.bib pre { margin: 0; padding: .9rem 4.75rem .9rem 1rem; overflow-x: auto; font: .78rem/1.65 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+.copy { position: absolute; top: .75rem; right: .95rem; font-size: .85em; }
+
+.crumb { margin-bottom: 2.5rem; color: var(--muted); }
+.crumb a { color: var(--ink); }
+.crumb.end { margin: 4.5rem 0 0; }
+.title { font-size: clamp(2rem, 1.25rem + 2.6vw, 3.25rem); font-weight: 400; line-height: 1.06; letter-spacing: -.03em; max-width: 16em; }
+.subtitle { margin-top: .7rem; font-size: var(--lede); line-height: 1.4; color: var(--muted); max-width: 28em; }
+.byline { margin: 1.75rem 0 .9rem; }
+.byline > * + * { margin-top: .2rem; }
+.prose { max-width: 36em; }
+.prose > * + * { margin-top: 1em; }
+.prose ul { padding-left: 1.3em; list-style: "⋆  "; }
+.prose li::marker { color: var(--muted); }
+.prose li + li { margin-top: .35em; }
+.teaser figcaption, .figs figcaption { margin-top: .6rem; font-size: .85em; color: var(--muted); }
+
+.teaser { margin: 2.75rem 0 1.5rem; }
+.block { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: .75rem 2rem; padding: 1.6rem 0; }
+.block .label { margin: 0; }
+.figs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.75rem; }
+
+.foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem 1.5rem; padding: var(--pad); }
+
+.cursor { position: fixed; left: 0; top: 0; z-index: 9999; pointer-events: none; opacity: 0; }
+.cursor.is-on { opacity: 1; }
+
+@media (min-width: 761px) {
+  .top { display: grid; grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr); align-items: baseline; column-gap: 3.5rem; }
+  .top .tag { grid-column: 2; text-align: center; }
+  .top .links { grid-column: 3; display: flex; justify-content: flex-end; gap: 1.6rem; }
+}
+@media (min-width: 761px) and (max-width: 899px) { .top .tag { display: none; } }
+.top .name { font-weight: 600; justify-self: start; }
+
+.top a, .foot a, .tags a, .tags button, .crumb a, .cv-contacts a { position: relative; }
+.top a::after, .foot a::after, .tags a::after, .tags button::after, .crumb a::after, .copy::after, .cv-contacts a::after, .gc-toggle::after, .gc-fit::after {
+  content: ""; position: absolute; inset: -7px -10px; pointer-events: none;
+  opacity: 0; transition: opacity .18s, inset .18s;
+  --l: 6px;
+  background:
+    linear-gradient(currentColor, currentColor) top left / var(--l) 1px,
+    linear-gradient(currentColor, currentColor) top left / 1px var(--l),
+    linear-gradient(currentColor, currentColor) top right / var(--l) 1px,
+    linear-gradient(currentColor, currentColor) top right / 1px var(--l),
+    linear-gradient(currentColor, currentColor) bottom left / var(--l) 1px,
+    linear-gradient(currentColor, currentColor) bottom left / 1px var(--l),
+    linear-gradient(currentColor, currentColor) bottom right / var(--l) 1px,
+    linear-gradient(currentColor, currentColor) bottom right / 1px var(--l);
+  background-repeat: no-repeat;
+}
+.top a:hover::after, .foot a:hover::after, .tags a:hover::after, .tags button:hover::after, .crumb a:hover::after, .copy:hover::after,
+.cv-contacts a:hover::after, .gc-toggle:hover::after, .gc-fit:hover::after, .top a[aria-current]::after, .tags button[aria-expanded="true"]::after {
+  opacity: 1; inset: -4px -7px;
+}
+
+.hero { letter-spacing: -.035em; }
+.hero .ch { transition: transform .8s cubic-bezier(.16, 1, .3, 1); }
+.hero:hover .ch, .hero.is-scattered .ch { transform: translate(var(--x, 0), var(--y, 0)) rotate(var(--r, 0deg)); }
+@media (prefers-reduced-motion: reduce) { .hero .ch { transform: none !important; } }
+
+.media svg, .media img { filter: grayscale(1) contrast(1.05); transition: filter .5s; }
+.card:hover .media svg, .card:hover .media img, .card:focus-within .media svg, .card:focus-within .media img,
+.print:hover .media svg, .print:hover .media img, .print:focus-visible .media svg, .print:focus-visible .media img,
+.print.is-dragging .media svg, .print.is-dragging .media img,
+.media.color svg, .media.color img { filter: none; }
+
+.cursor {
+  width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%;
+  background: #fff; mix-blend-mode: difference;
+  transition: opacity .2s, width .25s, height .25s, margin .25s;
+}
+.cursor.is-link { width: 38px; height: 38px; margin: -19px 0 0 -19px; }
+.has-cursor, .has-cursor * { cursor: none; }
+
+@media (max-width: 760px) {
+  .top { display: flex; justify-content: space-between; align-items: center; }
+  .top .tag, .top .links { display: none; }
+  .menu { display: block; }
+  .menu summary { list-style: none; cursor: pointer; letter-spacing: .12em; padding: .2rem 0; }
+  .menu summary::-webkit-details-marker { display: none; }
+  .menu nav {
+    position: absolute; left: 0; right: 0; top: 100%;
+    display: grid; justify-items: start; gap: .5rem;
+    padding: .75rem var(--pad) 1.75rem;
+    background: var(--paper); border-bottom: 1px solid var(--line);
+    font-size: 1.6rem;
+  }
+  .news li { grid-template-columns: 5.5rem minmax(0, 1fr); }
+  .year, .block { grid-template-columns: 1fr; gap: .6rem; }
+  .cv-head, .cv-sec h2 { margin-left: 0; }
+  .cv-entry { grid-template-columns: 1fr; gap: .15rem; }
+  .cv-when { text-align: left; }
+  .figs { grid-template-columns: 1fr; }
+  .gallery { grid-template-columns: 1fr 1fr; gap: 1.75rem 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}
+
+@media print {
+  @page { size: letter; margin: 16mm 14mm 18mm; }
+  html { font-size: 11px; }
+  body { display: block; min-height: 0; font-size: 11px; }
+  .top, .foot, .cursor, .cv-print { display: none !important; }
+  main { padding: 0; }
+  .page:not([data-page="home"]) { max-width: none; padding: 0; }
+  .cv { --cv-date: 8.5rem; --cv-gap: 1.5rem; }
+  .cv-sec { margin-top: 2rem; }
+  .cv-sec h2 { break-after: avoid; }
+  .cv-entry { padding-top: .6rem; break-inside: avoid; }
+  .tags a, .cv-contacts a { text-decoration: underline; text-decoration-color: #bbb; text-underline-offset: .2em; }
+  .tags a::after, .cv-contacts a::after { display: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="name" href="#">aryaqzhong</a>
+  <p class="tag"><span aria-hidden="true">⋆｡˚</span> ideas, interfaces + small experiments <span aria-hidden="true">˚｡⋆</span></p>
+  <nav class="links" aria-label="main">
+    <a href="#research">research</a>
+    <a href="#cv">cv</a>
+    <a href="#gallery">gallery</a>
+  </nav>
+  <details class="menu">
+    <summary aria-label="menu"><span aria-hidden="true">⋆ ˚ ｡ ୨୧ ｡ ˚ ⋆</span></summary>
+    <nav aria-label="main menu">
+      <a href="#research">research/</a>
+      <a href="#cv">cv/</a>
+      <a href="#gallery">gallery/</a>
+    </nav>
+  </details>
+</header>
+
+<main id="main">
+
+  <section class="page" data-page="home">
+    <h1 class="hero">hi, it’s arya :)</h1>
+  </section>
+
+  <section class="page" data-page="research" aria-labelledby="research-h">
+    <h1 class="sr" id="research-h">research</h1>
+    <p class="lede">I’m a <span class="fill">[your role]</span> at <span class="fill">[school, lab, or studio]</span>, working with <span class="fill">[advisor or team]</span>. My work explores <span class="fill">[your topic]</span>, with a focus on <span class="fill">[the angle you care about]</span>. Previously, I <span class="fill">[one line about where you’ve been]</span>.</p>
+
+    <h2 class="label">recently</h2>
+    <div class="news" tabindex="0" role="region" aria-label="news, scrollable">
+      <ul>
+        <li><time datetime="2026-10">oct 2026</time><p>launched this website <span aria-hidden="true">✦</span></p></li>
+        <li><time datetime="2026-09">sep 2026</time><p><span class="fill">[something you started: a program, a job, a project]</span></p></li>
+        <li><time datetime="2026-08">aug 2026</time><p><span class="fill">[a paper, show, or project that got accepted]</span></p></li>
+        <li><time datetime="2026-06">jun 2026</time><p><span class="fill">[an internship, residency, or trip]</span></p></li>
+        <li><time datetime="2025-11">nov 2025</time><p><span class="fill">[a talk you gave, or an award you got]</span></p></li>
+        <li><time datetime="2025-09">sep 2025</time><p><span class="fill">[the start of something]</span></p></li>
+      </ul>
+    </div>
+
+    <h2 class="label">selected projects</h2>
+    <div class="cards">
+      <article class="card">
+        <a class="media" href="#projects/your-newest-project" tabindex="-1" aria-hidden="true" data-gen="flow:11"></a>
+        <div class="card-body">
+          <h3><a href="#projects/your-newest-project">your newest project</a></h3>
+          <p class="badge"><span aria-hidden="true">✦</span>venue 2026</p>
+          <p class="desc">one line on what it is and why it matters.</p>
+          <p class="tags"><a href="#todo">paper</a><a href="#todo">demo</a><a href="#todo">code</a></p>
+        </div>
+      </article>
+      <article class="card">
+        <a class="media" href="#todo" tabindex="-1" aria-hidden="true" data-gen="scatter:7"></a>
+        <div class="card-body">
+          <h3><a href="#todo">an interactive explainer</a></h3>
+          <p class="badge"><span aria-hidden="true">✦</span>workshop 2026</p>
+          <p class="tags"><a href="#todo">demo</a></p>
+        </div>
+      </article>
+      <article class="card">
+        <a class="media" href="#todo" tabindex="-1" aria-hidden="true" data-gen="graph:3"></a>
+        <div class="card-body">
+          <h3><a href="#todo">a tool you built with others</a></h3>
+          <p class="badge"><span aria-hidden="true">✦</span>preprint 2025</p>
+          <p class="desc">say who you made it with, and for whom.</p>
+          <p class="tags"><a href="#todo">paper</a><a href="#todo">code</a></p>
+        </div>
+      </article>
+      <article class="card">
+        <a class="media" href="#todo" tabindex="-1" aria-hidden="true" data-gen="grid:5"></a>
+        <div class="card-body">
+          <h3><a href="#todo">a data art piece</a></h3>
+          <p class="badge"><span aria-hidden="true">✦</span>award name 2025</p>
+          <p class="desc">maps, archives, or datasets turned into something to look at.</p>
+        </div>
+      </article>
+      <article class="card">
+        <a class="media" href="#todo" tabindex="-1" aria-hidden="true" data-gen="blobs:9"></a>
+        <div class="card-body">
+          <h3><a href="#todo">a class project worth showing</a></h3>
+          <p class="badge"><span aria-hidden="true">✦</span>course 2025</p>
+          <p class="desc">small projects count. pick the ones you can still explain.</p>
+          <p class="tags"><a href="#todo">code</a></p>
+        </div>
+      </article>
+      <article class="card">
+        <a class="media" href="#todo" tabindex="-1" aria-hidden="true" data-gen="rings:4"></a>
+        <div class="card-body">
+          <h3><a href="#todo">a collaboration across fields</a></h3>
+          <p class="badge"><span aria-hidden="true">✦</span>honorable mention 2024</p>
+          <p class="desc">working with people from another field? name them.</p>
+          <p class="tags"><a href="#todo">paper</a><a href="#todo">demo</a><a href="#todo">code</a></p>
+        </div>
+      </article>
+    </div>
+
+    <h2 class="label">publications</h2>
+
+    <section class="year">
+      <h2 class="yr">2026</h2>
+      <div>
+        <article class="pub">
+          <h3><a href="#projects/your-newest-project">Your Newest Project: A Subtitle That Says What It Does</a></h3>
+          <p class="authors"><span class="me">Arya Q. Zhong</span>, <span class="fill">[Coauthor]</span>, <span class="fill">[Advisor]</span></p>
+          <p class="venue"><span>Venue 2026</span></p>
+          <p class="tags"><a href="#todo">pdf</a><a href="#todo">arxiv</a><a href="#todo">code</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
+          <div class="bib" hidden><pre>@inproceedings{zhong2026newest,
+  title     = {Your Newest Project: A Subtitle That Says What It Does},
+  author    = {Zhong, Arya Q. and Coauthor, A. and Advisor, B.},
+  booktitle = {Proceedings of Venue},
+  year      = {2026}
+}</pre><button type="button" class="copy">copy</button></div>
+        </article>
+        <article class="pub">
+          <h3><a href="#todo">An Interactive Explainer of an Idea</a></h3>
+          <p class="authors"><span class="me">Arya Q. Zhong</span>*, <span class="fill">[Coauthor]</span>*, <span class="fill">[Advisor]</span></p>
+          <p class="venue"><span>Workshop at Venue 2026</span></p>
+          <p class="tags"><a href="#todo">demo</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
+          <div class="bib" hidden><pre>@inproceedings{zhong2026explainer,
+  title     = {An Interactive Explainer of an Idea},
+  author    = {Zhong, Arya Q. and Coauthor, A. and Advisor, B.},
+  booktitle = {Workshop at Venue},
+  year      = {2026}
+}</pre><button type="button" class="copy">copy</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="year">
+      <h2 class="yr">2025</h2>
+      <div>
+        <article class="pub">
+          <h3><a href="#todo">A Tool You Built with Others</a></h3>
+          <p class="authors"><span class="fill">[Coauthor]</span>, <span class="me">Arya Q. Zhong</span>, <span class="fill">[Advisor]</span></p>
+          <p class="venue"><span>arXiv preprint 2025</span></p>
+          <p class="tags"><a href="#todo">arxiv</a><a href="#todo">code</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
+          <div class="bib" hidden><pre>@article{coauthor2025tool,
+  title   = {A Tool You Built with Others},
+  author  = {Coauthor, A. and Zhong, Arya Q. and Advisor, B.},
+  journal = {arXiv preprint},
+  year    = {2025}
+}</pre><button type="button" class="copy">copy</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section class="year">
+      <h2 class="yr">2024</h2>
+      <div>
+        <article class="pub">
+          <h3><a href="#todo">A Collaboration Across Fields</a></h3>
+          <p class="authors"><span class="fill">[Coauthor]</span>, <span class="me">Arya Q. Zhong</span>, <span class="fill">[Coauthor]</span>, <span class="fill">[Advisor]</span></p>
+          <p class="venue"><span>Venue 2024</span><span class="award"><span aria-hidden="true">✦</span> Honorable Mention</span></p>
+          <p class="tags"><a href="#todo">pdf</a><a href="#todo">demo</a><a href="#todo">code</a><button type="button" class="bib-toggle" aria-expanded="false">bibtex</button></p>
+          <div class="bib" hidden><pre>@inproceedings{coauthor2024collab,
+  title     = {A Collaboration Across Fields},
+  author    = {Coauthor, A. and Zhong, Arya Q. and Coauthor, C. and Advisor, B.},
+  booktitle = {Proceedings of Venue},
+  year      = {2024}
+}</pre><button type="button" class="copy">copy</button></div>
+        </article>
+        <article class="pub">
+          <h3><a href="#todo">A Poster or Extended Abstract</a></h3>
+          <p class="authors"><span class="me">Arya Q. Zhong</span>, <span class="fill">[Advisor]</span></p>
+          <p class="venue"><span>Poster, Venue 2024</span></p>
+          <p class="tags"><a href="#todo">pdf</a></p>
+        </article>
+      </div>
+    </section>
+
+    <p class="note">* equal contribution. the full list is also on <a href="#todo">google scholar</a>.</p>
+  </section>
+
+  <section class="page" data-page="cv" data-title="cv" aria-labelledby="cv-h">
+    <div class="cv">
+      <header class="cv-head">
+        <h1 class="cv-name" id="cv-h">Arya Q. Zhong</h1>
+        <p class="cv-role"><span class="fill">[your fields, e.g. visualization, interaction, design]</span></p>
+        <p class="cv-contacts">
+          <span class="fill">[City, ST]</span>
+          <a href="mailto:hello@example.com">hello@example.com</a>
+          <a href="#todo">github</a>
+          <a href="#todo">google scholar</a>
+          <a href="#todo">linkedin</a>
+          <a class="cv-print" href="#print">pdf</a>
+        </p>
+      </header>
+
+      <section class="cv-sec">
+        <h2>Education</h2>
+        <div class="cv-entry">
+          <p class="cv-when">Aug. 2025 – Present</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[University]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
+            <p class="cv-sub">PhD, <span class="fill">[Field]</span></p>
+            <p class="cv-note">Advisor: <span class="fill">[name]</span></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when">May 2025</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[University]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
+            <p class="cv-sub">BS, <span class="fill">[Field]</span></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when">2024</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[School]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
+            <p class="cv-sub"><span class="fill">[Summer program or studio]</span></p>
+            <p class="cv-title"><span class="fill">[School]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
+            <p class="cv-sub"><span class="fill">[Exchange or cross-registration]</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-sec">
+        <h2>Research Experience</h2>
+        <div class="cv-entry">
+          <p class="cv-when">Jun. 2026 –</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[Lab or company]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
+            <p class="cv-sub"><span class="fill">[Research Intern, team or group]</span></p>
+            <p class="cv-note">Mentors: <span class="fill">[names]</span></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when">2024 – 2025</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[Lab]</span><span class="cv-where">, <span class="fill">[University]</span></span></p>
+            <p class="cv-sub">Research Assistant</p>
+            <p class="cv-note">Advisor: <span class="fill">[name]</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-sec">
+        <h2>Publications</h2>
+        <div data-cv-pubs></div>
+      </section>
+
+      <section class="cv-sec">
+        <h2>Awards</h2>
+        <div class="cv-entry">
+          <p class="cv-when">Nov. 2025</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[Award or contest]</span><span class="cv-where">, <span class="fill">[City, Country]</span></span></p>
+            <p class="cv-sub"><span class="fill">[Honorable Mention, project name]</span></p>
+            <p class="tags"><a href="#todo">paper</a><a href="#todo">demo</a><a href="#todo">award</a></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when">2021 – 2025</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[Dean’s List]</span></p>
+            <p class="cv-sub"><span class="fill">[University]</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-sec">
+        <h2>Teaching</h2>
+        <div class="cv-entry">
+          <p class="cv-when">Fall 2026</p>
+          <div class="cv-what">
+            <p class="cv-title">Teaching Assistant</p>
+            <p class="cv-sub"><span class="fill">[Course number: Course name]</span>, Instructor: <span class="fill">[name]</span></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when">Spring 2026</p>
+          <div class="cv-what">
+            <p class="cv-title">Guest Lecturer</p>
+            <p class="cv-sub"><span class="fill">[Course number: Course name]</span></p>
+            <p class="tags"><a href="#todo">slides</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-sec">
+        <h2>Talks</h2>
+        <div class="cv-entry">
+          <p class="cv-when">Apr. 2026</p>
+          <div class="cv-what">
+            <p class="cv-title"><span class="fill">[Talk title]</span><span class="cv-where">, <span class="fill">[City, ST]</span></span></p>
+            <p class="cv-sub"><span class="fill">[Event, course, or lab]</span></p>
+            <p class="tags"><a href="#todo">slides</a><a href="#todo">video</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-sec">
+        <h2>Service</h2>
+        <div class="cv-entry">
+          <p class="cv-when">2026 – Present</p>
+          <div class="cv-what">
+            <p class="cv-title">Reviewer</p>
+            <p class="cv-sub"><span class="fill">[Conference or journal]</span></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when">2025</p>
+          <div class="cv-what">
+            <p class="cv-title">Student Volunteer</p>
+            <p class="cv-sub"><span class="fill">[Conference]</span></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-sec">
+        <h2>Skills</h2>
+        <div class="cv-entry">
+          <p class="cv-when"></p>
+          <div class="cv-what">
+            <p class="cv-title">Programming</p>
+            <p class="cv-sub"><span class="fill">[Python, JavaScript, …]</span></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when"></p>
+          <div class="cv-what">
+            <p class="cv-title">Design tools</p>
+            <p class="cv-sub"><span class="fill">[Figma, Illustrator, …]</span></p>
+          </div>
+        </div>
+        <div class="cv-entry">
+          <p class="cv-when"></p>
+          <div class="cv-what">
+            <p class="cv-title">Languages</p>
+            <p class="cv-sub"><span class="fill">[English, Mandarin Chinese, …]</span></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="page" data-page="gallery" aria-labelledby="gallery-h">
+    <div class="gallery">
+      <div class="gallery-intro">
+        <h1 id="gallery-h">gallery</h1>
+        <p>sketches, prints, and small experiments.</p>
+        <p class="gallery-hint">zoom with scroll or pinch. drag to look around, or pick up a print and move it.</p>
+      </div>
+
+      <a class="print" href="#todo">
+        <div class="media" data-gen="blobs:21" style="--ratio: 3 / 4"></div>
+        <p class="print-title">untitled (study)</p>
+        <p class="print-meta">2026</p>
+        <p class="print-desc">shapes slowly melting into each other</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="flow:22" style="--ratio: 4 / 3"></div>
+        <p class="print-title">a map of somewhere</p>
+        <p class="print-meta">2026</p>
+        <p class="print-desc">a neighborhood drawn from open data</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="rings:23" style="--ratio: 1 / 1"></div>
+        <p class="print-title">plotter drawing</p>
+        <p class="print-meta">2025</p>
+        <p class="print-desc">pen on paper, drawn by a small robot</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="scatter:24" style="--ratio: 4 / 5"></div>
+        <p class="print-title">sketchbook page</p>
+        <p class="print-meta">2025</p>
+        <p class="print-desc">notes from a long train ride</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="grid:25" style="--ratio: 1 / 1"></div>
+        <p class="print-title">type study</p>
+        <p class="print-meta">2025</p>
+        <p class="print-desc">letters built on a sixteen-square grid</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="graph:26" style="--ratio: 3 / 2"></div>
+        <p class="print-title">letters, mapped</p>
+        <p class="print-meta">2024</p>
+        <p class="print-desc">who wrote to whom over ten years</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="blobs:27" style="--ratio: 4 / 5"></div>
+        <p class="print-title">collage</p>
+        <p class="print-meta">2024</p>
+        <p class="print-desc">paper, glue, and a flatbed scanner</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="flow:28" style="--ratio: 3 / 4"></div>
+        <p class="print-title">screen print</p>
+        <p class="print-meta">2024</p>
+        <p class="print-desc">two colors, one afternoon</p>
+      </a>
+      <a class="print" href="#todo">
+        <div class="media" data-gen="scatter:30" style="--ratio: 16 / 10"></div>
+        <p class="print-title">generative poster</p>
+        <p class="print-meta">2026</p>
+        <p class="print-desc">one of a hundred variations</p>
+      </a>
+    </div>
+  </section>
+
+  <section class="page" data-page="projects/your-newest-project" data-parent="research" aria-labelledby="project-h">
+    <p class="crumb"><a href="#research">research/</a></p>
+    <h1 class="title" id="project-h">your newest project</h1>
+    <p class="subtitle">a subtitle that says what it does, in plain words</p>
+    <div class="byline">
+      <p class="authors"><span class="me">Arya Q. Zhong</span>, <span class="fill">[Coauthor]</span>, <span class="fill">[Advisor]</span></p>
+      <p class="badge"><span aria-hidden="true">✦</span>venue 2026</p>
+    </div>
+    <p class="tags"><a href="#todo">paper</a><a href="#todo">demo</a><a href="#todo">code</a><a href="#todo">video</a></p>
+
+    <figure class="teaser">
+      <div class="media color" data-gen="flow:11" style="--ratio: 16 / 9"></div>
+      <figcaption>a teaser image or a short video. a clip of the thing working beats any screenshot.</figcaption>
+    </figure>
+
+    <section class="block">
+      <h2 class="label">abstract</h2>
+      <div class="prose">
+        <p>this is where the abstract goes. say what problem you looked at, what you built, and what you found, in two or three sentences. most people decide here whether to keep reading.</p>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="label">how it works</h2>
+      <div>
+        <div class="prose">
+          <p>walk through the idea the way you’d explain it to a friend from another field. one good figure usually does more than three paragraphs.</p>
+        </div>
+        <div class="figs">
+          <figure><div class="media color" data-gen="scatter:12"></div><figcaption>fig. 1&ensp;the main interface</figcaption></figure>
+          <figure><div class="media color" data-gen="graph:13"></div><figcaption>fig. 2&ensp;an example in use</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="label">what we found</h2>
+      <div class="prose">
+        <ul>
+          <li>two or three short findings read better than one long paragraph.</li>
+          <li>say who it helps, and how you know.</li>
+          <li>be honest about what didn’t work. people trust that.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="block">
+      <h2 class="label">cite</h2>
+      <div class="bib"><pre>@inproceedings{zhong2026newest,
+  title     = {Your Newest Project: A Subtitle That Says What It Does},
+  author    = {Zhong, Arya Q. and Coauthor, A. and Advisor, B.},
+  booktitle = {Proceedings of Venue},
+  year      = {2026}
+}</pre><button type="button" class="copy">copy</button></div>
+    </section>
+
+    <section class="block">
+      <h2 class="label">thanks</h2>
+      <div class="prose">
+        <p>thank the people, labs, and funders who made it possible.</p>
+      </div>
+    </section>
+
+    <p class="crumb end">next&ensp;<a href="#todo">an interactive explainer</a></p>
+  </section>
+
+</main>
+
+<footer class="foot">
+  <a href="#todo">github</a>
+  <a href="#todo">linkedin</a>
+  <a href="#todo">google scholar</a>
+  <a href="mailto:hello@example.com">email</a>
+</footer>
+
+<div class="cursor" aria-hidden="true"></div>
+
+<script>
+const PALETTE = ['#ff5a36', '#2f5bff', '#00a676', '#ffb400', '#111111'];
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const fine = matchMedia('(hover: hover) and (pointer: fine)');
+
+function rng(a) {
+  return () => {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+const f = n => n.toFixed(1);
+const GEN = {
+  scatter(r, W, H, P) {
+    let s = '';
+    for (let c = 0; c < 3; c++) {
+      const cx = W * (.2 + .6 * r()), cy = H * (.2 + .6 * r());
+      for (let i = 0; i < 45; i++) {
+        const a = r() * 6.283, d = Math.pow(r(), .7) * Math.min(W, H) * .28;
+        s += `<circle cx="${f(cx + Math.cos(a) * d)}" cy="${f(cy + Math.sin(a) * d)}" r="${f(2 + r() * 3.5)}" fill="${P[c]}" fill-opacity=".85"/>`;
+      }
+    }
+    return s;
+  },
+  flow(r, W, H, P) {
+    let s = '';
+    const n = 16, ph = r() * 6;
+    for (let i = 0; i < n; i++) {
+      const y0 = H * (.12 + .76 * i / (n - 1)), amp = 12 + r() * 26, k = 30 + r() * 30;
+      let d = `M0 ${f(y0)}`;
+      for (let x = 8; x <= W; x += 8) d += `L${x} ${f(y0 + Math.sin(x / k + ph + i * .35) * amp * Math.sin(x / W * Math.PI))}`;
+      s += `<path d="${d}" fill="none" stroke="${P[i % 4]}" stroke-width="1.6"/>`;
+    }
+    return s;
+  },
+  blobs(r, W, H, P) {
+    let s = '';
+    for (let i = 0; i < 7; i++) s += `<circle cx="${f(r() * W)}" cy="${f(r() * H)}" r="${f(30 + r() * Math.min(W, H) * .35)}" fill="${P[i % 4]}" fill-opacity=".55"/>`;
+    return s;
+  },
+  graph(r, W, H, P) {
+    const pts = Array.from({ length: 18 }, () => [24 + r() * (W - 48), 24 + r() * (H - 48)]);
+    let s = '';
+    pts.forEach(p => {
+      pts.map((q, j) => [j, Math.hypot(p[0] - q[0], p[1] - q[1])]).sort((a, b) => a[1] - b[1]).slice(1, 3)
+        .forEach(([j]) => { s += `<line x1="${f(p[0])}" y1="${f(p[1])}" x2="${f(pts[j][0])}" y2="${f(pts[j][1])}" stroke="${P[4]}" stroke-width="1"/>`; });
+    });
+    pts.forEach((p, i) => { s += `<circle cx="${f(p[0])}" cy="${f(p[1])}" r="${f(4 + r() * 6)}" fill="${P[i % 4]}"/>`; });
+    return s;
+  },
+  grid(r, W, H, P) {
+    let s = '';
+    const cols = 16, rows = Math.round(16 * H / W), cw = W / cols, ch = H / rows, a = r() * 6, b = r() * 6;
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const v = (Math.sin(x / 2.7 + a) * Math.cos(y / 2.2 + b) + 1) / 2;
+      s += `<rect x="${f(x * cw)}" y="${f(y * ch)}" width="${f(cw + .6)}" height="${f(ch + .6)}" fill="${P[v > .66 ? 0 : v > .33 ? 1 : 2]}" fill-opacity="${f(.25 + v * .75)}"/>`;
+    }
+    return s;
+  },
+  rings(r, W, H, P) {
+    let s = '';
+    const cx = W * (.35 + r() * .3), cy = H * (.35 + r() * .3);
+    for (let i = 14; i > 0; i--) s += `<circle cx="${f(cx + i * (r() - .5) * 6)}" cy="${f(cy + i * (r() - .5) * 6)}" r="${f(i * Math.min(W, H) * .045)}" fill="none" stroke="${P[i % 4]}" stroke-width="1.6"/>`;
+    return s;
+  }
+};
+document.querySelectorAll('[data-gen]').forEach(el => {
+  const [type, seed] = el.dataset.gen.split(':');
+  if (!GEN[type]) return;
+  const ratio = (el.style.getPropertyValue('--ratio') || '4 / 3').split('/').map(Number);
+  const W = 400, H = Math.round(W * ratio[1] / ratio[0]);
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" focusable="false">${GEN[type](rng(+seed || 1), W, H, PALETTE)}</svg>`;
+});
+
+function splitLetters(el) {
+  const chars = [...el.textContent.trim()];
+  el.setAttribute('aria-label', chars.join(''));
+  el.innerHTML = chars.map(c => `<span class="ch${/\p{So}|[\u2200-\u22FF]/u.test(c) ? ' sym' : ''}" aria-hidden="true">${c === '<' ? '&lt;' : c === '&' ? '&amp;' : c}</span>`).join('');
+  return [...el.querySelectorAll('.ch')];
+}
+
+const hero = document.querySelector('.hero');
+const letters = splitLetters(hero);
+const spread = n => (Math.random() - .5) * n;
+function scatter() {
+  letters.forEach(s => {
+    s.style.setProperty('--x', spread(180) + 'px');
+    s.style.setProperty('--y', spread(130) + 'px');
+    s.style.setProperty('--r', spread(80) + 'deg');
+  });
+}
+scatter();
+hero.addEventListener('mouseenter', scatter);
+hero.addEventListener('click', () => {
+  if (!hero.classList.contains('is-scattered')) scatter();
+  hero.classList.toggle('is-scattered');
+});
+
+if (fine.matches) {
+  const dot = document.querySelector('.cursor');
+  document.documentElement.classList.add('has-cursor');
+  document.addEventListener('pointermove', e => {
+    dot.style.translate = `${e.clientX}px ${e.clientY}px`;
+    dot.classList.toggle('is-link', !!e.target.closest('a, button, summary, .hero'));
+    dot.classList.add('is-on');
+  });
+  document.documentElement.addEventListener('mouseleave', () => dot.classList.remove('is-on'));
+}
+
+document.querySelectorAll('.bib-toggle').forEach((btn, i) => {
+  const box = btn.closest('.pub').querySelector('.bib');
+  box.id = box.id || 'bib-' + (i + 1);
+  btn.setAttribute('aria-controls', box.id);
+  btn.addEventListener('click', () => {
+    const open = btn.getAttribute('aria-expanded') !== 'true';
+    btn.setAttribute('aria-expanded', String(open));
+    box.hidden = !open;
+  });
+});
+
+document.querySelectorAll('.copy').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const pre = btn.closest('.bib').querySelector('pre');
+    try {
+      await navigator.clipboard.writeText(pre.textContent);
+      btn.textContent = 'copied';
+    } catch (err) {
+      getSelection().selectAllChildren(pre);
+      btn.textContent = 'selected';
+    }
+    clearTimeout(btn.timer);
+    btn.timer = setTimeout(() => { btn.textContent = 'copy'; }, 1800);
+  });
+});
+
+const cvPubs = document.querySelector('[data-cv-pubs]');
+if (cvPubs) {
+  document.querySelectorAll('[data-page="research"] .year').forEach(year => {
+    const pubs = [...year.querySelectorAll('.pub')].filter(pub => pub.querySelector('h3'));
+    if (!pubs.length) return;
+    const entry = document.createElement('div');
+    entry.className = 'cv-entry';
+    const when = document.createElement('p');
+    when.className = 'cv-when';
+    when.textContent = year.querySelector('.yr') ? year.querySelector('.yr').textContent : '';
+    const what = document.createElement('div');
+    what.className = 'cv-what';
+    pubs.forEach(pub => {
+      const title = document.createElement('p');
+      title.className = 'cv-title';
+      title.append(...[...pub.querySelector('h3').childNodes].map(n => n.cloneNode(true)));
+      const venue = document.createElement('p');
+      venue.className = 'cv-sub';
+      venue.textContent = [...pub.querySelectorAll('.venue > span')].map(s => s.textContent.trim()).join(', ');
+      what.append(title, venue);
+      const authors = pub.querySelector('.authors');
+      if (authors) {
+        const copy = authors.cloneNode(true);
+        copy.className = 'cv-note';
+        what.append(copy);
+      }
+      const links = pub.querySelector('.tags');
+      if (links) {
+        const copy = links.cloneNode(true);
+        copy.querySelectorAll('button').forEach(b => b.remove());
+        if (copy.querySelector('a')) what.append(copy);
+      }
+    });
+    entry.append(when, what);
+    cvPubs.append(entry);
+  });
+  if (!cvPubs.children.length) cvPubs.closest('.cv-sec').hidden = true;
+}
+
+document.querySelectorAll('a[href="#print"]').forEach(a => a.addEventListener('click', e => {
+  e.preventDefault();
+  window.print();
+}));
+
+const gallery = (() => {
+  const section = document.querySelector('[data-page="gallery"]');
+  const sheet = section && section.querySelector('.gallery');
+  if (!sheet) return { enter() {}, leave() {} };
+
+  const DRAG_THRESHOLD = 6;
+  const MAX_SCALE = 2.25, FIT_PADDING = 0.92;
+  const INITIAL_ZOOM = 1.08, INITIAL_MIN_SCALE = 0.3;
+  const WHEEL_ZOOM = 0.0015, PINCH_ZOOM = 0.006, MIN_STEP = 0.8, MAX_STEP = 1.25;
+  const TAU = 90 / Math.LN2;
+  const MIN_SPEED = 45, MAX_SPEED = 3200, VELOCITY_WINDOW = 70;
+  const EDGE_SLACK = 64;
+  const PAD = 28, STRENGTH = 0.25, PASSES = 4, SMOOTH = 0.2, SETTLE = 0.35, SETTLE_MS = 1500;
+  const FLY_MS = 720, FLY_EASE = 'cubic-bezier(.22, 1, .36, 1)';
+  const CELL_W = 600, CELL_H = 470, MARGIN = 90;
+
+  const html = document.documentElement, body = document.body, header = document.querySelector('.top');
+  const intro = sheet.querySelector('.gallery-intro');
+  const introBox = { x: 0, y: 0, w: 0, h: 0 };
+  const items = [...sheet.querySelectorAll('.print')].map(el => ({
+    el, media: el.querySelector('.media'), x: 0, y: 0, tx: 0, ty: 0, w: 0, h: 0, mh: 0, r: 0, z: 1, moving: false
+  }));
+  const clampTo = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+  const view = document.createElement('div');
+  view.className = 'gc';
+  sheet.before(view);
+  view.append(sheet);
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'gc-toggle';
+  view.before(toggle);
+  const fitBtn = document.createElement('button');
+  fitBtn.type = 'button';
+  fitBtn.className = 'gc-fit';
+  fitBtn.textContent = 'fit view';
+  view.after(fitBtn);
+  items.forEach(it => {
+    it.el.draggable = false;
+    it.el.querySelectorAll('img').forEach(img => { img.draggable = false; });
+  });
+
+  let mode = 'canvas', active = false, laidOut = false, busy = false, stacked = false;
+  let W = 0, H = 0, vw = 0, vh = 0, top = 0, fitS = 1, topZ = 10, gridScroll = 0;
+  const cam = { x: 0, y: 0, s: 1 };
+  let vel = null, camAnim = null, dragItem = null, anchor = null, settleUntil = 0;
+  let gesture = null, history = [], suppressClick = false, raf = 0, last = 0;
+  const pointers = new Map();
+
+  function ratioOf(media) {
+    const [a, b] = (media.style.getPropertyValue('--ratio') || '4 / 3').split('/').map(Number);
+    return b ? a / b : 4 / 3;
+  }
+  function place(it) {
+    it.el.style.setProperty('--x', it.x.toFixed(1) + 'px');
+    it.el.style.setProperty('--y', it.y.toFixed(1) + 'px');
+  }
+  function measureItems() {
+    items.forEach(it => { it.h = it.el.offsetHeight; it.mh = it.media.offsetHeight; });
+    introBox.h = intro.offsetHeight;
+  }
+  function setItem(it, w, x, y, r, z) {
+    Object.assign(it, { w, x, y, tx: x, ty: y, r, z });
+    it.el.style.setProperty('--w', w + 'px');
+    it.el.style.setProperty('--r', r + 'deg');
+    it.el.style.setProperty('--z', z);
+    place(it);
+  }
+  function layout() {
+    const rand = rng(97);
+    introBox.w = Math.min(540, CELL_W - 40);
+    intro.style.setProperty('--w', introBox.w + 'px');
+    intro.style.setProperty('--z', 5);
+    introBox.h = intro.offsetHeight;
+
+    stacked = innerWidth < 640;
+    if (stacked) {
+      W = CELL_W + MARGIN * 2;
+      let y = MARGIN;
+      introBox.x = MARGIN + (CELL_W - introBox.w) / 2;
+      introBox.y = y;
+      y += introBox.h + 70;
+      items.forEach(it => {
+        const ratio = ratioOf(it.media);
+        let w = +it.el.dataset.w || Math.round(400 + rand() * 120);
+        w = Math.min(w, CELL_W - 40, Math.round(560 * ratio));
+        setItem(it, w, MARGIN + (CELL_W - w) / 2 + (rand() - .5) * Math.min(120, CELL_W - w), y + rand() * 20,
+          Math.round((rand() - .5) * 60) / 10, 1 + Math.floor(rand() * 3));
+        y += w / ratio + 110;
+      });
+      H = y + MARGIN - 60;
+      finishLayout();
+      return;
+    }
+
+    const slotsNeeded = items.length + 1, aspect = innerWidth / innerHeight;
+    const cols = clampTo(Math.round(Math.sqrt(slotsNeeded * aspect * CELL_H / CELL_W) + (aspect > 1 ? 0.4 : 0)), 2, 6);
+    const rows = Math.ceil(slotsNeeded / cols);
+    W = cols * CELL_W + MARGIN * 2;
+    H = rows * CELL_H + MARGIN * 2;
+    const introSlot = Math.floor((rows - 1) / 2) * cols + Math.floor((cols - 1) / 2);
+    const slots = [];
+    for (let k = 0; slots.length < items.length; k++) if (k !== introSlot) slots.push(k);
+    const lastRow = rows - 1;
+    const filledLast = slots.filter(k => Math.floor(k / cols) === lastRow).length + (Math.floor(introSlot / cols) === lastRow ? 1 : 0);
+    const cellX = k => MARGIN + (k % cols) * CELL_W + (Math.floor(k / cols) === lastRow ? (cols - filledLast) * CELL_W / 2 : 0);
+    const cellY = k => MARGIN + Math.floor(k / cols) * CELL_H;
+
+    items.forEach((it, i) => {
+      const k = slots[i];
+      const ratio = ratioOf(it.media);
+      let w = +it.el.dataset.w || Math.round(360 + rand() * 150);
+      w = Math.min(w, Math.round((CELL_H - 80) * ratio), CELL_W - 40);
+      const h = w / ratio + 50;
+      setItem(it, w,
+        cellX(k) + (CELL_W - w) / 2 + (rand() - .5) * Math.min(90, CELL_W - w),
+        cellY(k) + Math.max(0, (CELL_H - h) / 2) + (rand() - .5) * Math.min(70, Math.max(0, CELL_H - h)),
+        Math.round((rand() - .5) * 70) / 10,
+        1 + Math.floor(rand() * 3));
+    });
+    introBox.x = cellX(introSlot) + (CELL_W - introBox.w) / 2;
+    introBox.y = cellY(introSlot) + Math.max(0, (CELL_H - introBox.h) / 2);
+    finishLayout();
+  }
+  function finishLayout() {
+    intro.style.setProperty('--x', introBox.x + 'px');
+    intro.style.setProperty('--y', introBox.y + 'px');
+    sheet.style.width = W + 'px';
+    sheet.style.height = H + 'px';
+    measureItems();
+  }
+
+  function measure() {
+    vw = innerWidth;
+    vh = innerHeight;
+    top = Math.max(0, Math.round(header.getBoundingClientRect().bottom));
+    body.style.setProperty('--top-h', top + 'px');
+    fitS = Math.min(vw / W, (vh - top) / H) * FIT_PADDING;
+  }
+  function fitCam() {
+    return { s: fitS, x: (vw - W * fitS) / 2, y: top + (vh - top - H * fitS) / 2 };
+  }
+  function clampCam(c) {
+    const ww = W * c.s, wh = H * c.s, ah = vh - top;
+    c.x = ww <= vw ? (vw - ww) / 2 : clampTo(c.x, vw - ww - EDGE_SLACK, EDGE_SLACK);
+    c.y = wh <= ah ? top + (ah - wh) / 2 : clampTo(c.y, vh - wh - EDGE_SLACK, top + EDGE_SLACK);
+    return c;
+  }
+  function initialCam() {
+    let s = Math.max(fitS * INITIAL_ZOOM, INITIAL_MIN_SCALE);
+    if (W / H < 0.8) s = Math.max(s, vw / W * FIT_PADDING);
+    s = Math.min(s, MAX_SCALE);
+    const x = vw / 2 - (introBox.x + introBox.w / 2) * s;
+    const y = stacked ? top + 28 - introBox.y * s : top + (vh - top) / 2 - (introBox.y + introBox.h / 2) * s;
+    return clampCam({ s, x, y });
+  }
+  function zoomAt(px, py, f) {
+    const s = clampTo(cam.s * f, fitS, MAX_SCALE);
+    const k = s / cam.s;
+    cam.x = px - (px - cam.x) * k;
+    cam.y = py - (py - cam.y) * k;
+    cam.s = s;
+    clampCam(cam);
+    dirty();
+  }
+  function animateCam(to) {
+    vel = null;
+    to = clampCam({ ...to });
+    if (reduce.matches) { Object.assign(cam, to); dirty(); return; }
+    camAnim = { from: { ...cam }, to, t0: performance.now() };
+    dirty();
+  }
+
+  function dirty() { if (!raf) raf = requestAnimationFrame(frame); }
+  function frame(now) {
+    raf = 0;
+    const dt = last ? Math.min(48, now - last) : 16;
+    let again = false;
+    if (camAnim) {
+      const t = Math.min(1, (now - camAnim.t0) / 520), e = 1 - Math.pow(1 - t, 3);
+      const { from, to } = camAnim;
+      cam.s = from.s + (to.s - from.s) * e;
+      cam.x = from.x + (to.x - from.x) * e;
+      cam.y = from.y + (to.y - from.y) * e;
+      if (t < 1) again = true; else camAnim = null;
+    }
+    if (dragItem || now < settleUntil) again = true;
+    if (vel) {
+      cam.x += vel.x * dt / 1000;
+      cam.y += vel.y * dt / 1000;
+      const bx = cam.x, by = cam.y;
+      clampCam(cam);
+      if (cam.x !== bx) vel.x = 0;
+      if (cam.y !== by) vel.y = 0;
+      const decay = Math.exp(-dt / TAU);
+      vel.x *= decay;
+      vel.y *= decay;
+      if (Math.hypot(vel.x, vel.y) < MIN_SPEED) vel = null; else again = true;
+    }
+    const settling = now < settleUntil;
+    if (anchor && (dragItem === anchor || settling)) solve(anchor);
+    for (const it of items) {
+      if (!it.moving) continue;
+      if (it === dragItem) {
+        it.x = it.tx;
+        it.y = it.ty;
+      } else {
+        it.x += (it.tx - it.x) * SMOOTH;
+        it.y += (it.ty - it.y) * SMOOTH;
+        const done = Math.abs(it.tx - it.x) < SETTLE && Math.abs(it.ty - it.y) < SETTLE;
+        if (done || (!dragItem && !settling)) {
+          it.x = it.tx;
+          it.y = it.ty;
+          it.moving = false;
+          it.el.classList.remove('is-moving');
+        } else again = true;
+      }
+      place(it);
+    }
+    if (mode === 'canvas') {
+      sheet.style.transform = `translate3d(${cam.x.toFixed(2)}px, ${cam.y.toFixed(2)}px, 0) scale(${cam.s.toFixed(4)})`;
+      const f = fitCam();
+      fitBtn.classList.toggle('is-visible', Math.abs(cam.s / f.s - 1) > .02 || Math.hypot(cam.x - f.x, cam.y - f.y) > 24);
+    }
+    last = again ? now : 0;
+    if (again) dirty();
+  }
+
+  function keepInside(it) {
+    it.tx = clampTo(it.tx, 0, W - it.w);
+    it.ty = clampTo(it.ty, 0, H - it.h);
+  }
+  function solve(anchor) {
+    const hot = new Set([anchor]);
+    for (let pass = 0; pass < PASSES; pass++) {
+      for (const a of items) {
+        if (!hot.has(a)) continue;
+        for (const b of items) {
+          if (b === a || b === anchor) continue;
+          const ox = Math.min(a.tx + a.w, b.tx + b.w) - Math.max(a.tx, b.tx) + PAD;
+          const oy = Math.min(a.ty + a.h, b.ty + b.h) - Math.max(a.ty, b.ty) + PAD;
+          if (ox <= 0 || oy <= 0) continue;
+          const push = Math.min(ox, oy) * STRENGTH;
+          if (push < 0.01) continue;
+          if (ox < oy) b.tx += (Math.sign(b.tx + b.w / 2 - (a.tx + a.w / 2)) || 1) * push;
+          else b.ty += (Math.sign(b.ty + b.h / 2 - (a.ty + a.h / 2)) || 1) * push;
+          keepInside(b);
+          if (!b.moving) { b.moving = true; b.el.classList.add('is-moving'); }
+          hot.add(b);
+        }
+      }
+    }
+  }
+
+  view.addEventListener('pointerdown', e => {
+    if (mode !== 'canvas' || busy) return;
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    vel = null;
+    camAnim = null;
+    if (pointers.size === 2) { startPinch(); return; }
+    if (pointers.size > 2) return;
+    const el = e.target.closest('.print');
+    const it = el && items.find(i => i.el === el);
+    if (it) {
+      gesture = { type: 'press', item: it, id: e.pointerId, sx: e.clientX, sy: e.clientY,
+        ox: (e.clientX - cam.x) / cam.s - it.tx, oy: (e.clientY - cam.y) / cam.s - it.ty };
+    } else {
+      gesture = { type: 'pan', id: e.pointerId, lx: e.clientX, ly: e.clientY };
+      history = [{ t: e.timeStamp, x: e.clientX, y: e.clientY }];
+      try { view.setPointerCapture(e.pointerId); } catch (err) {}
+      html.classList.add('is-panning');
+    }
+  });
+  addEventListener('pointermove', e => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (!gesture) return;
+    if (gesture.type === 'pinch') { movePinch(); return; }
+    if (e.pointerId !== gesture.id) return;
+    if (gesture.type === 'press') {
+      if (Math.hypot(e.clientX - gesture.sx, e.clientY - gesture.sy) < DRAG_THRESHOLD) return;
+      gesture.type = 'drag';
+      dragItem = anchor = gesture.item;
+      dragItem.moving = true;
+      dragItem.el.classList.add('is-dragging');
+      try { dragItem.el.setPointerCapture(e.pointerId); } catch (err) {}
+    }
+    if (gesture.type === 'drag') {
+      const it = gesture.item;
+      it.tx = (e.clientX - cam.x) / cam.s - gesture.ox;
+      it.ty = (e.clientY - cam.y) / cam.s - gesture.oy;
+      keepInside(it);
+      dirty();
+    } else if (gesture.type === 'pan') {
+      cam.x += e.clientX - gesture.lx;
+      cam.y += e.clientY - gesture.ly;
+      gesture.lx = e.clientX;
+      gesture.ly = e.clientY;
+      history.push({ t: e.timeStamp, x: e.clientX, y: e.clientY });
+      while (history.length > 2 && e.timeStamp - history[0].t > 140) history.shift();
+      clampCam(cam);
+      dirty();
+    }
+  });
+  function release(e) {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.delete(e.pointerId);
+    if (!gesture) return;
+    if (gesture.type === 'pinch') {
+      if (pointers.size < 2) { gesture = null; html.classList.remove('is-panning'); }
+      return;
+    }
+    if (e.pointerId !== gesture.id) return;
+    if (gesture.type === 'drag') {
+      const it = gesture.item;
+      it.el.classList.remove('is-dragging');
+      it.z = ++topZ;
+      it.el.style.setProperty('--z', it.z);
+      dragItem = null;
+      settleUntil = performance.now() + SETTLE_MS;
+      suppressClick = true;
+      setTimeout(() => { suppressClick = false; }, 400);
+      dirty();
+    } else if (gesture.type === 'pan' && e.type === 'pointerup' && !reduce.matches) {
+      const recent = history.filter(p => e.timeStamp - p.t <= VELOCITY_WINDOW);
+      if (recent.length >= 2) {
+        const a = recent[0], b = recent[recent.length - 1], dt = (b.t - a.t) / 1000;
+        if (dt > 0) {
+          let vx = (b.x - a.x) / dt, vy = (b.y - a.y) / dt;
+          const sp = Math.hypot(vx, vy);
+          if (sp > MAX_SPEED) { vx *= MAX_SPEED / sp; vy *= MAX_SPEED / sp; }
+          if (sp > MIN_SPEED) { vel = { x: vx, y: vy }; last = 0; dirty(); }
+        }
+      }
+    }
+    gesture = null;
+    html.classList.remove('is-panning');
+  }
+  addEventListener('pointerup', release);
+  addEventListener('pointercancel', release);
+
+  function startPinch() {
+    if (gesture && gesture.type === 'drag') {
+      gesture.item.el.classList.remove('is-dragging');
+      dragItem = null;
+      settleUntil = performance.now() + SETTLE_MS;
+    }
+    const [a, b] = [...pointers.values()];
+    gesture = { type: 'pinch', d: Math.hypot(a.x - b.x, a.y - b.y) || 1, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+    html.classList.add('is-panning');
+  }
+  function movePinch() {
+    const [a, b] = [...pointers.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y) || 1, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    cam.x += mx - gesture.mx;
+    cam.y += my - gesture.my;
+    gesture.mx = mx;
+    gesture.my = my;
+    zoomAt(mx, my, d / gesture.d);
+    gesture.d = d;
+  }
+
+  view.addEventListener('wheel', e => {
+    if (mode !== 'canvas') return;
+    e.preventDefault();
+    let dy = e.deltaY;
+    if (e.deltaMode === 1) dy *= 16; else if (e.deltaMode === 2) dy *= vh * 0.9;
+    vel = null;
+    camAnim = null;
+    zoomAt(e.clientX, e.clientY, clampTo(Math.exp(-dy * (e.ctrlKey ? PINCH_ZOOM : WHEEL_ZOOM)), MIN_STEP, MAX_STEP));
+  }, { passive: false });
+  let gestureScale = 1;
+  view.addEventListener('gesturestart', e => { e.preventDefault(); gestureScale = 1; });
+  view.addEventListener('gesturechange', e => {
+    e.preventDefault();
+    if (mode === 'canvas') zoomAt(e.clientX, e.clientY, e.scale / gestureScale);
+    gestureScale = e.scale;
+  });
+  view.addEventListener('dragstart', e => e.preventDefault());
+  view.addEventListener('scroll', () => { view.scrollLeft = 0; view.scrollTop = 0; });
+  view.addEventListener('click', e => {
+    if (suppressClick && e.target.closest('.print')) { e.preventDefault(); e.stopPropagation(); }
+  }, true);
+  sheet.addEventListener('focusin', e => {
+    if (mode !== 'canvas') return;
+    const it = items.find(i => i.el === e.target.closest('.print'));
+    if (!it) return;
+    const l = cam.x + it.x * cam.s, t = cam.y + it.y * cam.s;
+    if (l < 0 || t < top || l + it.w * cam.s > vw || t + it.h * cam.s > vh) {
+      animateCam({ s: cam.s, x: vw / 2 - (it.x + it.w / 2) * cam.s, y: top + (vh - top) / 2 - (it.y + it.h / 2) * cam.s });
+    }
+  });
+  fitBtn.addEventListener('click', () => animateCam(fitCam()));
+  addEventListener('resize', () => {
+    if (!active || mode !== 'canvas') return;
+    measure();
+    cam.s = clampTo(cam.s, fitS, MAX_SCALE);
+    clampCam(cam);
+    dirty();
+  });
+  if (document.fonts) document.fonts.ready.then(() => { if (laidOut && active && mode === 'canvas') measureItems(); });
+
+  function applyMode() {
+    const canvas = mode === 'canvas';
+    view.classList.toggle('is-canvas', canvas);
+    body.classList.toggle('gallery-canvas', canvas && active);
+    html.classList.toggle('gallery-lock', canvas && active);
+    toggle.textContent = canvas ? 'tidy up' : 'scatter';
+    if (!canvas) {
+      sheet.style.transform = '';
+      sheet.style.width = '';
+      sheet.style.height = '';
+    }
+  }
+  function prepareCanvas() {
+    if (!laidOut) {
+      layout();
+      laidOut = true;
+      measure();
+      Object.assign(cam, initialCam());
+    } else {
+      sheet.style.width = W + 'px';
+      sheet.style.height = H + 'px';
+      measure();
+      measureItems();
+      cam.s = clampTo(cam.s, fitS, MAX_SCALE);
+      clampCam(cam);
+    }
+    sheet.style.transform = `translate3d(${cam.x}px, ${cam.y}px, 0) scale(${cam.s})`;
+    items.forEach(place);
+    dirty();
+  }
+  function canvasRect(it) {
+    const a = it.r * Math.PI / 180, dy = it.mh / 2 - it.h / 2;
+    const wx = it.x + it.w / 2 - dy * Math.sin(a), wy = it.y + it.h / 2 + dy * Math.cos(a);
+    return { cx: cam.x + wx * cam.s, cy: cam.y + wy * cam.s, w: it.w * cam.s, h: it.mh * cam.s, r: it.r };
+  }
+  function gridRect(it) {
+    const b = it.media.getBoundingClientRect();
+    return { cx: b.left + b.width / 2, cy: b.top + b.height / 2, w: b.width, h: b.height, r: 0 };
+  }
+  function fly(pairs) {
+    const layer = document.createElement('div');
+    layer.className = 'gv-layer';
+    body.append(layer);
+    const box = r => ({ left: (r.cx - r.w / 2) + 'px', top: (r.cy - r.h / 2) + 'px', width: r.w + 'px', height: r.h + 'px', transform: `rotate(${r.r}deg)` });
+    const runs = pairs.map(({ media, from, to }, i) => {
+      const copy = media.cloneNode(true);
+      copy.classList.add('gv-fly');
+      layer.append(copy);
+      return copy.animate([box(from), box(to)], { duration: FLY_MS, easing: FLY_EASE, delay: Math.min(i * 3, 30), fill: 'both' }).finished;
+    });
+    return Promise.all(runs).finally(() => layer.remove());
+  }
+  async function switchTo(next) {
+    if (busy || !active || next === mode) return;
+    busy = true;
+    const from = items.map(mode === 'canvas' ? canvasRect : gridRect);
+    if (next === 'canvas') gridScroll = scrollY;
+    mode = next;
+    applyMode();
+    if (next === 'canvas') prepareCanvas(); else scrollTo(0, gridScroll);
+    if (!reduce.matches) {
+      view.classList.add('is-flying');
+      const to = items.map(next === 'canvas' ? canvasRect : gridRect);
+      try { await fly(items.map((it, i) => ({ media: it.media, from: from[i], to: to[i] }))); } catch (err) {}
+      view.classList.remove('is-flying');
+    }
+    busy = false;
+  }
+  toggle.addEventListener('click', () => switchTo(mode === 'canvas' ? 'grid' : 'canvas'));
+
+  function enter() {
+    active = true;
+    applyMode();
+    if (mode === 'canvas') prepareCanvas();
+  }
+  function leave() {
+    if (!active) return;
+    active = false;
+    applyMode();
+    vel = camAnim = gesture = dragItem = null;
+    pointers.clear();
+    html.classList.remove('is-panning');
+  }
+  applyMode();
+  return { enter, leave };
+})();
+
+const pages = [...document.querySelectorAll('.page')];
+const navLinks = [...document.querySelectorAll('.top a[href^="#"]')];
+const menu = document.querySelector('.menu');
+const SITE = 'Arya Q. Zhong';
+let current = null;
+
+function route(initial) {
+  const id = decodeURIComponent(location.hash.slice(1)) || 'home';
+  const page = pages.find(p => p.dataset.page === id) || (current ? null : pages[0]);
+  menu.open = false;
+  if (!page || page === current) return;
+  pages.forEach(p => p.classList.toggle('is-current', p === page));
+  navLinks.forEach(a => {
+    const target = a.getAttribute('href').slice(1) || 'home';
+    if (target === page.dataset.page) a.setAttribute('aria-current', 'page');
+    else if (target === page.dataset.parent) a.setAttribute('aria-current', 'true');
+    else a.removeAttribute('aria-current');
+  });
+  document.body.classList.toggle('on-home', page.dataset.page === 'home');
+  document.body.classList.toggle('on-gallery', page.dataset.page === 'gallery');
+  const heading = page.querySelector('h1');
+  const label = page.dataset.title || (heading ? heading.textContent.trim() : page.dataset.page);
+  document.title = page.dataset.page === 'home' ? SITE : label + ' / ' + SITE;
+  if (!initial) {
+    window.scrollTo(0, 0);
+    const h = page.querySelector('h1');
+    if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+  }
+  if (page.dataset.page === 'gallery') gallery.enter(); else gallery.leave();
+  current = page;
+}
+document.addEventListener('click', e => { if (menu.open && !menu.contains(e.target)) menu.open = false; });
+window.addEventListener('hashchange', () => route(false));
+route(true);
+</script>
+</body>
+</html>
