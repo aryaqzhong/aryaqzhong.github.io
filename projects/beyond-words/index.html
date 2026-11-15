@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <title>Beyond Words · Qing (Arya) Zhong</title>
-<meta name="description" content="What expert ratings of piano performances capture about how pianists play, and which consistent playing habits they miss.">
+<meta name="description" content="What expert ratings of piano performances capture about how pianists play, which consistent playing habits they miss, and a listening room to compare performances and rate one yourself.">
 <link rel="canonical" href="https://aryaqzhong.github.io/projects/beyond-words/">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Beyond Words: what expert piano ratings capture, and what they miss">
@@ -14,13 +14,14 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50' y='80' font-size='84' text-anchor='middle'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..600&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="stylesheet" href="../assets/explainer.css">
+<link rel="stylesheet" href="bw.css">
 </head>
-<body>
+<body class="bw">
 <header class="xbar">
   <a class="home" href="/">aryaqzhong <span>/ Beyond Words</span></a>
-  <p class="where" data-start="Introduction" aria-live="off"></p>
+  <p class="where" data-start="Overture" aria-live="off"></p>
   <div class="right">
     <button class="toc-btn" type="button" aria-expanded="false" aria-controls="toc">contents</button>
     <span class="pct">0%</span>
@@ -28,13 +29,14 @@
   <span class="xprogress" aria-hidden="true"></span>
 </header>
 <nav class="toc" id="toc" aria-label="Contents">
-  <a href="#data"><span>01</span>Same notes, different playing</a>
-  <a href="#ceiling"><span>02</span>How consistent are the experts?</a>
-  <a href="#mapping"><span>03</span>What the notes explain</a>
-  <a href="#blind"><span>04</span>Habits nobody rates</a>
-  <a href="#audio"><span>05</span>The renderer drops the soft pedal</a>
-  <a href="#listening"><span>06</span>Testing it with listeners</a>
-  <a href="#explore"><span>07</span>Explore the ratings</a>
+  <a href="#data"><span>I</span>Same notes, different playing</a>
+  <a href="#ceiling"><span>II</span>How consistent are the experts?</a>
+  <a href="#mapping"><span>III</span>What the notes explain</a>
+  <a href="#blind"><span>IV</span>Habits nobody rates</a>
+  <a href="#audio"><span>V</span>The renderer drops the soft pedal</a>
+  <a href="#listening"><span>VI</span>Testing it with listeners</a>
+  <a href="#explore"><span>VII</span>The listening room</a>
+  <a href="#rate-ch"><span>VIII</span>Rate one yourself</a>
 </nav>
 
 <main>
@@ -44,14 +46,14 @@
       <p class="kicker">Piano performance and perception</p>
       <h1>Beyond Words</h1>
       <p class="sub">What expert ratings of piano performances capture about how pianists play, and which consistent playing habits they miss.</p>
-      <p class="meta"><span>Qing (Arya) Zhong</span><span>2026</span><a href="/demos/beyond-words/">Perception Explorer ↗</a><a href="https://github.com/aryaqzhong/BeyondWords-Piano">Code ↗</a></p>
+      <p class="meta"><span>Qing (Arya) Zhong</span><span>2026</span><a href="#explore">Listening room ↓</a><a href="https://github.com/aryaqzhong/BeyondWords-Piano">Code ↗</a></p>
     </div>
     <span class="cue" aria-hidden="true"></span>
   </section>
 
-  <section class="chapter" id="data" data-label="Data">
+  <section class="chapter" id="data" data-label="I · Same notes, different playing">
     <div class="prose">
-      <p class="label">01 · Data</p>
+      <p class="label">I · Data</p>
       <h2>Same notes, different playing</h2>
       <p>PercePiano collects performances by 20 pianists from the Yamaha e-Competition. Short passages are each played by about twelve of them and rated by experts on 19 seven-point scales: “bright–dark”, “dry–wet pedal”, “stable–unstable timing” and so on.</p>
       <p>Every comparison here is between <strong>pianists playing the same passage</strong>, so the notes are fixed and only the playing differs. The labels were rebuilt from the individual ratings: “I don’t know” answers are left out and repeated submissions by one rater count once.</p>
@@ -64,9 +66,11 @@
     </div>
   </section>
 
-  <section class="chapter" id="ceiling" data-label="Noise ceiling">
+  <div class="pairs" aria-hidden="true"><div class="track"><span>stable<i>—</i><b>unstable</b></span><span>short<i>—</i><b>long</b></span><span>cushioned<i>—</i><b>solid</b></span><span>dry<i>—</i><b>wet</b></span><span>clean<i>—</i><b>blurred</b></span><span>even<i>—</i><b>colorful</b></span><span>shallow<i>—</i><b>rich</b></span><span>bright<i>—</i><b>dark</b></span><span>soft<i>—</i><b>loud</b></span><span>sophisticated<i>—</i><b>raw</b></span><span>small<i>—</i><b>large</b></span><span>fast<i>—</i><b>slow</b></span><span>flat<i>—</i><b>spacious</b></span><span>unbalanced<i>—</i><b>balanced</b></span><span>pure<i>—</i><b>dramatic</b></span><span>pleasant<i>—</i><b>dark</b></span><span>low<i>—</i><b>high</b></span><span>honest<i>—</i><b>imaginative</b></span><span>doubtful<i>—</i><b>convincing</b></span><span class="dup">stable<i>—</i><b>unstable</b></span><span class="dup">short<i>—</i><b>long</b></span><span class="dup">cushioned<i>—</i><b>solid</b></span><span class="dup">dry<i>—</i><b>wet</b></span><span class="dup">clean<i>—</i><b>blurred</b></span><span class="dup">even<i>—</i><b>colorful</b></span><span class="dup">shallow<i>—</i><b>rich</b></span><span class="dup">bright<i>—</i><b>dark</b></span><span class="dup">soft<i>—</i><b>loud</b></span><span class="dup">sophisticated<i>—</i><b>raw</b></span><span class="dup">small<i>—</i><b>large</b></span><span class="dup">fast<i>—</i><b>slow</b></span><span class="dup">flat<i>—</i><b>spacious</b></span><span class="dup">unbalanced<i>—</i><b>balanced</b></span><span class="dup">pure<i>—</i><b>dramatic</b></span><span class="dup">pleasant<i>—</i><b>dark</b></span><span class="dup">low<i>—</i><b>high</b></span><span class="dup">honest<i>—</i><b>imaginative</b></span><span class="dup">doubtful<i>—</i><b>convincing</b></span></div></div>
+
+  <section class="chapter" id="ceiling" data-label="II · How consistent are the experts?">
     <div class="prose">
-      <p class="label">02 · Noise ceiling</p>
+      <p class="label">II · Noise ceiling</p>
       <h2>How consistent are the experts?</h2>
       <p>Before asking what explains a rating, it helps to know how much of it is signal. A rater model separates each expert’s leniency from real differences between pianists; the agreement that remains is the <strong>noise ceiling</strong>, the most any model of these ratings could explain.</p>
     </div>
@@ -74,43 +78,44 @@
 
   <div class="scrolly" data-scene="ceiling">
     <div class="steps">
-      <div class="step" data-label="Noise ceiling"><div>
+      <div class="step" data-label="II · How consistent are the experts?"><div>
         <p class="label">Vocabulary</p>
         <h3>Nineteen words for one performance.</h3>
-        <p>Each segment was rated by 9–10 experts on every scale, from pedal amount and pace to interpretation and valence.</p>
+        <p>Each performance was rated by 9–10 experts on every scale, from pedal amount and pace to interpretation and valence.</p>
       </div></div>
-      <div class="step" data-label="Noise ceiling"><div>
+      <div class="step" data-label="II · How consistent are the experts?"><div>
         <h3>Raw agreement varies widely.</h3>
         <p>How consistently the experts separate pianists within a passage ranges from near zero to about 0.8, before any correction.</p>
       </div></div>
-      <div class="step" data-label="Noise ceiling"><div>
+      <div class="step" data-label="II · How consistent are the experts?"><div>
         <h3>With leniency removed.</h3>
         <p>The noise ceiling is <strong>0.62–0.83</strong> for pedal, pace and timing, but only <strong>0.14–0.23</strong> for brightness, valence, energy and loudness. On those four, single ratings say little about the pianist.</p>
       </div></div>
-      <div class="step" id="mapping" data-label="What the notes explain"><div>
-        <p class="label">03 · Mapping</p>
+      <div class="step" id="mapping" data-label="III · What the notes explain"><div>
+        <p class="label">III · Mapping</p>
         <h3>What the notes explain.</h3>
         <p>21 interpretable MIDI features (tempo against the score, pedal depth and changes, velocity, articulation) predict each scale for pianists held out of training. White: R² for unseen pianists; gray: the ceiling.</p>
       </div></div>
-      <div class="step" data-label="What the notes explain"><div>
+      <div class="step" data-label="III · What the notes explain"><div>
         <h3>Pace: 62% of what can be explained.</h3>
         <p>Pace reaches <strong>R² = 0.43</strong>, 62% of its ceiling. Pedal features carry pedal, touch, articulation length and timbre depth.</p>
       </div></div>
-      <div class="step" data-label="What the notes explain"><div>
+      <div class="step" data-label="III · What the notes explain"><div>
         <h3>Evaluative words stay out of reach.</h3>
         <p>Interpretation, valence and balance stay below 20% of their ceilings: these summaries of the notes say little about them.</p>
       </div></div>
     </div>
-    <div class="stage">
+    <div class="stage"><div class="sheet">
+      <p class="fig"><span>Fig. ii</span><span>the nineteen scales</span></p>
       <div class="big" aria-live="polite"></div>
       <div class="viz"><svg role="img" aria-label="For each of the 19 scales: the noise ceiling and the variance explained by MIDI features."></svg></div>
       <p class="cap">Within-passage reliability per scale; R² from leave-one-pianist-out ridge regression.</p>
-    </div>
+    </div></div>
   </div>
 
-  <section class="chapter" id="blind" data-label="Blind spots">
+  <section class="chapter" id="blind" data-label="IV · Habits nobody rates">
     <div class="prose">
-      <p class="label">04 · Blind spots</p>
+      <p class="label">IV · Blind spots</p>
       <h2>Habits nobody rates</h2>
       <p>Now turn the question around: which consistent playing habits do the 19 scales fail to predict? Each habit is placed by how consistent it is for a pianist across passages, and by how well the 19 ratings predict it for pianists the model has not seen.</p>
     </div>
@@ -118,30 +123,31 @@
 
   <div class="scrolly" data-scene="blind">
     <div class="steps">
-      <div class="step" data-label="Blind spots"><div>
+      <div class="step" data-label="IV · Habits nobody rates"><div>
         <h3>Most habits leave a trace.</h3>
         <p>Tempo against the score, sustain depth and key velocity are consistent for a pianist and well predicted from the ratings.</p>
       </div></div>
-      <div class="step" data-label="Blind spots"><div>
+      <div class="step" data-label="IV · Habits nobody rates"><div>
         <h3>Two do not.</h3>
         <p><strong>Soft-pedal use</strong> and <strong>pedal re-articulation</strong> recur across passages (performer ICC ≈ 0.31), yet the ratings predict neither (R² ≈ 0). The rules of this screen were fixed before looking at the results.</p>
       </div></div>
-      <div class="step" data-label="Blind spots"><div>
+      <div class="step" data-label="IV · Habits nobody rates"><div>
         <h3>Not even a minority of experts.</h3>
         <p>For each of 47 experts separately, their own ratings predict tempo for 35 and sustain depth for 26, but pedal re-articulation for 3 and soft-pedal use for none.</p>
         <p>This shows that the ratings do not reflect these habits, not that listeners cannot hear them.</p>
       </div></div>
     </div>
-    <div class="stage">
+    <div class="stage"><div class="sheet">
+      <p class="fig"><span>Fig. iv</span><span>habits and the jury</span></p>
       <div class="big" aria-live="polite"></div>
       <div class="viz"><svg role="img" aria-label="Performance habits by performer consistency and by how well the ratings predict them; then, per expert, whether their ratings predict each habit."></svg></div>
       <p class="cap">Performer ICC across passages; out-of-fold R² from the 19 ratings. Per-expert tests use held-out pianists and within-passage permutations, FDR-corrected.</p>
-    </div>
+    </div></div>
   </div>
 
-  <section class="chapter" id="audio" data-label="Audio">
+  <section class="chapter" id="audio" data-label="V · The renderer drops the soft pedal">
     <div class="prose">
-      <p class="label">05 · Audio</p>
+      <p class="label">V · Audio</p>
       <h2>The renderer drops the soft pedal</h2>
       <p>The experts heard a virtual-piano rendering of the MIDI, not a recording. Rendering every performance with an open sampler (FluidSynth, with Yamaha C5 grand and Kawai upright samples) shows how fragile that playback chain can be.</p>
     </div>
@@ -149,29 +155,30 @@
 
   <div class="scrolly" data-scene="render">
     <div class="steps">
-      <div class="step" data-label="Audio"><div>
+      <div class="step" data-label="V · The renderer drops the soft pedal"><div>
         <h3>734 performances, rendered twice.</h3>
         <p>Every performance with soft-pedal events was rendered as played, and again with all soft-pedal events removed.</p>
       </div></div>
-      <div class="step" data-label="Audio"><div>
+      <div class="step" data-label="V · The renderer drops the soft pedal"><div>
         <h3>711 come out sample-identical.</h3>
         <p>The other 23 are identical up to where the shorter file ends. The renderer ignores the soft pedal entirely: a playback chain can silently remove the very cue of the blind spot.</p>
       </div></div>
-      <div class="step" data-label="Audio"><div>
+      <div class="step" data-label="V · The renderer drops the soft pedal"><div>
         <h3>The sustain pedal is different.</h3>
         <p>Removing the sustain pedal instead changes <strong>666</strong> of the 734 renders. Where audio carries real information it adds to MIDI: R² for dynamic range rises from 0.08 to 0.15 with the grand.</p>
       </div></div>
     </div>
-    <div class="stage">
+    <div class="stage"><div class="sheet">
+      <p class="fig"><span>Fig. v</span><span>a contact sheet of renders</span></p>
       <div class="big" aria-live="polite"></div>
       <div class="viz"><svg role="img" aria-label="One square per rendered performance: identical or changed after removing a pedal."></svg></div>
       <p class="cap">Squares are counts, not specific performances. White: sample-identical; gray: identical until the shorter file ends; dark: changed.</p>
-    </div>
+    </div></div>
   </div>
 
-  <section class="chapter" id="listening" data-label="Listening test">
+  <section class="chapter" id="listening" data-label="VI · Testing it with listeners">
     <div class="prose">
-      <p class="label">06 · Next</p>
+      <p class="label">VI · Next</p>
       <h2>Testing it with listeners</h2>
       <p>The ratings cannot settle whether the two habits are audible. A paired listening test can: each listener rates the same performance twice, once as played and once with only the pedal changed, while the notes stay identical.</p>
     </div>
@@ -179,35 +186,86 @@
 
   <div class="scrolly" data-scene="power">
     <div class="steps">
-      <div class="step" data-label="Listening test"><div>
+      <div class="step" data-label="VI · Testing it with listeners"><div>
         <h3>How many listeners?</h3>
         <p>Power is simulated for the planned design, with listeners and stimuli as random effects and PercePiano’s own rating noise.</p>
       </div></div>
-      <div class="step" data-label="Listening test"><div>
+      <div class="step" data-label="VI · Testing it with listeners"><div>
         <h3>Timbre depth: 29 listeners.</h3>
         <p>To detect half the typical difference between pianists in timbre depth with 80% power takes <strong>29 listeners</strong> with 24 stimulus pairs, or 67 with 12.</p>
       </div></div>
-      <div class="step" data-label="Listening test"><div>
+      <div class="step" data-label="VI · Testing it with listeners"><div>
         <h3>Pedal clarity: 13.</h3>
         <p>Pedal clarity needs 13 listeners with 24 pairs. The original design, with different performances rated by about ten raters each, has 6% power for the same timbre-depth difference.</p>
       </div></div>
     </div>
-    <div class="stage">
+    <div class="stage"><div class="sheet">
+      <p class="fig"><span>Fig. vi</span><span>power of the planned test</span></p>
       <div class="big" aria-live="polite"></div>
       <div class="viz"><svg role="img" aria-label="Simulated power of the planned listening test against the number of listeners."></svg></div>
       <p class="cap">Effect = half the typical between-pianist difference on each scale; quasi-F test, two-sided α = 0.05.</p>
-    </div>
+    </div></div>
   </div>
 
-  <section class="chapter" id="explore" data-label="Explore">
+  <section class="chapter room-wrap" id="explore" data-label="VII · The listening room">
     <div class="prose">
-      <p class="label">07 · Explore</p>
-      <h2>Explore the ratings yourself</h2>
-      <p>The Perception Explorer lets you browse the scales and passages, compare two performances of the same passage with their piano rolls, pedals and rating differences, and rate a performance yourself before seeing where the experts placed it.</p>
-      <div class="cta">
-        <a class="btn primary" href="/demos/beyond-words/">Open the Perception Explorer</a>
-        <a class="btn" href="https://github.com/aryaqzhong/BeyondWords-Piano">Code on GitHub ↗</a>
+      <p class="label">VII · Listen</p>
+      <h2>The listening room</h2>
+      <p>Pick a passage and two pianists who played it. Their piano rolls load from the PercePiano repository, play through a sampled grand, and sit next to how the experts rated them and where their playing differs. The example pairs were rated alike by the experts, yet differ clearly in one of the habits the ratings miss.</p>
+    </div>
+    <div class="room" id="room">
+      <aside>
+        <section class="rbox"><h3><b>a</b>Passage</h3><select id="rm-passage" aria-label="Passage"></select><p class="sub" id="rm-passage-sub"></p></section>
+        <section class="rbox"><h3><b>b</b>Two pianists</h3><div class="chips" id="rm-pianists" aria-label="Pianists"></div></section>
+        <section class="rbox"><h3><b>c</b>Rated alike, played differently</h3><div class="ex" id="rm-examples"></div></section>
+      </aside>
+      <div class="main">
+        <div class="summary" id="rm-summary"><div><b class="txt">Loading the ratings…</b><span>1,073 performances, 19 scales</span></div></div>
+        <h3><b>d</b>What they played <span class="legend">notes shaded by key velocity · sustain pedal solid · soft pedal dashed</span></h3>
+        <div class="roll" id="roll-a"></div>
+        <div class="roll" id="roll-b"></div>
+        <h3><b>e</b>How the experts rated them <span class="legend">A − B, in units of the typical difference between two pianists · band ±1 · 95% CI</span></h3>
+        <div class="chart" id="rm-ratings"></div>
+        <h3><b>f</b>Where their playing differs most <span class="legend">A − B in within-passage standard deviations · white: blind-spot candidates</span></h3>
+        <div class="chart" id="rm-features"></div>
       </div>
+    </div>
+    <p class="figcap prose"><span class="fig">Fig. vii</span><b>The listening room.</b> <i>a</i>, one of 99 passages from three works. <i>b</i>, the pianists who played it; the first pick is A, the second B. <i>c</i>, pairs the experts rated alike that differ most in soft-pedal use, pedal changes, melody lead or melody overlap, and the clearest contrasts on four scales. <i>d</i>, notes with the sustain pedal (solid) and soft pedal (dashed) below; playback uses a sampled grand (Salamander, CC BY 3.0) with the sustain pedal applied to note lengths. Soft pedal and half-pedaling are not rendered, and the experts heard a different rendering. <i>e</i>, rating differences adjusted for each rater’s leniency; gray rows have too few raters to compare single performances. <i>f</i>, the ten largest differences among 23 MIDI features.</p>
+  </section>
+
+  <section class="chapter tight" id="rate-ch" data-label="VIII · Rate one yourself">
+    <div class="prose">
+      <p class="label">VIII · Rate</p>
+      <h2>Rate one yourself</h2>
+      <p>Listen first. The pianist and the experts’ ratings stay hidden until you have answered on the four scales of the short form, which keeps most of what the 19 scales measure reliably. Then see where the experts placed it, and how far a single expert typically lands from their mean.</p>
+    </div>
+    <div class="rate" id="rate">
+      <aside>
+        <section class="rbox rate-head"><h3><b>g</b>The performance</h3><p class="rp" id="rate-passage">…</p>
+          <div class="rate-actions"><button id="rate-play" class="rbtn primary" type="button" disabled>▶ Play</button><button id="rate-next" class="rbtn" type="button">Another performance</button></div>
+          <div id="rate-progress" class="rate-progress" aria-hidden="true"></div>
+          <p class="sub" id="rate-status" role="status">loading…</p>
+        </section>
+      </aside>
+      <div class="main">
+        <form id="rate-form" class="rate-form" aria-label="Your ratings"></form>
+        <div class="rate-submit"><button id="rate-reveal" class="rbtn primary" type="button" disabled>Show the experts’ ratings</button><span id="rate-hint"></span></div>
+        <div id="rate-result" hidden>
+          <h3><b>h</b>You and the experts <span class="legend">dot and bar: the experts’ mean with its 95% CI · band: where a single expert typically lands (±1 SD) · ring: you</span></h3>
+          <div id="rate-rows"></div>
+          <h3 style="margin-top:1.6rem"><b>i</b>What was played</h3>
+          <div class="roll" id="rate-roll"></div>
+        </div>
+        <div id="rate-session" hidden>
+          <h3>Your session</h3>
+          <p class="note" id="rate-session-sub"></p>
+          <div class="rtable" id="rate-summary"></div>
+          <p class="note"><button id="rate-reset" class="rbtn" type="button">Clear my ratings</button> &nbsp;Your ratings stay in this browser and are not sent anywhere.</p>
+        </div>
+      </div>
+    </div>
+    <p class="figcap prose"><span class="fig">Fig. viii</span><b>The rating desk.</b> The comparison illustrates the rating task; it is not a listening experiment. Playback is approximate and the experts heard a different rendering.</p>
+    <div class="prose">
       <div class="limits">
         <h3>Limitations</h3>
         <ul>
@@ -217,6 +275,7 @@
           <li>The listening test is designed and powered, not yet run.</li>
         </ul>
       </div>
+      <div class="cta"><a class="btn" href="https://github.com/aryaqzhong/BeyondWords-Piano">Code and results on GitHub ↗</a></div>
     </div>
   </section>
 </main>
@@ -224,18 +283,19 @@
 <footer class="xfoot">
   <div class="inner">
     <div>
-      <h3>References</h3>
+      <h3>References and data</h3>
       <ol>
-        <li>Park et al. PercePiano. Scientific Reports 2024.</li>
+        <li>Park et al. PercePiano. Scientific Reports 2024. Data under the MIT License, Copyright (c) 2024 Jongho Kim SNU (<a href="data/LICENSE-PercePiano.txt">license</a>). This page holds only derived numbers; MIDI files are read from the PercePiano repository at a fixed commit and are not copied here.</li>
         <li>Bai et al. Electronics 15:3855, 2026.</li>
         <li>Westfall, Kenny &amp; Judd. Statistical power and optimal design in experiments in which samples of participants respond to samples of stimuli. Journal of Experimental Psychology: General 2014.</li>
       </ol>
     </div>
-    <p class="back"><a href="/#research">← research</a><a href="/#cv">cv</a><a href="/">home</a></p>
+    <p class="back"><a href="/#research">← research</a><a href="/projects/dualwindow-mss/">dualwindow-mss →</a><a href="/">home</a></p>
   </div>
 </footer>
 
 <script src="../assets/explainer.js"></script>
 <script src="bw.js"></script>
+<script src="room.js"></script>
 </body>
 </html>

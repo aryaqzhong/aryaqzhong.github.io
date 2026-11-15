@@ -4,6 +4,7 @@
   const seeded = seed => () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
   const shuffle = (n, seed) => { const r = seeded(seed), a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const narrowOf = stage => stage.clientWidth < 560;
+  const hopT = (i, p) => ease(clamp(p / .5));
 
   function ceiling(data) {
     const D = data.descriptors, n = D.length;
@@ -25,20 +26,16 @@
         rows = D.map(d => {
           const r = el('g', {}, g);
           const lab = el('text', { x: labelW, y: 0, 'text-anchor': 'end', class: 't-soft', dy: '.35em' }, r); lab.textContent = d.short;
-          const ceil = el('rect', { x: x(0), y: -6, height: 12, width: 0, fill: '#3a3a3a' }, r);
-          const fill = el('rect', { x: x(0), y: -6, height: 12, width: 0, fill: '#fff' }, r);
+          const track = el('line', { x1: x(0), x2: x(1), y1: 0, y2: 0, stroke: '#1a1a1a' }, r);
+          const ceil = el('rect', { x: x(0), y: -5, height: 10, width: 0, fill: '#3a3a3a' }, r);
+          const fill = el('rect', { x: x(0), y: -5, height: 10, width: 0, fill: '#fff' }, r);
           const val = el('text', { x: x(0), y: 0, dy: '.35em', class: 't-muted t-num halo' }, r);
-          return { d, r, lab, ceil, fill, val };
+          return { d, r, lab, track, ceil, fill, val };
         });
       },
       update(i, p) {
         const t = hopT(i, p);
-        const st = k => ({
-          y: k <= 1 ? 'raw' : 'ceil',
-          bar: k === 0 ? 0 : 1,
-          kind: k <= 1 ? 'raw' : 'ceil',
-          r2: k >= 3 ? 1 : 0,
-        });
+        const st = k => ({ y: k <= 1 ? 'raw' : 'ceil', bar: k === 0 ? 0 : 1, kind: k <= 1 ? 'raw' : 'ceil', r2: k >= 3 ? 1 : 0 });
         const A = st(Math.max(0, i - 1)), B = st(i), tt = i === 0 ? 1 : t;
         rows.forEach((row, k) => {
           const d = row.d;
@@ -56,7 +53,7 @@
           row.val.textContent = i === 0 ? '' : showR2 ? `${d.r2.toFixed(2)} of ${d.ceiling.toFixed(2)}` : v.toFixed(2);
         });
         const heads = [
-          `<div><b>19</b>descriptor scales</div><div><b>9–10</b>experts per segment</div>`,
+          `<div><b>19</b>scales</div><div><b>9–10</b>experts per performance</div>`,
           `<div><b>0.00–0.81</b>raw agreement</div>`,
           `<div><b>0.62–0.83</b>pedal, pace, timing</div><div><b>0.14–0.23</b>brightness, valence, energy, loudness</div>`,
           `<div><b>21</b>MIDI features</div><div><b>white</b>R² for unseen pianists</div><div><b>gray</b>noise ceiling</div>`,
@@ -67,7 +64,6 @@
       },
     };
   }
-  const hopT = (i, p) => ease(clamp(p / .5));
 
   function blind(data) {
     const F = data.features, E = data.experts;
@@ -101,7 +97,7 @@
         const ex0 = narrow ? 112 : 168, xx = scale(-.5, .5, ex0, VW - 16), rowH = (VH - 70) / E.length;
         el('line', { x1: xx(0), x2: xx(0), y1: 26, y2: VH - 30, stroke: '#444' }, ex);
         [-.5, 0, .5].forEach(v => el('text', { x: xx(v), y: VH - 12, 'text-anchor': 'middle', class: 't-muted' }, ex).textContent = (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1));
-        el('text', { x: VW - 16, y: 14, 'text-anchor': 'end', class: 't-muted' }, ex).textContent = 'one dot per expert · filled = their ratings predict it';
+        el('text', { x: VW - 16, y: 14, 'text-anchor': 'end', class: 't-muted' }, ex).textContent = 'one seat per expert · filled = their ratings predict it';
         E.forEach((e, r) => {
           const gy = 52 + r * rowH;
           el('text', { x: ex0 - 12, y: gy, dy: '.35em', 'text-anchor': 'end', class: e.role === 'candidate' ? 't-hi' : 't-soft' }, ex).textContent = narrow ? e.label.replace('Pedal re-articulation', 'Re-articulation').replace(' vs. score', '') : e.label;
@@ -234,11 +230,67 @@
     };
   }
 
+  function rollHero(hero) {
+    const canvas = hero.querySelector('canvas'), title = hero.querySelector('h1');
+    if (!canvas || !canvas.getContext) return;
+    const ctx = canvas.getContext('2d');
+    const rnd = seeded(5);
+    const prog = [[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59], [57, 60, 64], [50, 53, 57], [52, 56, 59], [57, 60, 64]];
+    const notes = []; let t = 0;
+    for (let bar = 0; bar < 72; bar++) {
+      const ch = prog[bar % prog.length];
+      [0, 2].forEach(b => notes.push({ t: t + b * .6 + (rnd() - .5) * .04, p: ch[0] - 12 - (bar % 16 === 15 ? 12 : 0), d: 1.1, v: 60 + rnd() * 25 }));
+      const tones = [ch[0], ch[1], ch[2], ch[0] + 12, ch[1] + 12, ch[2] + 12, ch[1] + 12, ch[2]];
+      for (let k = 0; k < 8; k++) notes.push({ t: t + k * .3 + (rnd() - .5) * .03, p: tones[k], d: .28 + rnd() * .3, v: 45 + rnd() * 40 + (k % 4 === 0 ? 15 : 0) });
+      if (rnd() < .8) notes.push({ t: t + (rnd() < .5 ? 0 : 1.2), p: ch[(bar * 7) % 3] + 24, d: 1.1 + rnd(), v: 70 + rnd() * 30 });
+      t += 2.4;
+    }
+    const total = t - 12;
+    let W = 0, H = 0, dpr = 1, nowY = 0, raf = 0, visible = true, mx = -1e4, start = performance.now(), last = 0, cur = 8, lastHp = 0;
+    const layout = () => {
+      dpr = Math.min(2, devicePixelRatio || 1);
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      const hb = hero.getBoundingClientRect(), tb = title.getBoundingClientRect();
+      nowY = tb.bottom - hb.top + 26;
+    };
+    const draw = now => {
+      raf = 0; if (!visible) return;
+      const dt = last ? Math.min(.05, (now - last) / 1000) : 0; last = now;
+      const hp = clamp(scrollY / (hero.offsetHeight * .8));
+      cur += dt * (1 + hp * 7); if (cur > total) cur -= total;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      const px = scale(24, 108, W * .06, W * .94), pps = 58, nw = Math.max(3, (px(25) - px(24)) * .62);
+      ctx.strokeStyle = '#1f1f1f'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(0, nowY + .5); ctx.lineTo(W, nowY + .5); ctx.stroke();
+      const fade = 1 - hp * .95;
+      for (const n of notes) {
+        const y0 = nowY + (n.t - cur) * pps, y1 = y0 + n.d * pps;
+        if (y1 < -10 || y0 > H + 10) continue;
+        const sounding = n.t <= cur && cur < n.t + n.d, past = cur >= n.t + n.d;
+        const x = px(n.p), near = Math.max(0, 1 - Math.abs(x - mx) / 90);
+        let a = sounding ? .95 : past ? .16 + .1 * clamp(1 - (cur - n.t - n.d) / 6) : .14 + .2 * (n.v / 127);
+        a = clamp((a + near * .35) * fade);
+        ctx.fillStyle = `rgba(255,255,255,${a.toFixed(3)})`;
+        ctx.fillRect(x - nw / 2, y0, nw, Math.max(2, y1 - y0 - 1.5));
+      }
+      if (!X.reduce) raf = requestAnimationFrame(draw);
+    };
+    const go = () => { if (!raf) raf = requestAnimationFrame(draw); };
+    layout(); go();
+    let rt = 0;
+    addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); go(); }, 150); });
+    hero.addEventListener('pointermove', e => { const b = canvas.getBoundingClientRect(); mx = e.clientX - b.left; go(); });
+    hero.addEventListener('pointerleave', () => { mx = -1e4; });
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) { last = 0; go(); } }).observe(hero);
+    addEventListener('scroll', () => { if (X.reduce && visible) go(); }, { passive: true });
+    if (document.fonts) document.fonts.ready.then(() => { layout(); go(); });
+  }
+
   fetch('data.json').then(r => r.json()).then(data => {
     X.scene('ceiling', ceiling(data));
     X.scene('blind', blind(data));
     X.scene('render', render(data));
     X.scene('power', power(data));
-    X.boot({ mode: 'roll' });
-  }).catch(e => { console.error(e); X.boot({ mode: 'roll' }); });
+  }).catch(e => console.error(e)).then(() => X.boot({ hero: rollHero }));
 })();
