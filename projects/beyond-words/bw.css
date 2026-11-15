@@ -70,6 +70,7 @@
 .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
 .note { margin: .5rem 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.5; }
 .figcap { margin: 1.5rem auto 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.main .figcap { margin: 1.7rem 0 0; padding-top: 1.1rem; border-top: 1px solid var(--line); max-width: none; }
 .figcap b { color: var(--ink); font-weight: 500; }
 .figcap .fig { margin-right: .5rem; font: italic 400 17px var(--serif); color: var(--soft); }
 .figcap i { font: italic 400 16px var(--serif); color: var(--soft); }

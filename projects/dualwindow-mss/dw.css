@@ -57,9 +57,9 @@
 .desk h3 { display: flex; align-items: baseline; gap: .6rem; margin: 0 0 .7rem; color: var(--ink); font-size: 13.5px; font-weight: 500; }
 .desk h3 b { font: 500 13px var(--mono); color: var(--hi); }
 .desk h3 .legend { margin-left: auto; font: 11.5px var(--mono); color: var(--muted); font-weight: 400; }
-.box { margin-bottom: 1rem; padding: .9rem .95rem .95rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+.box { margin-bottom: .85rem; padding: .8rem .95rem .85rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
 .opts { display: flex; flex-direction: column; gap: .25rem; }
-.opt { display: grid; grid-template-columns: 1fr auto; gap: .2rem .6rem; align-items: center; width: 100%; padding: .48rem .62rem; border: 1px solid transparent; border-radius: 7px; background: none; color: var(--soft); font: 14px/1.3 var(--font); text-align: left; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+.opt { display: grid; grid-template-columns: 1fr auto; gap: .2rem .6rem; align-items: center; width: 100%; padding: .4rem .62rem; border: 1px solid transparent; border-radius: 7px; background: none; color: var(--soft); font: 14px/1.3 var(--font); text-align: left; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
 .opt.key { grid-template-columns: 1.2em 1fr auto; }
 .opt:hover { border-color: var(--faint); color: var(--ink); }
 .opt[aria-selected="true"], .opt[aria-checked="true"] { background: var(--hi); color: #000; }
@@ -90,6 +90,8 @@
 .models tr.sel td:first-child::before { content: "▸ "; }
 .models td:first-child { font-family: var(--font); font-size: 13px; }
 .figcap { margin: 1.5rem auto 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.main .figcap { margin: 1.7rem 0 0; padding-top: 1.1rem; border-top: 1px solid var(--line); max-width: none; }
+.main .credit { margin: .7rem 0 0; max-width: none; }
 .figcap b { color: var(--ink); font-weight: 500; }
 .figcap .fig { font: 500 11.5px var(--mono); color: var(--soft); letter-spacing: .08em; text-transform: uppercase; margin-right: .5rem; }
 .figcap i { font-style: normal; font-family: var(--mono); font-size: 12.5px; color: var(--soft); }
