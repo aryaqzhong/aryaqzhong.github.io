@@ -5,8 +5,6 @@
   const clear = n => { while (n.firstChild) n.removeChild(n.firstChild); };
   const txt = (parent, x, y, s, attrs = {}) => { const t = el('text', Object.assign({ x, y }, attrs), parent); t.textContent = s; return t; };
   const observe = (node, fn) => { const ro = new ResizeObserver(() => fn(node.clientWidth, node.clientHeight)); ro.observe(node); return ro; };
-  const median = a => { const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
-  const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
   const seg = (box, items, current, onPick) => {
     box.replaceChildren(...items.map(([id, label]) => {
       const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.dataset.id = id;
@@ -123,51 +121,6 @@
     sync();
   }
 
-  function songLab(data) {
-    const fig = document.getElementById('lab-songs'); if (!fig) return;
-    const P = data.paired, tracks = data.tracks, hd = tracks.indexOf('PR - Happy Daze');
-    const cmps = [['C-B', 'C − B · 5.8 ms'], ['D-E', 'D − E · 2.9 ms'], ['C-Bw', 'C − wider B'], ['D-Ew', 'D − wider E']];
-    const svg = fig.querySelector('svg'), read = fig.querySelector('[data-role="read"]'), hover = fig.querySelector('[data-role="hover"]'), drop = fig.querySelector('[data-role="drop"]');
-    let key = 'D-E', W = 0, H = 0, rows = [], geo = null, hot = -1;
-    function stats() {
-      const v = P[key].values.map((x, j) => ({ x, j })).filter(d => !(drop.checked && d.j === hd));
-      const xs = v.map(d => d.x);
-      return { v, med: median(xs), mu: mean(xs), better: xs.filter(x => x > 0).length, n: xs.length };
-    }
-    function draw() {
-      if (!W || !H) return;
-      clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-      const narrow = W < 560, l = narrow ? 34 : 56, r = W - (narrow ? 12 : 110), y = scale(-3, 3, H - 26, 14);
-      const s = stats(); rows = s.v.sort((a, b) => a.x - b.x);
-      const step = (r - l) / rows.length, bw = Math.max(2, Math.min(12, step * .62));
-      for (let t = -3; t <= 3; t++) { el('line', { x1: l - 6, x2: r, y1: y(t), y2: y(t), stroke: t ? '#1e1e1e' : '#5a5a5a' }, svg); txt(svg, l - 10, y(t), t ? (t === 3 && !narrow ? '+3 dB' : fmt(t, 0)) : '0', { class: 't-muted', 'text-anchor': 'end', dy: '.35em' }); }
-      rows.forEach((d, k) => {
-        const v = Math.max(-3, Math.min(3, d.x)), x = l + k * step + (step - bw) / 2, y0 = y(0), y1 = y(v);
-        el('rect', { x, y: Math.min(y0, y1), width: bw, height: Math.max(.8, Math.abs(y1 - y0)), rx: 1, fill: k === hot ? '#fff' : d.x >= 0 ? '#d8d8d8' : '#5a5a5a', opacity: hot >= 0 && k !== hot ? .55 : 1 }, svg);
-        if (d.x < -3) txt(svg, x + bw / 2, y(-3) + 14, '▼', { class: 't-muted', 'text-anchor': 'middle' });
-      });
-      el('line', { x1: l, x2: r, y1: y(s.med), y2: y(s.med), stroke: '#fff', 'stroke-dasharray': '4 3' }, svg);
-      if (narrow) txt(svg, l + 4, y(s.med) - 6, `median ${fmt(s.med)} dB`, { class: 't-hi t-num halo' });
-      el('line', { x1: l, x2: r, y1: y(s.mu), y2: y(s.mu), stroke: '#9a9a9a', 'stroke-dasharray': '2 4' }, svg);
-      if (narrow) txt(svg, r, y(s.mu) + (s.mu < s.med ? 15 : -6), `mean ${fmt(s.mu)} dB`, { class: 't-soft t-num halo', 'text-anchor': 'end' });
-      else { const dy = Math.abs(y(s.mu) - y(s.med)) < 14 ? (s.mu < s.med ? 8 : -8) : 0; txt(svg, r + 8, y(s.mu) + dy, `mean ${fmt(s.mu)}`, { class: 't-soft t-num', dy: '.35em' }); txt(svg, r + 8, y(s.med) - dy, `median ${fmt(s.med)}`, { class: 't-hi t-num', dy: '.35em' }); }
-      geo = { l, step };
-      read.innerHTML = `<span><b>${fmt(s.med)} dB</b>median per song</span><span><b>${fmt(s.mu)} dB</b>mean per song</span><span><b>${s.better} of ${s.n}</b>songs improve</span>`;
-    }
-    const pick = e => {
-      if (!geo) return;
-      const b = svg.getBoundingClientRect(), x = (e.clientX - b.left) * (W / b.width), k = Math.floor((x - geo.l) / geo.step);
-      const k2 = k >= 0 && k < rows.length ? k : -1;
-      if (k2 !== hot) { hot = k2; draw(); }
-      hover.textContent = hot >= 0 ? `${tracks[rows[hot].j].replace(' - ', ' – ')}: ${fmt(rows[hot].x)} dB` : ' ';
-    };
-    svg.addEventListener('pointermove', pick); svg.addEventListener('pointerdown', pick);
-    svg.addEventListener('pointerleave', () => { hot = -1; hover.textContent = ' '; draw(); });
-    const markCmp = seg(fig.querySelector('[data-role="cmp"]'), cmps, key, id => { key = id; hot = -1; markCmp(id); draw(); });
-    drop.addEventListener('change', () => { hot = -1; draw(); });
-    observe(svg.parentElement, (w, h) => { W = w; H = h; draw(); });
-  }
-
   function bleedLab(data) {
     const fig = document.getElementById('lab-bleed'); if (!fig) return;
     const C = data.bleed.curves, G = ['0.5', '0.75', '1 (as trained)', '1.5', '2'];
@@ -196,6 +149,13 @@
           else txt(svg, x(a) + 9, y(v) - 9, k, { class: dual ? 't-hi' : 't-soft' });
         }
       });
+      const eqs = { de: [data.bleed.equal.DE, ['D', 'E']], cb: [data.bleed.equal.ABC, ['C', 'B']] }[hl];
+      if (eqs) {
+        const [eq, ks] = eqs, ex = x(eq.atten);
+        el('line', { x1: ex, x2: ex, y1: t, y2: b, stroke: '#fff', 'stroke-dasharray': '2 4', opacity: .7 }, svg);
+        ks.forEach(k => { const yy = y(eq.loss[k]); el('rect', { x: ex - 4, y: yy - 4, width: 8, height: 8, fill: '#0b0b0b', stroke: '#fff', transform: `rotate(45 ${ex} ${yy})` }, svg); });
+        txt(svg, ex + 8, b - 8, narrow ? `equal ${eq.atten.toFixed(1)} dB removed` : `same ${eq.atten.toFixed(1)} dB of band removed: ${ks[0]} loses ${Math.abs(eq.loss[ks[0]]).toFixed(2)} dB of voice, ${ks[1]} ${Math.abs(eq.loss[ks[1]]).toFixed(2)} dB`, { class: 't-hi halo' });
+      }
       og.textContent = G[g];
       read.innerHTML = on.map(k => { const [a, v] = C[k][g]; return `<span><b>${k}</b>${Math.abs(v).toFixed(2)} dB voice lost · ${a.toFixed(1)} dB band removed</span>`; }).join('');
     }
@@ -205,5 +165,5 @@
   }
 
   citations();
-  fetch('data.json').then(r => r.json()).then(data => { windowLab(data); songLab(data); bleedLab(data); }).catch(e => console.error(e));
+  fetch('data.json').then(r => r.json()).then(data => { windowLab(data); bleedLab(data); }).catch(e => console.error(e));
 })();

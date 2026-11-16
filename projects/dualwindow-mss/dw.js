@@ -21,13 +21,10 @@
 
   X.scene('window', (() => {
     const states = [
-      { title: 'First, collect a frame of audio.', stats: ['1024 samples', '≈ 23.2 ms wait'], note: 'A conventional window uses the same length for analysis and synthesis.', kind: 'time' },
-      { title: 'A long window resolves two nearby tones.', stats: ['1024 samples', '43 Hz between bins'], note: 'Line: normalized spectral magnitude. Dots: frequencies sampled by the STFT.', kind: 'spectrum', N: 1024 },
-      { title: 'A shorter window loses spectral detail.', stats: ['256 samples · ≈ 5.8 ms', '172 Hz between bins'], note: 'The signal and frequency axis stay the same; only the window changes.', kind: 'spectrum', N: 256 },
-      { title: 'At 128 samples, the view is coarser still.', stats: ['128 samples · ≈ 2.9 ms', '345 Hz between bins'], note: 'Fewer bins describe the same two tones. The mask has less detail to work with.', kind: 'spectrum', N: 128 },
-      { title: 'Give analysis and synthesis different jobs.', stats: ['2048 samples analyzed', '128 samples synthesized'], note: 'Both ranges end at now. The longer analysis reads history already in the buffer.', kind: 'dual' },
-      { title: 'Two frame contributions add up to one.', stats: ['128-sample Hann product', '64-sample hop'], note: 'With an unchanged spectrum, overlapping frames reconstruct the input without gaps.', kind: 'overlap' },
-      { title: 'More spectral detail at the same wait.', stats: ['Short E vs dual D', 'Same 128-sample synthesis'], note: 'The 127-sample framing bound is ≈ 2.88 ms. The implementation is tested in Results.', kind: 'summary' },
+      { title: 'A long window resolves two nearby tones.', stats: ['1024 samples · 23.2 ms wait', '43 Hz between bins'], note: 'Line: normalized spectrum. Dots: the frequencies the STFT samples.', kind: 'spectrum', N: 1024 },
+      { title: 'A short window waits less and sees less.', stats: ['128 samples · 2.9 ms wait', '345 Hz between bins'], note: 'Same two tones, same frequency axis; only the window changed.', kind: 'spectrum', N: 128 },
+      { title: 'Give analysis and synthesis different jobs.', stats: ['2048 samples analyzed', '128 samples synthesized'], note: 'Both end at now. The long analysis reads history already in the buffer.', kind: 'dual' },
+      { title: 'The overlapping frames still add up to one.', stats: ['128-sample Hann product', '64-sample hop'], note: 'An unchanged spectrum is reconstructed exactly; the wait stays at 128 samples.', kind: 'overlap' },
     ];
     let svg, readout, heading, stats, note, panel, W = 0, H = 0, step = 0, renderedStep = -1;
     const spectralCache = new Map();
@@ -50,16 +47,6 @@
     const line = (x1, y1, x2, y2, color = '#444', attrs = {}) => el('line', { x1, y1, x2, y2, stroke: color, ...attrs }, svg);
     const label = (x, y, text, anchor = 'start', cls = 't-soft') => txt(svg, x, y, text, { class: cls, 'text-anchor': anchor });
     const path = (points, color = '#fff', attrs = {}) => el('path', { d: points.map(([x, y], k) => `${k ? 'L' : 'M'}${x.toFixed(2)},${y.toFixed(2)}`).join(' '), fill: 'none', stroke: color, 'stroke-width': 2, ...attrs }, svg);
-    function timeFrame() {
-      const l = 16, r = W - 16, cy = H * .45, barH = Math.min(60, H * .24), unit = (r - l) / 32;
-      label(l, cy - barH / 2 - 28, 'oldest sample', 'start', 't-muted');
-      label(r, cy - barH / 2 - 28, 'newest · now', 'end', 't-hi');
-      for (let k = 0; k < 32; k++) el('rect', { x: l + k * unit, y: cy - barH / 2, width: Math.max(2, unit - 2), height: barH, fill: k === 31 ? '#fff' : '#888' }, svg);
-      const y = cy + barH / 2 + 16;
-      path([[l, y - 5], [l, y], [r, y], [r, y - 5]], '#aaa', { 'stroke-width': 1 });
-      label((l + r) / 2, y + 24, '1024 samples per frame', 'middle', 't-hi');
-      label((l + r) / 2, Math.min(H - 10, y + 55), 'collect → process → reconstruct', 'middle', 't-muted');
-    }
     function frequency(N) {
       const l = 28, r = W - 16, top = 48, bottom = H - 30;
       const x = scale(0, 600, l, r), y = scale(0, 1, bottom, top);
@@ -111,28 +98,14 @@
       label(l, H - 5, '0', 'start', 't-muted');
       label(r, H - 5, '64 samples · one hop', 'end', 't-muted');
     }
-    function summary() {
-      const l = 8, r = W - 8, c1 = W * .57, c2 = W * .85;
-      const top = 28, rowH = Math.min(68, (H - top - 5) / 4);
-      label(c1, 14, 'Short E', 'middle', 't-soft'); label(c2, 14, 'Dual D', 'middle', 't-hi');
-      const rows = [['Analysis (N)', '128', '2048'], ['Synthesis (M)', '128', '128'], ['Bin spacing', '345 Hz', '22 Hz'], ['Wait (samples)', '≤ 127', '≤ 127']];
-      rows.forEach(([name, a, b], j) => {
-        const y = top + j * rowH;
-        line(l, y, r, y, '#333');
-        label(l, y + rowH * .6, name, 'start', 't-muted');
-        label(c1, y + rowH * .6, a, 'middle', 't-soft'); label(c2, y + rowH * .6, b, 'middle', 't-hi');
-      });
-    }
     function draw() {
       if (!svg || !W || !H) return;
       clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       const state = states[step];
       svg.setAttribute('aria-label', state.title + ' ' + state.stats.join('. ') + '. ' + state.note);
-      if (state.kind === 'time') timeFrame();
-      else if (state.kind === 'spectrum') frequency(state.N);
+      if (state.kind === 'spectrum') frequency(state.N);
       else if (state.kind === 'dual') dual();
-      else if (state.kind === 'overlap') overlap();
-      else summary();
+      else overlap();
     }
     function render() {
       if (!heading || renderedStep === step) return;
@@ -140,7 +113,7 @@
       const state = states[step];
       panel.dataset.phase = state.kind;
       heading.textContent = state.title;
-      readout.textContent = `${String(step + 1).padStart(2, '0')} / 07`;
+      readout.textContent = `${String(step + 1).padStart(2, '0')} / ${String(states.length).padStart(2, '0')}`;
       stats.replaceChildren(...state.stats.map(value => { const span = document.createElement('span'); span.textContent = value; return span; }));
       note.textContent = state.note;
       draw();
@@ -157,7 +130,9 @@
     };
   })());
 
-  function pipeline(data) {
+  function pipelineFig() {
+    const fig = document.getElementById('fig-pipeline'); if (!fig) return;
+    const svg = fig.querySelector('svg');
     const stages = [
       ['input', '64 samples / block', 'add to past buffer'],
       ['analysis STFT', '2048 past samples', '1025 bins'],
@@ -166,29 +141,29 @@
       ['inverse STFT', '128-sample window', 'add overlaps every 64'],
       ['output', '64 samples / block', 'shifted by 1 hop'],
     ];
-    const lit = [[0], [1], [2], [3], [4, 5], []];
-    let svg, big, W = 0, H = 0, boxes = [], packet, pts = [], raf = 0, visible = false, step = 0, built = false, flow, cost;
+    let W = 0, H = 0, pts = [], packet = null, raf = 0, visible = false;
     const loop = t => {
-      raf = 0; if (!visible || !built) return;
+      raf = 0; if (!visible || !packet || pts.length < 2) return;
       const f = X.reduce ? .45 : (t / 5200) % 1, seg = f * (pts.length - 1), k = Math.min(pts.length - 2, Math.floor(seg)), u = seg - k;
       packet.setAttribute('transform', `translate(${lerp(pts[k][0], pts[k + 1][0], u)},${lerp(pts[k][1], pts[k + 1][1], u)})`);
-      if (!X.reduce && step < 5) raf = requestAnimationFrame(loop);
+      if (!X.reduce) raf = requestAnimationFrame(loop);
     };
     function build() {
+      if (!W || !H) return;
       clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-      const narrow = W < 520, cols = narrow ? 2 : 3, rows = 6 / cols, gap = narrow ? 22 : 32;
-      const bw = (W - 8 - gap * (cols - 1)) / cols, bh = narrow ? 64 : 96, gy = narrow ? 18 : 40;
-      const totalH = rows * bh + (rows - 1) * gy, top = Math.max(4, (H - totalH - 22) / 2);
-      flow = el('g', {}, svg); cost = el('g', { opacity: 0 }, svg); boxes = []; pts = [];
-      const defs = el('defs', {}, svg), mk = el('marker', { id: 'arr', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto' }, defs);
+      const narrow = W < 700, cols = narrow ? 2 : 3, gap = narrow ? 20 : 30;
+      const flowW = narrow ? W - 8 : W * .6, bw = (flowW - gap * (cols - 1)) / cols, bh = narrow ? 64 : 88, gy = narrow ? 18 : 34;
+      const rows = 6 / cols, totalH = rows * bh + (rows - 1) * gy, top = narrow ? 6 : Math.max(6, (H - totalH - 26) / 2);
+      const defs = el('defs', {}, svg), mk = el('marker', { id: 'parr', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto' }, defs);
       el('path', { d: 'M0,0 L10,5 L0,10 z', fill: '#777' }, mk);
+      const boxes = []; pts = [];
       stages.forEach((lines, i) => {
         const r = Math.floor(i / cols), c = r % 2 === 0 ? i % cols : cols - 1 - i % cols;
-        const x = 4 + c * (bw + gap), y = top + r * (bh + gy), g = el('g', {}, flow);
-        const rect = el('rect', { x, y, width: bw, height: bh, rx: 3, fill: '#121212', stroke: '#555' }, g);
-        txt(g, x + 9, y + (narrow ? 16 : 24), `${i + 1} ${lines[0]}`, { class: 't-hi' });
-        lines.slice(1).forEach((line, k) => txt(g, x + 9, y + (narrow ? 34 : 48) + k * 16, line, { class: 't-soft' }));
-        boxes.push({ g, rect, x, y, cx: x + bw / 2, cy: y + bh / 2 });
+        const x = 4 + c * (bw + gap), y = top + r * (bh + gy);
+        el('rect', { x, y, width: bw, height: bh, rx: 3, fill: '#121212', stroke: i === 1 || i === 4 ? '#fff' : '#555' }, svg);
+        txt(svg, x + 9, y + (narrow ? 17 : 24), `${i + 1} ${lines[0]}`, { class: 't-hi' });
+        lines.slice(1).forEach((line, k) => txt(svg, x + 9, y + (narrow ? 35 : 46) + k * 16, line, { class: 't-soft' }));
+        boxes.push({ x, y, cx: x + bw / 2, cy: y + bh / 2 });
       });
       boxes.forEach((b, i) => {
         if (i === 0) pts.push([b.x, b.cy]);
@@ -196,59 +171,38 @@
         const n = boxes[i + 1];
         if (!n) { pts.push([b.x + bw, b.cy]); return; }
         if (n.cy === b.cy) {
-          const forward = n.x > b.x;
-          el('line', { x1: forward ? b.x + bw : b.x, x2: forward ? n.x : n.x + bw, y1: b.cy, y2: n.cy, stroke: '#777', 'marker-end': 'url(#arr)' }, flow);
+          const fwd = n.x > b.x;
+          el('line', { x1: fwd ? b.x + bw : b.x, x2: fwd ? n.x : n.x + bw, y1: b.cy, y2: n.cy, stroke: '#777', 'marker-end': 'url(#parr)' }, svg);
         } else {
           const ym = b.y + bh + gy / 2;
-          el('path', { d: `M${b.cx},${b.y + bh} V${ym} H${n.cx} V${n.y}`, fill: 'none', stroke: '#777', 'marker-end': 'url(#arr)' }, flow);
+          el('path', { d: `M${b.cx},${b.y + bh} V${ym} H${n.cx} V${n.y}`, fill: 'none', stroke: '#777', 'marker-end': 'url(#parr)' }, svg);
           pts.push([b.cx, ym], [n.cx, ym]);
         }
       });
-      txt(flow, 4, top + totalH + 18, narrow ? '□ block · lit box = stage' : '□ one block of 64 samples · bright box = the stage described at left', { class: 't-muted' });
-      const left = 8, right = W - 12, maxBar = right - left, rowH = Math.min(108, H / 2 - 20), topCost = Math.max(30, (H - 2 * rowH) / 2);
-      [['B · short · 129 bins', 1.55, '#8a8a8a'], ['C · dual · 1025 bins', 5.84, '#fff']].forEach(([label, value, color], k) => {
-        const y = topCost + k * rowH;
-        txt(cost, left, y, label, { class: 't-soft' });
-        txt(cost, right, y, `${value.toFixed(2)} MMAC`, { class: 't-hi t-num', 'text-anchor': 'end' });
-        el('rect', { x: left, y: y + 14, width: maxBar * value / 6, height: 24, fill: color }, cost);
+      txt(svg, 4, top + totalH + 20, narrow ? '□ one 64-sample block · white: the two windows' : '□ one 64-sample block per hop · white boxes: where the two windows act', { class: 't-muted' });
+      const cx0 = narrow ? 4 : W * .68, cx1 = W - 6, cy0 = narrow ? top + totalH + 54 : top + 8, barW = cx1 - cx0;
+      txt(svg, cx0, cy0, narrow ? 'compute per frame at 5.8 ms' : 'compute per frame at the same 5.8 ms latency', { class: 't-muted' });
+      [['B · short · 129 bins', 1.55, '#8a8a8a'], ['C · dual · 1025 bins', 5.84, '#fff']].forEach(([label, v, col], k) => {
+        const y = cy0 + 30 + k * (narrow ? 52 : 64);
+        txt(svg, cx0, y, label, { class: 't-soft' });
+        txt(svg, cx1, y, `${v.toFixed(2)} MMAC`, { class: 't-hi t-num', 'text-anchor': 'end' });
+        el('rect', { x: cx0, y: y + 10, width: barW * v / 6, height: narrow ? 16 : 22, fill: col }, svg);
       });
-      txt(cost, left, topCost + rowH * 2, narrow ? 'MMAC per frame · 5.8 ms latency' : 'Compute per frame at the same 5.8 ms latency; per-bin layers dominate the cost.', { class: 't-muted' });
-      packet = el('g', {}, flow); el('rect', { x: -4, y: -4, width: 8, height: 8, fill: '#fff', rx: 1 }, packet);
-      built = true; paint(); if (visible && !raf) raf = requestAnimationFrame(loop);
+      if (!narrow) txt(svg, cx0, cy0 + 30 + 2 * 64 + 4, 'per-bin layers dominate the cost', { class: 't-muted' });
+      packet = el('g', {}, svg); el('rect', { x: -4, y: -4, width: 8, height: 8, fill: '#fff', rx: 1 }, packet);
+      if (visible && !raf) raf = requestAnimationFrame(loop);
     }
-    function paint() {
-      if (!built) return;
-      boxes.forEach((b, i) => { const on = lit[step].includes(i); b.g.setAttribute('opacity', on ? 1 : .7); b.rect.setAttribute('stroke', on ? '#fff' : '#555'); });
-      fade(flow, step === 5 ? 0 : 1); fade(cost, step === 5 ? 1 : 0);
-    }
-    return {
-      init(stage) {
-        svg = stage.querySelector('svg'); big = stage.querySelector('.big');
-        observe(svg.parentElement, (w, h) => { W = w; H = h; build(); });
-        new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf) raf = requestAnimationFrame(loop); }).observe(svg);
-      },
-      update(i) {
-        step = i; paint();
-        big.innerHTML = [
-          '<div><b>64 samples</b>per block · 1.45 ms per hop</div>',
-          '<div><b>2048 → 1025</b>past samples → frequency bins</div><div><b>128 samples</b>synthesis window</div>',
-          '<div><b>0.94 M</b>parameters per model</div><div><b>64 bands</b>into one causal GRU layer</div>',
-          '<div><b>0 … 1</b>one gain per bin</div><div><b>mixture × mask</b>the vocal estimate</div>',
-          '<div><b>1 hop</b>streaming signal shift</div><div><b>127 samples</b>worst case with block wait</div>',
-          '<div><b>5.84 / 1.55</b>MMAC per frame · C / B</div><div><b>1025 / 129</b>frequency bins</div>',
-        ][i];
-        if (visible && !raf) raf = requestAnimationFrame(loop);
-      },
-    };
+    observe(svg.parentElement, (w, h) => { W = w; H = h; build(); });
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible && !raf) raf = requestAnimationFrame(loop); }).observe(svg);
   }
 
   function oracle(data) {
-    const V = data.oracle.validation, O = data.octaves;
-    let svg, big, W = 0, H = 0, gO, gB, dual = [], dualLbl, brk, inset, built = false, cur = { i: 0, p: 0 };
+    const V = data.oracle.validation;
+    let svg, big, W = 0, H = 0, gO, dual = [], dualLbl, brk, inset, built = false, cur = { i: 0, p: 0 };
     function build() {
       clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       const narrow = W < 520;
-      gO = el('g', {}, svg); gB = el('g', { opacity: 0 }, svg);
+      gO = el('g', {}, svg);
       const left = narrow ? 44 : 56, right = W - 34, top = 52, bottom = H - 40;
       const x = v => scale(Math.log2(2.9), Math.log2(23.22), left, right)(Math.log2(v)), y = scale(7, 11.5, bottom, top);
       const ax = el('g', { class: 'ax' }, gO);
@@ -282,24 +236,6 @@
         el('rect', { x: ix, y: yy + 12, width: sc(v) - ix, height: 24, fill: col }, inset);
       });
       txt(inset, ix, iy + 150, '≈ 40% of the oracle gain realized', { class: 't-hi' });
-      const bx0 = narrow ? 44 : 56, bx1 = W - 16, btop = 30, bbot = H - 44;
-      const order = ['A', 'B', 'C', 'E', 'D'], lat = { A: '23.2 ms', B: '5.8 ms', C: '5.8 ms', E: '2.9 ms', D: '2.9 ms' }, kind = { A: 'long', B: 'short', C: 'dual', E: 'short', D: 'dual' };
-      const gw = (bx1 - bx0) / order.length, by = scale(0, -4, btop, bbot);
-      const axb = el('g', { class: 'ax' }, gB);
-      [0, -1, -2, -3, -4].forEach(v => { el('line', { x1: bx0 - 4, x2: bx1, y1: by(v), y2: by(v), stroke: v === 0 ? '#555' : '#1f1f1f' }, axb); txt(axb, bx0 - 8, by(v), `${v} dB`, { 'text-anchor': 'end', dy: '.35em' }); });
-      txt(gB, bx0, 10, narrow ? '↓ vocal loss (dB), simulated bleed' : '↓ vocal energy lost with simulated bleed, by octave', { class: 't-muted' });
-      order.forEach((k, i) => {
-        const cx = bx0 + gw * (i + .5), w = Math.min(26, gw * .22);
-        [[0, '#fff'], [1, '#6a6a6a']].forEach(([j, col]) => {
-          const v = O.loss[k][j], xx = cx + (j ? 4 : -w - 4);
-          el('rect', { x: xx, y: by(0), width: w, height: by(v) - by(0), fill: col }, gB);
-          txt(gB, xx + w / 2, by(v) + 14, Math.abs(v).toFixed(1), { class: j ? 't-muted t-num' : 't-hi t-num', 'text-anchor': 'middle' });
-        });
-        txt(gB, cx, bbot + 16, narrow ? k : `${k} · ${kind[k]}`, { class: kind[k] === 'dual' ? 't-hi' : 't-soft', 'text-anchor': 'middle' });
-        txt(gB, cx, bbot + 30, lat[k], { class: 't-muted', 'text-anchor': 'middle' });
-      });
-      const lg = el('g', {}, gB), lx = bx1 - (narrow ? 120 : 160), ly = 38;
-      [['125–250 Hz', '#fff'], ['250–500 Hz', '#6a6a6a']].forEach(([l, col], k) => { el('rect', { x: lx, y: ly + k * 18 - 9, width: 12, height: 12, fill: col }, lg); txt(lg, lx + 18, ly + k * 18, l, { class: 't-soft', dy: '.35em' }); });
       built = true; render();
     }
     function render() {
@@ -309,14 +245,11 @@
       dual.forEach(g => fade(g, showDual)); fade(dualLbl, showDual);
       fade(brk, i === 1 ? t : i > 1 ? 1 : 0);
       fade(inset, i === 2 ? 1 : 0);
-      const sw = i === 3 ? t : 0;
-      fade(gO, i === 2 ? 1 : 1 - sw); fade(gB, sw);
       [...gO.children].forEach(g => { if (g !== inset) g.style.visibility = i === 2 ? 'hidden' : ''; });
       const heads = [
         `<div><b>10.9 → 7.8 dB</b>ideal masks, symmetric 23.2 → 2.9 ms</div>`,
         `<div><b>10.06 dB</b>dual 2048 / 256 at 5.8 ms</div><div><b>9.52 dB</b>symmetric at 11.6 ms</div>`,
         `<div><b>+1.87 dB</b>oracle gain, positive on every song</div><div><b>+0.76 dB</b>trained · ≈ 40%</div>`,
-        `<div><b>3.6 dB</b>lost at 125–250 Hz, short 256</div><div><b>2.6 dB</b>dual window</div><div><b>2.4 dB</b>long window</div>`,
       ];
       big.innerHTML = heads[i];
     }
@@ -324,18 +257,20 @@
   }
 
   function gains(data) {
-    const P = data.paired, keys = ['C-B', 'D-E', 'D-Ew', 'D-Ew'];
+    const P = data.paired, keys = ['C-B', 'D-E', 'D-Ew', 'D-E'];
     const cfg = k => data.configs.find(c => c.key === k);
     const meta = [
       { lat: '5.8 ms', a: cfg('B').si_sdr_median, b: cfg('C').si_sdr_median, what: 'short → dual window, median song' },
       { lat: '2.9 ms', a: cfg('E').si_sdr_median, b: cfg('D').si_sdr_median, what: 'short → dual window, median song' },
       { lat: '2.9 ms', a: data.wide.Ew, b: cfg('D').si_sdr_median, what: 'wider short → dual, same compute' },
-      { lat: '2.9 ms', a: data.wide.Ew, b: cfg('D').si_sdr_median, what: 'wider short → dual, same compute' },
     ];
-    const n = data.tracks.length, hd = data.tracks.indexOf('PR - Happy Daze'), CAP = data.capacity;
+    const n = data.tracks.length, hd = data.tracks.indexOf('PR - Happy Daze');
+    const avg = a => a.reduce((x, y) => x + y, 0) / a.length;
+    const mid = a => { const q = [...a].sort((x, y) => x - y), m = q.length >> 1; return q.length % 2 ? q[m] : (q[m - 1] + q[m]) / 2; };
+    const rest = P['D-E'].values.filter((_, j) => j !== hd), meanRest = avg(rest), medRest = mid(rest);
     const ranks = keys.map(k => { const v = P[k].values, order = v.map((val, j) => [val, j]).sort((a, b) => a[0] - b[0]), r = new Array(n); order.forEach(([, j], q) => { r[j] = q; }); return r; });
     const clipv = v => Math.max(-3, Math.min(3, v));
-    let svg, big, W = 0, H = 0, left, right, step, bw, y, bars = [], medLine, medText, meanLine, meanText, hdLabel, hdLead, gBars, gCap, cur = { i: 0, p: 0 }, built = false;
+    let svg, big, W = 0, H = 0, left, right, step, bw, y, bars = [], medLine, medText, meanLine, meanText, hdLabel, hdLead, gBars, cur = { i: 0, p: 0 }, built = false;
     function build() {
       clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       const narrow = W < 520;
@@ -356,19 +291,6 @@
       medText = txt(gBars, left + 4, 0, '', { class: 't-hi t-num halo' });
       hdLead = el('path', { fill: 'none', stroke: '#9a9a9a', opacity: 0 }, gBars);
       hdLabel = txt(gBars, 0, 0, '', { class: 't-hi halo', opacity: 0 });
-      gCap = el('g', { opacity: 0 }, svg);
-      const cl = narrow ? 44 : 60, cr = W - 20, ct = 30, cb = H - 60, cx = k => cl + (cr - cl) * (k + .5) / 3, cy = scale(0, 1, cb, ct);
-      const axc = el('g', { class: 'ax' }, gCap);
-      [0, .25, .5, .75, 1].forEach(v => { el('line', { x1: cl - 4, x2: cr, y1: cy(v), y2: cy(v), stroke: v ? '#1e1e1e' : '#5a5a5a' }, axc); txt(axc, cl - 8, cy(v), v ? fmt(v) : '0', { 'text-anchor': 'end', dy: '.35em' }); });
-      txt(gCap, cl, 12, narrow ? '↑ gain (dB) · 5.8 ms · 95% CI' : '↑ dual − short, median gain per song (dB) at 5.8 ms, with 95% CI', { class: 't-muted' });
-      CAP.forEach((c, k) => {
-        el('line', { x1: cx(k), x2: cx(k), y1: cy(c.ci[0]), y2: cy(c.ci[1]), stroke: '#9a9a9a', 'stroke-width': 2, 'stroke-linecap': 'round' }, gCap);
-        el('circle', { cx: cx(k), cy: cy(c.gain), r: 6, fill: '#fff' }, gCap);
-        txt(gCap, cx(k), cy(c.gain) - 14, `${fmt(c.gain)} dB`, { class: 't-hi t-num', 'text-anchor': 'middle' });
-        txt(gCap, cx(k), cb + 18, narrow ? `${c.params_M} M` : `${c.params_M} M parameters`, { class: 't-soft', 'text-anchor': 'middle' });
-        txt(gCap, cx(k), cb + 34, W < 850 ? `GRU ${c.width}` : `GRU width ${c.width} · short ${c.B.toFixed(2)} → dual ${c.C.toFixed(2)} dB`, { class: 't-muted', 'text-anchor': 'middle' });
-      });
-      if (W >= 850) txt(gCap, cr, ct + 15, narrow ? '0.17 M dual beats 0.94 M short: +0.31 dB' : 'the 0.17 M dual-window model beats the 0.94 M short-window model by 0.31 dB per song', { class: 't-soft', 'text-anchor': 'end' });
       built = true; render();
     }
     function render() {
@@ -394,9 +316,7 @@
       hdLead.setAttribute('d', `M${hx.toFixed(1)},${y(-3)} L${(hx + 12).toFixed(1)},${ly + 4} L${(hx + 18).toFixed(1)},${ly + 4}`); hdLead.setAttribute('opacity', sm);
       hdLabel.setAttribute('x', hx + 22); hdLabel.setAttribute('y', ly + 8); hdLabel.setAttribute('opacity', sm);
       hdLabel.textContent = `PR – Happy Daze: ${fmt(vb[hd], 0)} dB, clipped`;
-      const sw = i === 4 ? t : 0;
-      fade(gBars, 1 - sw); fade(gCap, sw);
-      if (i === 4) big.innerHTML = `<div><b>${fmt(CAP[0].gain)} / ${fmt(CAP[1].gain)} / ${fmt(CAP[2].gain)} dB</b>gain at 0.17 / 0.38 / 0.94 M</div><div><b>+0.31 dB</b>0.17 M dual over 0.94 M short</div>`;
+      if (i === 3) big.innerHTML = `<div><b>${fmt(P['D-E'].mean)} → ${fmt(meanRest)} dB</b>mean, without this one song</div><div><b>${fmt(P['D-E'].median)} → ${fmt(medRest)} dB</b>median</div>`;
       else { const m = meta[i], pb = P[keys[i]]; big.innerHTML = `<div><b>${m.lat}</b>latency</div><div><b>${m.a.toFixed(2)} → ${m.b.toFixed(2)}</b>${m.what}</div><div><b>${pb.better} of ${pb.n}</b>songs improve</div>`; }
     }
     return { init(stage) { svg = stage.querySelector('svg'); big = stage.querySelector('.big'); observe(svg.parentElement, (w, h) => { W = w; H = h; build(); }); }, update(i, p) { cur = { i, p }; render(); } };
@@ -404,7 +324,7 @@
 
   function prefix(data) {
     const LC = data.latency_check;
-    let svg, big, W = 0, H = 0, gSig, gTab, outs, brk, m2, built = false, cur = { i: 0, p: 0 };
+    let svg, big, W = 0, H = 0, gSig, outs, brk, m2, built = false, cur = { i: 0, p: 0 };
     const NS = 600, NDIV = 330, LOOK = 123;
     const base = k => .5 * Math.sin(k * .09) + .3 * Math.sin(k * .23 + 1) + .2 * Math.sin(k * .41 + 2);
     const alt = k => .45 * Math.sin(k * .13 + 2) + .35 * Math.sin(k * .31) + .2 * Math.sin(k * .5 + 1);
@@ -415,7 +335,7 @@
     function build() {
       clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       const narrow = W < 520, left = narrow ? 70 : 120, right = W - 16, x = scale(0, NS, left, right);
-      gSig = el('g', {}, svg); gTab = el('g', { opacity: 0 }, svg);
+      gSig = el('g', {}, svg);
       const rows = [['input 1', inA, '#8a8a8a'], ['input 2', inB, '#fff'], ['output 1', outA, '#8a8a8a'], ['output 2', outB, '#fff']];
       const rowH = Math.min(90, (H - 80) / 4), amp = rowH * .32, top = 40;
       outs = el('g', { opacity: 0 }, gSig);
@@ -436,26 +356,13 @@
       const yb = yBot + 14;
       el('path', { d: `M${x(NDIV - LOOK)},${yb - 5} V${yb} H${x(NDIV)} V${yb - 5}`, fill: 'none', stroke: '#fff' }, brk);
       txt(brk, narrow ? right : (x(NDIV - LOOK) + x(NDIV)) / 2, yb + 16, narrow ? '123 samples look-ahead · bound 127' : 'look-ahead: 123 samples · bound 127 = synthesis window − 1', { class: 't-hi t-num', 'text-anchor': narrow ? 'end' : 'middle' });
-      const tl = narrow ? 4 : 60, th = Math.min(34, (H - 60) / 6), t0y = Math.max(26, (H - th * 7) / 2);
-      const cols = narrow ? [tl, W * .27, W * .62, W * .82] : [tl, W * .35, W * .65, W * .84];
-      txt(gTab, cols[0], t0y, 'config', { class: 't-muted' }); txt(gTab, cols[1], t0y, narrow ? 'windows' : 'analysis / synthesis', { class: 't-muted' }); txt(gTab, cols[2], t0y, narrow ? 'look' : 'look-ahead', { class: 't-muted' }); txt(gTab, cols[3], t0y, 'bound', { class: 't-muted' });
-      el('line', { x1: tl, x2: Math.min(W - 16, cols[3] + 80), y1: t0y + 10, y2: t0y + 10, stroke: '#333' }, gTab);
-      [['A', 'long', '23.2 ms'], ['B', 'short', '5.8 ms'], ['C', 'dual', '5.8 ms'], ['E', 'short', '2.9 ms'], ['D', 'dual', '2.9 ms']].forEach(([k, kind, lat], r) => {
-        const c = data.configs.find(q => q.key === k), yy = t0y + th * (r + 1), hi = kind === 'dual';
-        txt(gTab, cols[0], yy, narrow ? `${k} · ${kind}` : `${k} · ${kind} · ${lat}`, { class: hi ? 't-hi' : 't-soft' });
-        txt(gTab, cols[1], yy, `${c.N} / ${c.M}`, { class: 't-soft t-num' });
-        txt(gTab, cols[2], yy, `${LC[k].look}${narrow ? '' : ' samples'}`, { class: hi ? 't-hi t-num' : 't-soft t-num' });
-        txt(gTab, cols[3], yy, `≤ ${LC[k].bound}`, { class: 't-muted t-num' });
-      });
-      txt(gTab, tl, t0y + th * 6 + 10, W < 850 ? 'Identity mask: 1-hop signal shift' : 'Identity-mask impulse: one-hop signal shift; with block wait, worst case M − 1 samples', { class: 't-muted' });
       built = true; render();
     }
     function render() {
       if (!built) return;
       const { i, p } = cur, t = hop(i, p, .5);
       fade(outs, i === 1 ? t : i > 1 ? 1 : 0); fade(m2, i === 1 ? clamp((t - .3) / .7) : i > 1 ? 1 : 0); fade(brk, i === 1 ? clamp((t - .5) / .5) : i > 1 ? 1 : 0);
-      const sw = i === 2 ? t : 0; fade(gSig, 1 - sw); fade(gTab, sw);
-      const heads = [`<div><b>n</b>the first sample that differs</div>`, `<div><b>123</b>samples look-ahead, 2.9 ms models</div><div><b>≤ 127</b>bound</div><div><b>247 ≤ 255</b>at 5.8 ms</div>`, `<div><b>1 hop</b>streaming delay of the code</div><div><b>2.88 ms</b>worst case at 2.9 ms</div>`];
+      const heads = [`<div><b>n</b>the first sample that differs</div>`, `<div><b>123 ≤ 127</b>samples look-ahead at 2.9 ms</div><div><b>247 ≤ 255</b>at 5.8 ms</div><div><b>1 hop</b>impulse delay of the code</div>`];
       big.innerHTML = heads[i];
     }
     return { init(stage) { svg = stage.querySelector('svg'); big = stage.querySelector('.big'); observe(svg.parentElement, (w, h) => { W = w; H = h; build(); }); }, update(i, p) { cur = { i, p }; render(); } };
@@ -469,7 +376,7 @@
       { label: '2.9 ms short window · ONNX Runtime', ms: E.rtf * hopMs, note: `${(E.rtf * hopMs).toFixed(2)} ms per hop` },
       { label: '2.9 ms dual window · eager PyTorch', ms: data.torch_D.rtf * hopMs, note: `${(data.torch_D.rtf * hopMs).toFixed(2)} ms per hop · every hop late`, short: `${(data.torch_D.rtf * hopMs).toFixed(2)} ms · late` },
     ];
-    let svg, big, W = 0, H = 0, x, head, groups = [], gRace, gTrade, hopNote = [], hopHint, raf = 0, visible = false, t0 = performance.now(), step = 0, built = false;
+    let svg, big, W = 0, H = 0, x, head, groups = [], raf = 0, visible = false, t0 = performance.now(), step = 0, built = false;
     const loop = t => {
       raf = 0; if (!visible || !built) return;
       const play = X.reduce ? SPAN : ((t - t0) / 2600 % 1) * SPAN;
@@ -479,13 +386,12 @@
         b.setAttribute('width', Math.max(0, x(s + w) - x(s)));
         if (b.over) b.over.setAttribute('opacity', g.row.ms > hopMs && play - s > hopMs ? 1 : 0);
       }));
-      hopNote.forEach((n, k) => n.setAttribute('opacity', step === 0 && play >= k * hopMs ? 1 : 0));
       if (!X.reduce) raf = requestAnimationFrame(loop);
     };
     function build() {
       clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
       const narrow = W < 520;
-      gRace = el('g', {}, svg); gTrade = el('g', { opacity: 0 }, svg);
+      const gRace = el('g', {}, svg);
       x = scale(0, SPAN, 4, W - 4);
       const defs = el('defs', {}, svg), pat = el('pattern', { id: 'hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, defs);
       el('rect', { width: 6, height: 6, fill: '#0b0b0b' }, pat); el('line', { x1: 0, y1: 0, x2: 0, y2: 6, stroke: '#fff', 'stroke-width': 2 }, pat);
@@ -498,12 +404,6 @@
         if (!narrow || k % 2 === 0) txt(ax, x(k * hopMs), top - 26, `${(k * hopMs).toFixed(2)} ms`, { 'text-anchor': k === 0 ? 'start' : k === 6 ? 'end' : 'middle' });
       }
       txt(gRace, x(0), top - 44, narrow ? 'slot = one 1.45 ms hop · bar = compute time' : 'each slot is one 1.45 ms hop; the bar is the time spent computing it, in slow motion', { class: 't-muted' });
-      hopNote = [];
-      for (let k = 0; k < 6; k++) {
-        el('rect', { x: x(k * hopMs) + 1, y: top + 10, width: x(hopMs) - x(0) - 2, height: barH, fill: 'none', stroke: '#2e2e2e' }, gRace);
-        hopNote.push(txt(gRace, x(k * hopMs + hopMs / 2), top + 10 + barH / 2, narrow ? `block ${k + 1}` : `block ${k + 1} arrives`, { class: 't-soft', 'text-anchor': 'middle', dy: '.35em', opacity: 0 }));
-      }
-      hopHint = txt(gRace, x(0), top + 10 + barH + 20, narrow ? '64 new samples every 1.45 ms' : 'every 1.45 ms a new block of 64 samples arrives; the previous one must be finished by then', { class: 't-muted' });
       groups = [];
       rows.forEach((row, r) => {
         const gy = top + r * rowH, g = el('g', { opacity: 0, style: 'transition: opacity .5s' }, gRace);
@@ -518,32 +418,13 @@
         }
         groups.push({ g, bars, row });
       });
-      const tl = narrow ? 54 : 60, tr = W - 20, tt = 24, tb = H - 88;
-      const tx = scale(0, 6.5, tl, tr), ty = scale(2.8, 5, tb, tt);
-      const axt = el('g', { class: 'ax' }, gTrade);
-      [0, 1, 2, 3, 4, 5, 6].forEach(v => { el('line', { x1: tx(v), x2: tx(v), y1: tt, y2: tb, stroke: '#1f1f1f' }, axt); txt(axt, tx(v), tb + 16, String(v), { 'text-anchor': 'middle' }); });
-      [3, 3.5, 4, 4.5, 5].forEach(v => { el('line', { x1: tl - 4, x2: tr, y1: ty(v), y2: ty(v), stroke: '#1f1f1f' }, axt); txt(axt, tl - 8, ty(v), narrow ? v.toFixed(1) : `${v.toFixed(1)} dB`, { 'text-anchor': 'end', dy: '.35em' }); });
-      txt(gTrade, tr, tb + 32, 'million multiply-adds per frame →', { class: 't-muted', 'text-anchor': 'end' });
-      txt(gTrade, tl, 10, narrow ? '↑ vocal SI-SDR (dB), median' : '↑ vocal SI-SDR, median over the 50 test songs', { class: 't-muted' });
-      const pt = {}; data.configs.forEach(c => { pt[c.key] = [tx(c.mmac), ty(c.si_sdr_median)]; });
-      [['B', 'C', data.paired['C-B'].median], ['E', 'D', data.paired['D-E'].median]].forEach(([a, b, g]) => {
-        el('line', { x1: pt[a][0], x2: pt[b][0], y1: pt[a][1], y2: pt[b][1], stroke: '#555', 'stroke-dasharray': '4 3' }, gTrade);
-        txt(gTrade, tl, H - (a === 'B' ? 24 : 6), `${b} − ${a}: ${fmt(g)} dB per song at ${a === 'B' ? '5.8' : '2.9'} ms`, { class: 't-soft t-num' });
-      });
-      data.configs.forEach(c => {
-        const dual = c.kind === 'dual', [px, py] = pt[c.key];
-        el('circle', { cx: px, cy: py, r: 6, fill: dual ? '#fff' : c.kind === 'long' ? '#0b0b0b' : '#8a8a8a', stroke: '#fff', 'stroke-width': dual || c.kind === 'long' ? 1.5 : 0 }, gTrade);
-        txt(gTrade, dual ? px - 12 : px + 10, py + (c.key === 'E' ? 20 : c.key === 'B' ? -14 : c.key === 'C' ? -6 : c.key === 'D' ? 10 : 4), narrow ? `${c.key} ${c.latency_ms.toFixed(1)} ms` : `${c.key} · ${c.kind} · ${c.latency_ms.toFixed(1)} ms`, { class: dual ? 't-hi' : 't-soft', 'text-anchor': dual ? 'end' : 'start' });
-      });
       built = true; paint();
       if (visible && !raf) raf = requestAnimationFrame(loop);
     }
     function paint() {
       if (!built) return;
-      groups.forEach((g, r) => g.g.setAttribute('opacity', step >= 1 && r <= step - 1 ? 1 : 0));
-      head.setAttribute('y2', head.top + head.rowH * Math.max(1, step) - 34);
-      hopHint.setAttribute('opacity', step === 0 ? 1 : 0);
-      fade(gRace, step === 4 ? 0 : 1); fade(gTrade, step === 4 ? 1 : 0);
+      groups.forEach((g, r) => g.g.setAttribute('opacity', r <= step ? 1 : 0));
+      head.setAttribute('y2', head.top + head.rowH * (step + 1) - 34);
     }
     return {
       init(stage) {
@@ -554,11 +435,9 @@
       update(i) {
         step = i; paint();
         const cells = [
-          [`<div><b>64</b>samples per block</div>`, `<div><b>${hopMs.toFixed(2)} ms</b>per hop, the deadline</div>`],
           [`<div><b>${D.p99_ms.toFixed(2)} ms</b>99th percentile per hop</div>`, `<div><b>${hopMs.toFixed(2)} ms</b>budget per hop</div>`, `<div><b>${D.late_pct.toFixed(2)}%</b>late hops</div>`],
           [`<div><b>${D.rtf.toFixed(3)}</b>real-time factor, dual</div>`, `<div><b>${E.rtf.toFixed(3)}</b>real-time factor, short</div>`],
           [`<div><b>${data.torch_D.rtf.toFixed(2)}</b>real-time factor, eager PyTorch</div>`, `<div><b>${data.torch_D.late_pct.toFixed(0)}%</b>late hops</div>`],
-          [`<div><b>3.8× / 4.7×</b>multiply-adds of the short window</div>`, `<div><b>≈ 2×</b>measured CPU time</div>`, `<div><b>0.31 dB</b>cost of 23.2 → 5.8 ms with the dual window</div>`],
         ];
         big.innerHTML = cells[i].join('');
         if (X.reduce) loop(performance.now());
@@ -566,79 +445,34 @@
     };
   }
 
-  function bleed(data) {
-    const B = data.bleed;
-    let svg, big, W = 0, H = 0, gA, gC, gP, built = false, cur = { i: 0, p: 0 };
+  function tradeoffFig(data) {
+    const fig = document.getElementById('fig-tradeoff'); if (!fig) return;
+    const svg = fig.querySelector('svg');
+    let W = 0, H = 0;
     function build() {
+      if (!W || !H) return;
       clear(svg); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-      const narrow = W < 520;
-      gA = el('g', {}, svg); gC = el('g', { opacity: 0 }, svg); gP = el('g', { opacity: 0 }, svg);
-      const l0 = narrow ? 48 : 90, r0 = W - 65, mid = Math.max(60, H * .22), lx = scale(-30, 0, l0, Math.min(r0, l0 + 360));
-      txt(gA, l0, mid - 42, narrow ? 'the simulated microphone' : 'the simulated vocal microphone: levels at the input', { class: 't-muted' });
-      [['voice', 0, '#fff'], ['band', -5, '#6a6a6a']].forEach(([n, v, col], k) => {
-        const y = mid + k * 34;
-        txt(gA, l0 - 10, y + 12, n, { class: 't-soft', 'text-anchor': 'end' });
-        el('rect', { x: l0, y, width: lx(v) - l0, height: 16, fill: col }, gA);
-        txt(gA, lx(v) + 8, y + 12, v ? `${v} dB` : '0 dB', { class: 't-hi t-num' });
+      const narrow = W < 560, tl = narrow ? 44 : 60, tr = W - (narrow ? 14 : 40), tt = 26, tb = H - 44;
+      const tx = scale(0, 6.5, tl, tr), ty = scale(2.8, 5, tb, tt);
+      const ax = el('g', { class: 'ax' }, svg);
+      [0, 1, 2, 3, 4, 5, 6].forEach(v => { el('line', { x1: tx(v), x2: tx(v), y1: tt, y2: tb, stroke: '#1f1f1f' }, ax); txt(ax, tx(v), tb + 16, String(v), { 'text-anchor': 'middle' }); });
+      [3, 3.5, 4, 4.5, 5].forEach(v => { el('line', { x1: tl - 4, x2: tr, y1: ty(v), y2: ty(v), stroke: '#1f1f1f' }, ax); txt(ax, tl - 8, ty(v), narrow ? v.toFixed(1) : `${v.toFixed(1)} dB`, { 'text-anchor': 'end', dy: '.35em' }); });
+      txt(svg, tr, tb + 34, narrow ? 'MMAC per frame →' : 'million multiply-adds per frame →', { class: 't-muted', 'text-anchor': 'end' });
+      txt(svg, tl, 12, narrow ? '↑ median vocal SI-SDR (dB)' : '↑ vocal SI-SDR, median over the 50 test songs', { class: 't-muted' });
+      const pt = {}; data.configs.forEach(c => { pt[c.key] = [tx(c.mmac), ty(c.si_sdr_median)]; });
+      [['B', 'C', data.paired['C-B'].median, '5.8'], ['E', 'D', data.paired['D-E'].median, '2.9']].forEach(([a, b, g, lat], k) => {
+        el('line', { x1: pt[a][0], x2: pt[b][0], y1: pt[a][1], y2: pt[b][1], stroke: '#555', 'stroke-dasharray': '4 3' }, svg);
+        txt(svg, narrow ? tr : tx(3.1), ty(k ? 3.06 : 3.24), narrow ? `${b} − ${a}  ${fmt(g)} dB` : `${b} − ${a}: ${fmt(g)} dB per song at ${lat} ms`, { class: 't-soft t-num', 'text-anchor': narrow ? 'end' : 'start' });
       });
-      const y2 = mid + 88;
-      txt(gA, l0, y2, narrow ? 'hold the mixture’s mask fixed:' : 'estimate a mask from the mixture, then hold it fixed:', { class: 't-soft' });
-      txt(gA, l0, y2 + 20, narrow ? 'output = voice kept + bleed left' : 'output = voice kept + accompaniment remaining', { class: 't-soft' });
-      [['kept voice', 'vocal loss (dB, 0 = nothing lost)'], ['remaining band', 'bleed attenuation (dB, more = cleaner)']].forEach(([a, b], k) => {
-        const y = y2 + 56 + k * 30;
-        el('rect', { x: l0, y: y - 10, width: 10, height: 10, fill: k ? '#6a6a6a' : '#fff' }, gA);
-        txt(gA, l0 + 18, y - 1, narrow ? (k ? 'band left → bleed attenuation' : 'voice kept → vocal loss') : `${a}  →  measured as ${b}`, { class: 't-muted' });
+      const place = { A: [12, 4, 'start'], B: [-12, -12, 'end'], C: [-12, -8, 'end'], D: [-12, 14, 'end'], E: [12, 20, 'start'] };
+      data.configs.forEach(c => {
+        const dual = c.kind === 'dual', [px, py] = pt[c.key], [dx, dy, anchor] = place[c.key];
+        el('circle', { cx: px, cy: py, r: 6, fill: dual ? '#fff' : c.kind === 'long' ? '#0b0b0b' : '#8a8a8a', stroke: '#fff', 'stroke-width': dual || c.kind === 'long' ? 1.5 : 0 }, svg);
+        const lbl = narrow ? `${c.key} · ${c.latency_ms.toFixed(1)} ms` : `${c.key} · ${c.kind} · ${c.latency_ms.toFixed(1)} ms`;
+        txt(svg, px + dx, py + dy, lbl, { class: dual ? 't-hi' : 't-soft', 'text-anchor': anchor });
       });
-      if (!narrow) txt(gA, l0, y2 + 126, narrow ? 'stronger mask → less of both' : 'Stronger masks remove more of both; compare at equal attenuation.', { class: 't-muted' });
-      const cl = narrow ? 38 : 60, cr = W - 26, ct = 48, cb = H - 50;
-      const x = scale(7, 14.5, cl, cr), y = scale(-1.4, 0, cb, ct);
-      const ax = el('g', { class: 'ax' }, gC);
-      [7, 9, 11, 13].forEach(v => { el('line', { x1: x(v), x2: x(v), y1: ct, y2: cb, stroke: '#1f1f1f' }, ax); txt(ax, x(v), cb + 16, `${v} dB`, { 'text-anchor': 'middle' }); });
-      [0, -.4, -.8, -1.2].forEach(v => { el('line', { x1: cl - 4, x2: cr, y1: y(v), y2: y(v), stroke: v ? '#1f1f1f' : '#555' }, ax); txt(ax, cl - 8, y(v), v ? v.toFixed(1) : '0', { 'text-anchor': 'end', dy: '.35em' }); });
-      txt(gC, cr, cb + 32, 'band removed (bleed attenuation) →', { class: 't-muted', 'text-anchor': 'end' });
-      txt(gC, cl, 10, '↓ voice lost (dB)', { class: 't-muted' });
-      const style = { A: ['#9a9a9a', '3 3', 1.3], B: ['#8a8a8a', '', 1.6], C: ['#fff', '', 1.6], E: ['#8a8a8a', '', 1.6], D: ['#fff', '', 2] };
-      const name = { A: 'A long 23.2', B: 'B short 5.8', C: 'C dual 5.8', E: 'E short 2.9', D: 'D dual 2.9' };
-      Object.entries(B.curves).forEach(([k, pts]) => {
-        const [col, dash, sw] = style[k];
-        el('path', { d: pts.map(([a, b], j) => `${j ? 'L' : 'M'}${x(a).toFixed(1)},${y(b).toFixed(1)}`).join(' '), fill: 'none', stroke: col, 'stroke-width': sw, 'stroke-dasharray': dash }, gC);
-        const last = pts[pts.length - 1];
-        txt(gC, x(last[0]) + 6, y(last[1]) + (k === 'B' ? 16 : k === 'C' ? -6 : 4), W < 850 ? k : name[k], { class: k === 'C' || k === 'D' ? 't-hi' : 't-muted' });
-      });
-      const eq = B.equal.DE, ex = x(eq.atten);
-      el('line', { x1: ex, x2: ex, y1: ct, y2: cb, stroke: '#fff', 'stroke-dasharray': '2 4' }, gC);
-      ['D', 'E'].forEach(k => el('circle', { cx: ex, cy: y(eq.loss[k]), r: 5, fill: k === 'D' ? '#fff' : '#8a8a8a' }, gC));
-      el('path', { d: `M${ex + 12},${y(eq.loss.D)} H${ex + 18} V${y(eq.loss.E)} H${ex + 12}`, fill: 'none', stroke: '#fff' }, gC);
-      txt(gC, cr, 30, narrow ? 'at 8.9 dB: D loses 0.67, E 0.97 dB' : 'At equal 8.9 dB bleed attenuation: D loses 0.67 dB of voice, E loses 0.97 dB', { class: 't-hi halo', 'text-anchor': 'end' });
-      const pl = narrow ? 48 : 70, pr = W - 16, pt = 30, pb = H - 80, py = scale(0, 1.2, pb, pt), n = B.paths.length;
-      const axp = el('g', { class: 'ax' }, gP);
-      [0, .3, .6, .9, 1.2].forEach(v => { el('line', { x1: pl - 4, x2: pr, y1: py(v), y2: py(v), stroke: v ? '#1f1f1f' : '#555' }, axp); txt(axp, pl - 8, py(v), v ? fmt(v) : '0', { 'text-anchor': 'end', dy: '.35em' }); });
-      txt(gP, pl, 10, narrow ? '↑ paired gain (dB) · 95% CI' : '↑ dual − short, median SI-SDR gain per song (dB) with 95% CI', { class: 't-muted' });
-      const gw = (pr - pl) / n, bw = Math.min(30, gw * .2);
-      B.paths.forEach((pth, i) => {
-        const cx = pl + gw * (i + .5);
-        [['CB', 'C − B · 5.8 ms', '#8a8a8a', -1], ['DE', 'D − E · 2.9 ms', '#fff', 1]].forEach(([k, l, col, s]) => {
-          const [m, lo, hi] = pth[k], xx = cx + s * (bw / 2 + 3) - bw / 2;
-          el('rect', { x: xx, y: py(m), width: bw, height: py(0) - py(m), fill: col }, gP);
-          el('line', { x1: xx + bw / 2, x2: xx + bw / 2, y1: py(lo), y2: py(hi), stroke: '#0b0b0b', 'stroke-width': 3 }, gP);
-          el('line', { x1: xx + bw / 2, x2: xx + bw / 2, y1: py(lo), y2: py(hi), stroke: s > 0 ? '#9a9a9a' : '#ccc', 'stroke-width': 1.5 }, gP);
-          txt(gP, xx + bw / 2, py(m) - 10, fmt(m), { class: s > 0 ? 't-hi t-num halo' : 't-soft t-num halo', 'text-anchor': 'middle' });
-          if (i === 0) { const ly = pb + (s < 0 ? 46 : 64); el('rect', { x: pl, y: ly - 9, width: 12, height: 10, fill: col }, gP); txt(gP, pl + 20, ly, l, { class: s > 0 ? 't-hi' : 't-soft' }); }
-        });
-        txt(gP, cx, pb + 18, narrow ? ['dry', 'filter + delay', 'room FIR'][i] : pth.label, { class: 't-soft', 'text-anchor': 'middle' });
-      });
-      built = true; render();
     }
-    function render() {
-      if (!built) return;
-      const { i, p } = cur, t = hop(i, p, .5);
-      fade(gA, i === 0 ? 1 : i === 1 ? 1 - t : 0); fade(gC, i === 1 ? t : i === 2 ? 1 - t : 0); fade(gP, i === 2 ? t : 0);
-      const heads = [`<div><b>−5 dB</b>band below the voice</div><div><b>fixed mask</b>kept voice + remaining band</div>`,
-        `<div><b>0.67 vs 0.97 dB</b>voice lost, D vs E at 8.9 dB attenuation</div><div><b>0.68 vs 0.94 dB</b>C vs B at 9.7 dB</div>`,
-        `<div><b>+0.59 … +0.91 dB</b>paired gain on three paths</div><div><b>+0.32 … +0.35 dB</b>more voice kept at equal attenuation, D over E</div>`];
-      big.innerHTML = heads[i];
-    }
-    return { init(stage) { svg = stage.querySelector('svg'); big = stage.querySelector('.big'); observe(svg.parentElement, (w, h) => { W = w; H = h; build(); }); }, update(i, p) { cur = { i, p }; render(); } };
+    observe(svg.parentElement, (w, h) => { W = w; H = h; build(); });
   }
 
   function budget() {
@@ -799,11 +633,10 @@
   }
 
   fetch('data.json').then(r => r.json()).then(data => {
-    X.scene('pipeline', pipeline(data));
     X.scene('oracle', oracle(data));
     X.scene('gains', gains(data));
     X.scene('prefix', prefix(data));
     X.scene('deadline', deadline(data));
-    X.scene('bleed', bleed(data));
+    pipelineFig(); tradeoffFig(data);
   }).catch(e => console.error(e)).then(() => { budget(); X.boot({ hero: lensHero }); });
 })();
