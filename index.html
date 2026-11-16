@@ -108,7 +108,8 @@ body.on-home main { display: grid; place-items: center; }
 }
 .news li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: .3rem 0; }
 .news time { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 3rem 1.75rem; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4rem 3rem; }
+@media (max-width: 560px) { .cards { grid-template-columns: minmax(0, 1fr); gap: 3rem; } }
 .media { position: relative; display: block; aspect-ratio: var(--ratio, 4 / 3); overflow: hidden; background: var(--media-bg); }
 .media svg, .media img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .card h3 { font-size: 1em; font-weight: var(--title-weight, 500); line-height: 1.35; margin-top: .9rem; }
