@@ -85,7 +85,7 @@ a { color: inherit; }
 .t-num { font-variant-numeric: tabular-nums; }
 .halo { paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round; }
 
-.cta { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 1.8rem; }
+.project-links { display: flex; justify-content: center; max-width: 1180px; margin: 2.4rem auto 0; padding-top: 1.6rem; border-top: 1px solid var(--line); text-align: center; }
 .btn { display: inline-flex; align-items: center; gap: .55rem; padding: .72rem 1.15rem; border: 1px solid var(--faint); color: var(--ink); text-decoration: none; font-size: 15px; transition: border-color .2s, background .2s, color .2s; }
 .btn:hover { border-color: var(--hi); background: rgba(255, 255, 255, .05); }
 .btn.primary { background: var(--hi); border-color: var(--hi); color: #000; }
@@ -114,6 +114,7 @@ a { color: inherit; }
 .to-top path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
 @media (max-width: 860px) {
+  .project-links { margin-top: 1.8rem; }
   body { font-size: 16px; }
   .xbar { grid-template-columns: 1fr auto; }
   .xbar .where { display: none; }

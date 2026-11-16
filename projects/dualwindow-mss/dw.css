@@ -216,7 +216,6 @@
 .window-stats span { padding-bottom: .4rem; border-bottom: 1px solid var(--line); }
 .window-note { margin: 0; padding-top: .8rem; border-top: 1px solid var(--line); color: var(--ink); font-size: 14px; line-height: 1.5; }
 .dw .window-explainer .plot { min-width: 0; }
-.project-links { display: flex; justify-content: center; max-width: 1180px; margin: 2.4rem auto 0; padding-top: 1.6rem; border-top: 1px solid var(--line); text-align: center; }
 @media (max-width: 860px) {
   .dw .scrolly.window-explainer .stage { grid-template-rows: auto auto auto; gap: .55rem; }
   .dw .window-explainer .hud { flex-direction: row; }
@@ -225,7 +224,6 @@
   .window-stats { gap: .2rem .9rem; font-size: 10.5px; }
   .dw .window-explainer .plot { height: clamp(200px, 27svh, 270px); }
   .window-note { padding-top: .5rem; font-size: 12px; }
-  .project-links { margin-top: 1.8rem; }
 }
 
 .front { max-width: 980px; margin: 0 auto; padding: 4vh clamp(1.25rem, 5vw, 3rem) 0; }
