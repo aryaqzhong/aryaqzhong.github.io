@@ -146,8 +146,27 @@
     addEventListener('scroll', () => { if (reduce && visible) start(); }, { passive: true });
   }
 
+  function toTop() {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'to-top'; b.title = 'Back to top'; b.setAttribute('aria-label', 'Back to top');
+    b.innerHTML = '<svg viewBox="0 0 46 46" aria-hidden="true" focusable="false"><circle class="trk" cx="23" cy="23" r="21"/><circle class="prg" cx="23" cy="23" r="21"/><path d="M23 30V16M17 22l6-6 6 6"/></svg>';
+    document.body.appendChild(b);
+    const prg = b.querySelector('.prg'), L = 2 * Math.PI * 21;
+    prg.style.strokeDasharray = L.toFixed(1);
+    b.addEventListener('click', () => {
+      scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+      const home = document.querySelector('.xbar .home');
+      if (home) home.focus({ preventScroll: true });
+    });
+    return () => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      prg.style.strokeDashoffset = (L * (1 - (max > 0 ? clamp(scrollY / max) : 0))).toFixed(1);
+      b.classList.toggle('on', scrollY > innerHeight * .9);
+    };
+  }
+
   function boot(opts = {}) {
-    const fns = [bar(), scrolly()];
+    const fns = [bar(), scrolly(), toTop()];
     let ticking = false;
     const tick = () => { ticking = false; fns.forEach(f => f()); };
     const ask = () => { if (!ticking) { ticking = true; requestAnimationFrame(tick); } };
