@@ -6,7 +6,7 @@
   const narrowOf = stage => stage.clientWidth < 560;
   const hopT = (i, p) => ease(clamp(p / .5));
 
-  function ceiling(data) {
+  function ceiling(data, off = 0) {
     const D = data.descriptors, n = D.length;
     const rawRank = D.map((d, i) => [d.raw, i]).sort((a, b) => b[0] - a[0]).reduce((acc, [, i], r) => { acc[i] = r; return acc; }, []);
     let svg, big, rows = [], VW = 640, VH = 470, labelW = 168, x, y;
@@ -34,12 +34,12 @@
         });
       },
       update(i, p) {
-        const t = hopT(i, p);
+        const t = hopT(i, p), k = i + off;
         const st = k => ({ y: k <= 1 ? 'raw' : 'ceil', bar: k === 0 ? 0 : 1, kind: k <= 1 ? 'raw' : 'ceil', r2: k >= 3 ? 1 : 0 });
-        const A = st(Math.max(0, i - 1)), B = st(i), tt = i === 0 ? 1 : t;
-        rows.forEach((row, k) => {
+        const A = st(Math.max(0, k - 1)), B = st(k), tt = k === 0 ? 1 : t;
+        rows.forEach((row, n) => {
           const d = row.d;
-          const ya = y(A.y === 'raw' ? rawRank[k] : k), yb = y(B.y === 'raw' ? rawRank[k] : k);
+          const ya = y(A.y === 'raw' ? rawRank[n] : n), yb = y(B.y === 'raw' ? rawRank[n] : n);
           row.r.setAttribute('transform', `translate(0,${lerp(ya, yb, tt).toFixed(1)})`);
           const va = A.bar * (A.kind === 'raw' ? d.raw : d.ceiling), vb = B.bar * (B.kind === 'raw' ? d.raw : d.ceiling);
           const v = lerp(va, vb, tt);
@@ -47,10 +47,10 @@
           row.ceil.setAttribute('fill', (tt > .5 ? B.kind : A.kind) === 'raw' ? '#4a4a4a' : '#333');
           const r2 = Math.max(0, d.r2) * lerp(A.r2, B.r2, tt);
           row.fill.setAttribute('width', Math.max(0, x(r2) - x(0)));
-          const showR2 = i >= 3, focus = i === 4 ? d.id === 'mm_tempo' : i === 5 ? lowShare.has(d.id) : true;
+          const showR2 = k >= 3, focus = k === 4 ? d.id === 'mm_tempo' : k === 5 ? lowShare.has(d.id) : true;
           row.r.setAttribute('opacity', focus ? 1 : .28);
           row.val.setAttribute('x', x(Math.max(v, r2)) + 6);
-          row.val.textContent = i === 0 ? '' : showR2 ? `${d.r2.toFixed(2)} of ${d.ceiling.toFixed(2)}` : v.toFixed(2);
+          row.val.textContent = k === 0 ? '' : showR2 ? `${d.r2.toFixed(2)} of ${d.ceiling.toFixed(2)}` : v.toFixed(2);
         });
         const heads = [
           `<div><b>19</b>scales</div><div><b>9–10</b>experts per performance</div>`,
@@ -60,14 +60,14 @@
           `<div><b>0.43</b>R², pace</div><div><b>62%</b>of its ceiling</div>`,
           `<div><b>&lt; 20%</b>interpretation, valence, balance</div>`,
         ];
-        big.innerHTML = heads[i];
+        big.innerHTML = heads[k];
       },
     };
   }
 
   function blind(data) {
     const F = data.features, E = data.experts;
-    const named = new Set(['Tempo vs. score', 'Sustain depth', 'Mean velocity', 'Rubato', 'Sustain coverage', 'Soft-pedal use', 'Pedal change rate']);
+    const named = new Set(['Tempo vs. score', 'Sustain depth', 'Mean velocity', 'Rubato', 'Sustain coverage', 'Soft-pedal use', 'Pedal re-articulation']);
     let svg, big, sc, ex, dots = [], VW = 640, VH = 440, region, regionLbl, narrow = false;
     return {
       init(stage) {
@@ -88,7 +88,7 @@
           let t = null;
           if (named.has(f.label)) {
             const right = f.icc < .33, below = f.label === 'Soft-pedal use';
-            t = el('text', { x: x(f.icc) + (right ? 9 : -9), y: y(f.r2) + (below ? 18 : f.label === 'Pedal change rate' ? -10 : 4), 'text-anchor': right ? 'start' : 'end', class: 't-muted' }, sc);
+            t = el('text', { x: x(f.icc) + (right ? 9 : -9), y: y(f.r2) + (below ? 18 : f.label === 'Pedal re-articulation' ? -10 : 4), 'text-anchor': right ? 'start' : 'end', class: 't-muted' }, sc);
             t.textContent = f.label;
           }
           return { f, c, t, y0: y(f.r2), base: VH - 40 };
@@ -173,57 +173,107 @@
     };
   }
 
-  function power(data) {
-    const C = data.power.curves;
-    let svg, big, paths = [], marks = [], VW = 640, VH = 420, note, narrow = false;
+  function method(data) {
+    const dById = Object.fromEntries(data.descriptors.map(d => [d.id, d]));
+    const fById = Object.fromEntries(data.features.map(f => [f.id, f]));
+    const SC = [['mm_tempo', 'Pace', 'Pace'], ['pedal_amount', 'Pedal amount', 'Pedal amount'], ['timing', 'Timing', 'Timing'], ['interpretation', 'Interpretation', 'Interpretation'], ['timbre_brightness', 'Brightness', 'Brightness']];
+    const FE = [['tempo_ratio', 'Tempo vs. score', 'Tempo'], ['pedal_mean_depth', 'Sustain depth', 'Sustain depth'], ['velocity_mean', 'Key velocity', 'Velocity'], ['soft_pedal_ratio', 'Soft-pedal use', 'Soft pedal'], ['pedal_change_rate', 'Pedal re-articulation', 'Re-articulation']];
+    const NOTES = [[0, 5, .9], [1, 4, .9], [2, 3, .9], [3, 5, 1.8], [0, 0, 3.7], [2, 2, 1.7], [4, 6, .9], [5, 5, .9], [6, 4, .9], [7, 3, .9], [4, 1, 3.7], [6, 0, 1.8]];
+    const span = n => [...Array(n).keys()].map(b => [b * 8 / n, (b + 1) * 8 / n - .1]);
+    const PL = [
+      { n: 'A', s: 1, v: .85, ped: span(2), soft: [] },
+      { n: 'B', s: 1.08, v: .55, ped: span(4), soft: [[0, 7.9]] },
+      { n: 'C', s: .93, v: .95, ped: [[0, 7.8]], soft: [] },
+      { n: 'D', s: 1.03, v: .7, ped: span(8), soft: [[4, 7.9]] },
+    ];
+    let svg, big, VW = 640, VH = 436, narrow = false, gRoll, gDia, boxL, boxR, arA, arB, sRows = [], fRows = [];
+    const fade = g => { g.style.transition = 'opacity .45s'; return g; };
     return {
       init(stage) {
         svg = stage.querySelector('svg'); big = stage.querySelector('.big');
-        narrow = narrowOf(stage); if (narrow) { VW = 400; VH = 380; }
-        svg.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
-        const x = scale(0, 100, 44, VW - 16), y = scale(0, 1, VH - 40, 18);
-        const ax = el('g', { class: 'ax' }, svg);
-        [0, 20, 40, 60, 80, 100].forEach(v => { el('line', { x1: x(v), x2: x(v), y1: 18, y2: VH - 40, stroke: '#1c1c1c' }, ax); el('text', { x: x(v), y: VH - 22, 'text-anchor': 'middle' }, ax).textContent = v; });
-        [0, .2, .4, .6, .8, 1].forEach(v => { el('line', { x1: 44, x2: VW - 16, y1: y(v), y2: y(v), stroke: '#1c1c1c' }, ax); el('text', { x: 38, y: y(v), dy: '.35em', 'text-anchor': 'end' }, ax).textContent = pct(v); });
-        el('line', { x1: 44, x2: VW - 16, y1: y(.8), y2: y(.8), stroke: '#777', 'stroke-dasharray': '4 4' }, svg);
-        el('text', { x: VW - 16, y: y(.8) - 8, 'text-anchor': 'end', class: 't-soft' }, svg).textContent = '80% power';
-        el('text', { x: VW - 16, y: VH - 4, 'text-anchor': 'end', class: 't-muted' }, svg).textContent = 'listeners →';
-        C.forEach(c => {
-          const d = c.points.map(([a, b], k) => `${k ? 'L' : 'M'}${x(a).toFixed(1)},${y(b).toFixed(1)}`).join(' ');
-          const timbre = c.scale === 'timbre_depth';
-          const path = el('path', { d, fill: 'none', stroke: timbre ? '#fff' : '#8a8a8a', 'stroke-width': c.stimuli === 24 ? 2 : 1.4, 'stroke-dasharray': c.stimuli === 24 ? '' : '5 4' }, svg);
-          const len = path.getTotalLength(); path.dataset.len = len;
-          path.style.strokeDasharray = c.stimuli === 24 ? `${len} ${len}` : '5 4'; path.style.strokeDashoffset = len;
-          paths.push({ c, path, len });
-          if (c.need80 && c.stimuli === 24) {
-            const m = el('g', { opacity: 0 }, svg);
-            el('circle', { cx: x(c.need80), cy: y(.8), r: 5, fill: timbre ? '#fff' : '#8a8a8a' }, m);
-            el('text', { x: x(c.need80) + (timbre ? 10 : -10), y: y(.8) + (timbre ? 22 : -14), 'text-anchor': timbre ? 'start' : 'end', class: timbre ? 't-hi' : 't-soft' }, m).textContent = `${c.need80} listeners`;
-            marks.push({ c, m });
-          }
+        narrow = narrowOf(stage);
+        if (narrow) VW = 400;
+        const rowH = narrow ? 41 : 44, rx0 = 30, rx1 = VW - 6, rnd = seeded(3);
+        gRoll = fade(el('g', {}, svg));
+        el('text', { x: 0, y: 12, class: 't-muted' }, gRoll).textContent = narrow ? 'one passage · 4 of its ~12 pianists' : 'one passage, four of the ~12 pianists who played it';
+        PL.forEach((pl, r) => {
+          const y0 = 24 + r * rowH, bx = b => rx0 + b * pl.s / 8.8 * (rx1 - rx0);
+          el('text', { x: 4, y: y0 + 14, dy: '.35em', class: 't-soft', style: 'font: italic 400 17px var(--serif)' }, gRoll).textContent = pl.n;
+          el('rect', { x: rx0, y: y0, width: rx1 - rx0, height: 26, fill: '#151515' }, gRoll);
+          NOTES.forEach(([b, pitch, d]) => {
+            const v = clamp(pl.v + (rnd() - .5) * .3, .25, 1), j = (rnd() - .5) * .08;
+            el('rect', { x: bx(b + j), y: y0 + 21 - pitch * 3.1, width: Math.max(2, bx(b + j + d * .92) - bx(b + j)), height: 3, fill: '#fff', 'fill-opacity': (.25 + .7 * v).toFixed(2) }, gRoll);
+          });
+          pl.ped.forEach(([a, b]) => el('rect', { x: bx(a), y: y0 + 31, width: bx(b) - bx(a), height: 1.8, fill: '#8f8f8f' }, gRoll));
+          pl.soft.forEach(([a, b]) => el('line', { x1: bx(a), x2: bx(b), y1: y0 + 36.5, y2: y0 + 36.5, stroke: '#8a8a8a', 'stroke-width': 1.4, 'stroke-dasharray': '3 3' }, gRoll));
         });
-        note = el('text', { x: x(30), y: y(.08), class: 't-soft', opacity: 0 }, svg);
-        note.textContent = `original design: ${pct(data.power.between_design)} power`;
-        const lg = el('g', {}, svg), lx = x(narrow ? 50 : 58), ly = y(.4);
-        [['timbre depth', '#fff'], ['pedal clarity', '#8a8a8a']].forEach(([lab, col], k) => {
-          el('line', { x1: lx, x2: lx + 18, y1: ly + k * 18, y2: ly + k * 18, stroke: col, 'stroke-width': 2 }, lg);
-          el('text', { x: lx + 24, y: ly + k * 18, dy: '.35em', class: 't-soft' }, lg).textContent = lab;
-        });
-        el('text', { x: lx, y: ly + 40, dy: '.35em', class: 't-muted' }, lg).textContent = narrow ? 'solid 24 pairs · dashed 12' : 'solid: 24 stimulus pairs · dashed: 12';
+        const ly = 24 + 4 * rowH + 4;
+        el('rect', { x: rx0, y: ly - 1, width: 18, height: 1.8, fill: '#8f8f8f' }, gRoll);
+        el('text', { x: rx0 + 24, y: ly, dy: '.35em', class: 't-muted' }, gRoll).textContent = 'sustain pedal';
+        el('line', { x1: rx0 + 124, x2: rx0 + 142, y1: ly, y2: ly, stroke: '#8a8a8a', 'stroke-width': 1.4, 'stroke-dasharray': '3 3' }, gRoll);
+        el('text', { x: rx0 + 148, y: ly, dy: '.35em', class: 't-muted' }, gRoll).textContent = 'soft pedal';
+        if (!narrow) el('text', { x: rx1, y: ly, dy: '.35em', 'text-anchor': 'end', class: 't-muted' }, gRoll).textContent = 'shade = key velocity';
+
+        const top = ly + 16, bw = narrow ? (VW - 80) / 2 : (VW - 130) / 2, bh = 206;
+        VH = top + bh + 2; svg.setAttribute('viewBox', `0 0 ${VW} ${VH}`);
+        gDia = fade(el('g', {}, svg));
+        const box = (x, title, items, src) => {
+          const g = el('g', {}, gDia);
+          const frame = el('rect', { x: x + .5, y: top + .5, width: bw - 1, height: bh - 1, fill: '#0d0d0d', stroke: '#2a2a2a' }, g);
+          frame.style.transition = 'stroke .4s';
+          el('text', { x: x + 12, y: top + 22, class: 't-hi' }, g).textContent = title;
+          const rows = items.map(([id, long, short], j) => {
+            const iy = top + 50 + j * 32;
+            const lab = el('text', { x: x + 12, y: iy, class: 't-soft' }, g); lab.textContent = narrow ? short : long;
+            const val = el('text', { x: x + bw - 12, y: iy, 'text-anchor': 'end', class: 't-muted t-num' }, g);
+            el('rect', { x: x + 12, y: iy + 7, width: bw - 24, height: 4, fill: '#1c1c1c' }, g);
+            const ceil = el('rect', { x: x + 12, y: iy + 7, width: 0, height: 4, fill: '#4a4a4a' }, g);
+            const fill = el('rect', { x: x + 12, y: iy + 7, width: 0, height: 4, fill: '#fff' }, g);
+            return { id, d: src[id], lab, val, ceil, fill, w: bw - 24 };
+          });
+          return { g, frame, rows };
+        };
+        boxL = box(0, narrow ? '21 features' : 'Playing · 21 features', FE, fById);
+        boxR = box(VW - bw, narrow ? '19 scales' : 'Ratings · 19 scales', SC, dById);
+        fRows = boxL.rows; sRows = boxR.rows;
+        const arrow = (y, dir, letter, note) => {
+          const g = fade(el('g', {}, gDia)), x0 = bw + 8, x1 = VW - bw - 8;
+          const [a, b] = dir > 0 ? [x0, x1] : [x1, x0];
+          el('line', { x1: a, x2: b - dir * 7, y1: y, y2: y, stroke: '#fff', 'stroke-width': 1.5 }, g);
+          el('path', { d: `M${b},${y} l${-dir * 9},-5 v10 z`, fill: '#fff' }, g);
+          el('text', { x: (x0 + x1) / 2, y: y - 10, 'text-anchor': 'middle', class: 't-hi', style: 'font: italic 400 20px var(--serif)' }, g).textContent = letter;
+          if (!narrow) el('text', { x: (x0 + x1) / 2, y: y + 18, 'text-anchor': 'middle', class: 't-muted' }, g).textContent = note;
+          return g;
+        };
+        arA = arrow(top + 74, 1, 'A', 'predict each scale');
+        arB = arrow(top + 150, -1, 'B', 'predict each habit');
       },
       update(i, p) {
-        const t = clamp(p / .6);
-        paths.forEach(({ c, path, len }) => {
-          const k = c.scale === 'timbre_depth' ? 1 : 2, f = i < k ? 0 : i === k ? t : 1;
-          if (c.stimuli === 24) path.style.strokeDashoffset = (len * (1 - f)).toFixed(1);
-          path.style.opacity = c.stimuli === 24 ? 1 : f;
+        const t = hopT(i, p);
+        gRoll.style.opacity = i === 0 ? 1 : .3;
+        gDia.style.opacity = i === 0 ? .22 : 1;
+        boxR.frame.setAttribute('stroke', i === 1 || i === 2 ? '#8a8a8a' : '#2a2a2a');
+        boxL.frame.setAttribute('stroke', i >= 2 ? '#8a8a8a' : '#2a2a2a');
+        boxR.g.style.opacity = i === 3 ? .45 : 1; boxR.g.style.transition = 'opacity .45s';
+        boxL.g.style.opacity = i === 1 ? .35 : 1; boxL.g.style.transition = 'opacity .45s';
+        arA.style.opacity = i === 2 ? 1 : .18;
+        arB.style.opacity = i === 3 ? 1 : .18;
+        sRows.forEach(r => {
+          const c = i >= 1 ? r.d.ceiling * (i === 1 ? t : 1) : 0, q = i >= 2 ? Math.max(0, r.d.r2) * (i === 2 ? t : 1) : 0;
+          r.ceil.setAttribute('width', (c * r.w).toFixed(1)); r.fill.setAttribute('width', (q * r.w).toFixed(1));
+          r.val.textContent = i === 0 ? '' : i === 1 ? r.d.ceiling.toFixed(2) : narrow ? r.d.r2.toFixed(2) : `${r.d.r2.toFixed(2)} of ${r.d.ceiling.toFixed(2)}`;
         });
-        marks.forEach(({ c, m }) => { const k = c.scale === 'timbre_depth' ? 1 : 2; m.setAttribute('opacity', i < k ? 0 : i === k ? clamp((t - .7) / .3) : 1); });
-        note.setAttribute('opacity', i === 2 ? clamp((t - .5) / .5) : 0);
+        fRows.forEach(r => {
+          const q = i === 3 ? Math.max(0, r.d.r2) * t : 0;
+          r.fill.setAttribute('width', (q * r.w).toFixed(1));
+          r.val.textContent = i === 3 ? (r.d.r2 < .02 ? '≈ 0' : r.d.r2.toFixed(2)) : '';
+          r.lab.setAttribute('class', i === 3 ? (r.d.candidate ? 't-hi' : 't-muted') : 't-soft');
+        });
         const heads = [
-          `<div><b>paired</b>same notes, pedal changed</div><div><b>random</b>listeners and stimuli</div>`,
-          `<div><b>29</b>listeners · 24 pairs</div><div><b>67</b>listeners · 12 pairs</div>`,
-          `<div><b>13</b>listeners for pedal clarity</div><div><b>${pct(data.power.between_design)}</b>power of the original design</div>`,
+          `<div><b>99</b>passages</div><div><b>≈ 12</b>pianists play each</div>`,
+          `<div><b>0.14–0.83</b>noise ceilings of the 19 scales</div>`,
+          `<div><b>A</b>features → each scale</div><div><b>R²</b>for unseen pianists</div>`,
+          `<div><b>B</b>scales → each habit</div><div><b>2</b>habits predicted by none</div>`,
         ];
         big.innerHTML = heads[i];
       },
@@ -288,9 +338,10 @@
   }
 
   fetch('data.json').then(r => r.json()).then(data => {
-    X.scene('ceiling', ceiling(data));
+    X.scene('method', method(data));
+    X.scene('ceiling', ceiling(data, 0));
+    X.scene('mapping', ceiling(data, 3));
     X.scene('blind', blind(data));
     X.scene('render', render(data));
-    X.scene('power', power(data));
   }).catch(e => console.error(e)).then(() => X.boot({ hero: rollHero }));
 })();
