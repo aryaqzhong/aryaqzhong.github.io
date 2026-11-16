@@ -109,6 +109,7 @@ body.on-home main { display: grid; place-items: center; }
 .news li { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; padding: .3rem 0; }
 .news time { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4rem 3rem; }
+.cards .media { --ratio: 16 / 9; }
 @media (max-width: 560px) { .cards { grid-template-columns: minmax(0, 1fr); gap: 3rem; } }
 .media { position: relative; display: block; aspect-ratio: var(--ratio, 4 / 3); overflow: hidden; background: var(--media-bg); }
 .media svg, .media img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -396,7 +397,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
     <h2 class="label">selected projects</h2>
     <div class="cards">
       <article class="card">
-        <a class="media" href="/projects/beyond-words/" tabindex="-1" aria-hidden="true"><img src="images/projects/beyond-words.jpg?v=cover" alt="" width="1200" height="900" loading="lazy"></a>
+        <a class="media" href="/projects/beyond-words/" tabindex="-1" aria-hidden="true"><img src="images/projects/beyond-words.jpg?v=wide" alt="" width="1600" height="900" loading="lazy"></a>
         <div class="card-body">
           <h3><a href="/projects/beyond-words/">Beyond Words</a></h3>
           <p class="badge"><span aria-hidden="true">✦</span>independent research 2026</p>
@@ -405,7 +406,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
         </div>
       </article>
       <article class="card">
-        <a class="media" href="/projects/dualwindow-mss/" tabindex="-1" aria-hidden="true"><img src="images/projects/dualwindow-mss.jpg?v=cover" alt="" width="1200" height="900" loading="lazy"></a>
+        <a class="media" href="/projects/dualwindow-mss/" tabindex="-1" aria-hidden="true"><img src="images/projects/dualwindow-mss.jpg?v=wide" alt="" width="1600" height="900" loading="lazy"></a>
         <div class="card-body">
           <h3><a href="/projects/dualwindow-mss/">DualWindow-MSS</a></h3>
           <p class="badge"><span aria-hidden="true">✦</span>independent research 2026</p>
@@ -414,7 +415,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
         </div>
       </article>
       <article class="card">
-        <div class="media" aria-hidden="true"><img src="images/projects/neural-orchestra.jpg?v=cover" alt="" width="1200" height="900" loading="lazy"></div>
+        <div class="media" aria-hidden="true"><img src="images/projects/neural-orchestra.jpg?v=wide" alt="" width="1600" height="900" loading="lazy"></div>
         <div class="card-body">
           <h3>Neural Orchestra</h3>
           <p class="badge"><span aria-hidden="true">✦</span>MACL, in progress</p>
