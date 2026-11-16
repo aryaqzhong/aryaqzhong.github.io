@@ -100,9 +100,6 @@ body.on-home main { display: grid; place-items: center; }
 
 .lede { font-size: 1rem; line-height: 1.7; max-width: 47.5rem; }
 .lede .hl { color: var(--muted); }
-.lede-portrait { display: block; width: 80%; max-width: 15rem; aspect-ratio: 1; margin: 0 0 1.4rem; color: var(--ink); }
-.lede-portrait canvas { display: block; width: 100%; height: 100%; }
-html:not(.js) .lede-portrait { display: none; }
 .label { font-size: 1em; font-weight: 400; color: var(--muted); margin: 3.5rem 0 1rem; }
 .news {
   max-width: 44rem; max-height: 12rem; overflow-y: auto; padding-bottom: 3rem;
@@ -381,7 +378,7 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
 
   <section class="page" data-page="research" aria-labelledby="research-h">
     <h1 class="sr" id="research-h">research</h1>
-    <p class="lede"><span class="lede-portrait"><canvas role="img" aria-label="Portrait of Qing (Arya) Zhong"></canvas></span>I’m a first-year PhD student in Computing and Information Sciences at RIT, working with <span class="hl">Prof. Hwan Shim</span> in the <a class="hl" href="https://www.rit.edu/macl/">Music and Audio Cognition Lab (MACL)</a>. My work explores how people attend to and perceive sound, with a focus on decoding auditory attention from EEG and separating speech in real-world mixtures. Previously, at the <a class="hl" href="https://hci.cs.tufts.edu/">Tufts HCI Lab</a> with <span class="hl">Prof. Robert Jacob</span>, I used fNIRS to study cognitive workload in AI-assisted decision-making.</p>
+    <p class="lede">I’m a first-year PhD student in Computing and Information Sciences at RIT, working with <span class="hl">Prof. Hwan Shim</span> in the <a class="hl" href="https://www.rit.edu/macl/">Music and Audio Cognition Lab (MACL)</a>. My work explores how people attend to and perceive sound, with a focus on decoding auditory attention from EEG and separating speech in real-world mixtures. Previously, at the <a class="hl" href="https://hci.cs.tufts.edu/">Tufts HCI Lab</a> with <span class="hl">Prof. Robert Jacob</span>, I used fNIRS to study cognitive workload in AI-assisted decision-making.</p>
 
     <h2 class="label">recently</h2>
     <div class="news" tabindex="0" role="region" aria-label="news, scrollable">
@@ -1401,67 +1398,6 @@ function route(initial) {
 document.addEventListener('click', e => { if (menu.open && !menu.contains(e.target)) menu.open = false; });
 window.addEventListener('hashchange', () => route(false));
 route(true);
-function ditherPortrait(canvas) {
-  if (!canvas || !canvas.getContext) return;
-  const ctx = canvas.getContext('2d'), img = new Image();
-  const sample = document.createElement('canvas'), sctx = sample.getContext('2d', { willReadFrequently: true });
-  const pix = document.createElement('canvas'), pctx = pix.getContext('2d');
-  let W = 0, H = 0, dpr = 1, grid = null, pointer = null, frame = 0;
-  const ink = () => (getComputedStyle(canvas).color.match(/\d+/g) || [0, 0, 0]).slice(0, 3).map(Number);
-  function build() {
-    const cell = Math.max(1 / dpr, .5), cols = Math.ceil(W / cell), rows = Math.ceil(H / cell), n = cols * rows;
-    sample.width = cols; sample.height = rows;
-    sctx.imageSmoothingQuality = 'high';
-    sctx.drawImage(img, 0, 0, cols, rows);
-    const data = sctx.getImageData(0, 0, cols, rows).data, buf = new Float32Array(n), on = new Uint8Array(n);
-    for (let i = 0; i < n; i++) { const j = i * 4; buf[i] = (.2126 * data[j] + .7152 * data[j + 1] + .0722 * data[j + 2]) / 255; }
-    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-      const i = y * cols + x, nv = buf[i] < .5 ? 0 : 1, err = (buf[i] - nv) / 8;
-      if (x + 1 < cols) buf[i + 1] += err;
-      if (x + 2 < cols) buf[i + 2] += err;
-      if (y + 1 < rows) { if (x > 0) buf[i + cols - 1] += err; buf[i + cols] += err; if (x + 1 < cols) buf[i + cols + 1] += err; }
-      if (y + 2 < rows) buf[i + 2 * cols] += err;
-      if (!nv) on[i] = 1;
-    }
-    pix.width = cols; pix.height = rows;
-    const im = pctx.createImageData(cols, rows), d = im.data, [r, g, b] = ink();
-    for (let i = 0; i < n; i++) if (on[i]) { const j = i * 4; d[j] = r; d[j + 1] = g; d[j + 2] = b; d[j + 3] = 255; }
-    pctx.putImageData(im, 0, 0);
-    grid = { cols, rows, cell };
-  }
-  function draw() {
-    frame = 0;
-    if (!W || !grid) return;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, W, H);
-    ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(pix, 0, 0, grid.cols * grid.cell, grid.rows * grid.cell);
-    if (!pointer) return;
-    const R = Math.max(24, Math.min(88, W * .2));
-    ctx.save(); ctx.beginPath(); ctx.arc(pointer.x, pointer.y, R, 0, Math.PI * 2); ctx.clip();
-    ctx.clearRect(0, 0, W, H); ctx.filter = 'grayscale(1)'; ctx.imageSmoothingEnabled = true;
-    ctx.drawImage(img, 0, 0, W, H); ctx.restore();
-    ctx.beginPath(); ctx.arc(pointer.x, pointer.y, R, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgb(${ink()})`; ctx.lineWidth = 1; ctx.stroke();
-  }
-  const ask = () => { if (!frame) frame = requestAnimationFrame(draw); };
-  function resize() {
-    const r = canvas.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-    W = r.width; H = r.height; dpr = Math.min(devicePixelRatio || 1, 2);
-    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-    build(); ask();
-  }
-  const at = e => { const r = canvas.getBoundingClientRect(); pointer = { x: e.clientX - r.left, y: e.clientY - r.top }; ask(); };
-  const off = () => { pointer = null; ask(); };
-  canvas.addEventListener('pointerdown', at);
-  canvas.addEventListener('pointermove', at);
-  canvas.addEventListener('pointerleave', off);
-  canvas.addEventListener('pointercancel', off);
-  img.addEventListener('load', () => new ResizeObserver(resize).observe(canvas), { once: true });
-  img.src = 'images/portrait.jpg';
-}
-ditherPortrait(document.querySelector('.lede-portrait canvas'));
 </script>
 </body>
 </html>
