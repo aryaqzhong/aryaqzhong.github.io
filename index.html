@@ -78,11 +78,11 @@ h1[tabindex="-1"]:focus { outline: none; }
   text-decoration-line: underline; text-decoration-style: dotted;
   text-decoration-thickness: 1px; text-underline-offset: .2em;
 }
-.prose a, .note a, .cv-title a, .cv-sub a, .cv-note a {
+.prose a, .note a, .cv-title a, .cv-sub a, .cv-note a, .news a {
   text-decoration-line: underline; text-decoration-color: var(--line);
   text-decoration-thickness: 1px; text-underline-offset: .22em;
 }
-.prose a:hover, .note a:hover, .cv-title a:hover, .cv-sub a:hover, .cv-note a:hover { text-decoration-color: currentColor; }
+.prose a:hover, .note a:hover, .cv-title a:hover, .cv-sub a:hover, .cv-note a:hover, .news a:hover { text-decoration-color: currentColor; }
 .card h3 a:hover, .pub h3 a:hover { text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; }
 
 .top { position: relative; z-index: 20; padding: var(--pad); }
@@ -383,12 +383,14 @@ body.gallery-canvas .gc-fit.is-visible { opacity: 1; visibility: visible; }
     <h2 class="label">recently</h2>
     <div class="news" tabindex="0" role="region" aria-label="news, scrollable">
       <ul>
-        <li><time datetime="2026-10">oct 2026</time><p>launched this website <span aria-hidden="true">✦</span></p></li>
-        <li><time datetime="2026-09">sep 2026</time><p><span class="fill">[something you started: a program, a job, a project]</span></p></li>
-        <li><time datetime="2026-08">aug 2026</time><p><span class="fill">[a paper, show, or project that got accepted]</span></p></li>
-        <li><time datetime="2026-06">jun 2026</time><p><span class="fill">[an internship, residency, or trip]</span></p></li>
-        <li><time datetime="2025-11">nov 2025</time><p><span class="fill">[a talk you gave, or an award you got]</span></p></li>
-        <li><time datetime="2025-09">sep 2025</time><p><span class="fill">[the start of something]</span></p></li>
+        <li><time datetime="2026-11">nov 2026</time><p>launched this website, with interactive write-ups of two independent projects: <a href="/projects/dualwindow-mss/">DualWindow-MSS</a> and <a href="/projects/beyond-words/">Beyond Words</a> <span aria-hidden="true">✦</span></p></li>
+        <li><time datetime="2026-11">nov 2026</time><p>started work on Neural Orchestra at MACL, an EEG-driven virtual instrument for ensemble performance</p></li>
+        <li><time datetime="2026-08">aug 2026</time><p>began my PhD in Computing and Information Sciences at RIT, advised by Prof. Hwan Shim</p></li>
+        <li><time datetime="2025-05">may 2025</time><p>graduated from Tufts University with an MS in Computer Science</p></li>
+        <li><time datetime="2025-04">apr 2025</time><p>our fNIRS study of LLM-assisted decision-making was presented at <a href="https://www.cs.tufts.edu/~jacob/papers/llm.russell.nat25.pdf">NAT’25</a> in Berlin</p></li>
+        <li><time datetime="2024-05">may 2024</time><p>joined the Tufts HCI Lab as a graduate research assistant with Prof. Robert Jacob</p></li>
+        <li><time datetime="2023-01">jan 2023</time><p>started my MS in Computer Science at Tufts University</p></li>
+        <li><time datetime="2022-08">aug 2022</time><p>graduated cum laude from Northeastern University with a BS in Information Technology</p></li>
       </ul>
     </div>
 
